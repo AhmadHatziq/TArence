@@ -15,7 +15,7 @@ public class RemarkCommandParser {
     public RemarkCommand parse(String args) throws ParseException {
         requireNonNull(args);
 
-        // Obtains the remark word ie r/"word"
+        // argMultiMap is a mapping of prefixes to a list of strings.
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args,
                 PREFIX_REMARK);
 
@@ -28,6 +28,7 @@ public class RemarkCommandParser {
                     RemarkCommand.MESSAGE_USAGE), ive);
         }
 
+        // Obtains the remark string
         String remarkString = argMultimap.getValue(PREFIX_REMARK).orElse("");
         Remark remark = new Remark(remarkString);
         return new RemarkCommand(index, remark);

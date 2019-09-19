@@ -52,7 +52,7 @@ public class ArgumentMultimap {
     }
 
     /**
-     * Returns the preamble (text before the first valid prefix). Trims any leading/trailing spaces.
+     * Returns the preamble (text before the first valid prefix). Trims any leading/trailing spaces. Used to get index.
      */
     public String getPreamble() {
         return getValue(new Prefix("")).orElse("");
