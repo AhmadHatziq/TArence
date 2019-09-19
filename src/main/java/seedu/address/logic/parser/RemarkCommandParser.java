@@ -10,7 +10,7 @@ import seedu.address.model.person.Remark;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_REMARK;
 import static seedu.address.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 
-public class RemarkCommandParser {
+public class RemarkCommandParser implements Parser<RemarkCommand>  {
 
     public RemarkCommand parse(String args) throws ParseException {
         requireNonNull(args);
