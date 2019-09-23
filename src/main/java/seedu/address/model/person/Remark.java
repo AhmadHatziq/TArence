@@ -30,3 +30,4 @@ public class Remark {
         return value.hashCode();
     }
 }
+
