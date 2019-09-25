@@ -1,16 +1,16 @@
 package seedu.address.logic.commands;
 
+import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
+import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
+
+import java.util.List;
+
 import seedu.address.commons.core.Messages;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Remark;
-
-import java.util.List;
-
-import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
-import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
 /**
  * Changes the remark of an existing person in the address book.
@@ -31,6 +31,19 @@ public class RemarkCommand extends Command {
 
     private final Index index;
     private final Remark remark;
+
+    /**
+     * Default constructor for RemarkCommand.
+     *
+     * @param index of the person in the filtered person list to edit the remark
+     * @param remark of the person to be updated to
+     */
+    public RemarkCommand(Index index, Remark remark) {
+        requireAllNonNull(index, remark);
+
+        this.index = index;
+        this.remark = remark;
+    }
 
     @Override
     public CommandResult execute (Model model) throws CommandException {
@@ -74,18 +87,6 @@ public class RemarkCommand extends Command {
         return String.format(message, personToEdit);
     }
 
-    /**
-     * Default constructor for RemarkCommand.
-     *
-     * @param index of the person in the filtered person list to edit the remark
-     * @param remark of the person to be updated to
-     */
-    public RemarkCommand(Index index, Remark remark) {
-        requireAllNonNull(index, remark);
-
-        this.index = index;
-        this.remark = remark;
-    }
 
     @Override
     public boolean equals(Object other) {
@@ -105,3 +106,4 @@ public class RemarkCommand extends Command {
                 && remark.equals(e.remark);
     }
 }
+
