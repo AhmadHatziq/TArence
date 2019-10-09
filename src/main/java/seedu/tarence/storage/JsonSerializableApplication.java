@@ -29,8 +29,10 @@ class JsonSerializableApplication {
      * Constructs a {@code JsonSerializableApplication} with the given persons.
      */
     @JsonCreator
-    public JsonSerializableApplication(@JsonProperty("persons") List<JsonAdaptedPerson> persons) {
+    public JsonSerializableApplication(@JsonProperty("persons") List<JsonAdaptedPerson> persons,
+                                       @JsonProperty("modules") List<JsonAdaptedModule> modules) {
         this.persons.addAll(persons);
+        this.modules.addAll(modules);
     }
 
     /**
@@ -58,6 +60,10 @@ class JsonSerializableApplication {
             application.addPerson(person);
         }
         return application;
+    }
+
+    public List<JsonAdaptedModule> getModulesJsonStringArray() {
+        return this.modules;
     }
 
 }

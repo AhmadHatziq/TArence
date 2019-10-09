@@ -41,4 +41,11 @@ public class JsonAdaptedModule {
 
     }
 */
+    public String getModuleName() {
+        return this.moduleName;
+    }
+
+    public ArrayList<String> getTutorialListForModule() {
+        return this.tutorialListForModule;
+    }
 }

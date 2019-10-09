@@ -13,6 +13,7 @@ import seedu.tarence.commons.exceptions.IllegalValueException;
 import seedu.tarence.commons.util.FileUtil;
 import seedu.tarence.commons.util.JsonUtil;
 import seedu.tarence.model.ReadOnlyApplication;
+import seedu.tarence.model.tutorial.Tutorial;
 
 /**
  * A class to access the application data stored as a json file on the hard disk.
@@ -50,6 +51,13 @@ public class JsonApplicationStorage implements ApplicationStorage {
         if (!jsonApplication.isPresent()) {
             return Optional.empty();
         }
+        for (JsonAdaptedModule j : jsonApplication.get().getModulesJsonStringArray()) {
+            System.out.println(j.getModuleName());
+            for (String t : j.getTutorialListForModule() ) {
+                System.out.println(t);
+            }
+        }
+
 
         try {
             return Optional.of(jsonApplication.get().toModelType());
