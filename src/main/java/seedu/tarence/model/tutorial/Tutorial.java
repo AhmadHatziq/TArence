@@ -95,6 +95,45 @@ public class Tutorial {
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append(getTutName());
+        builder.append(" | ");
+        builder.append(getTimeTable().getDay().toString());
+        builder.append(" | ");
+        builder.append(getTimeTable().getStartTime().toString());
+        builder.append(" | ");
+        builder.append(getTimeTable().getWeeks().toString());
+        builder.append(" | ");
+        builder.append(getTimeTable().getDuration().toString());
+        builder.append(" | Students: ");
+        for (Student s : students) {
+            builder.append(""); // Identifier for students
+            builder.append(s.toString());
+
+        }
+        builder.append(getModCode().toString());
+
+        return builder.toString();
+    }
+
+    public String toJsonString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(getTutName());
+        builder.append(" | ");
+        builder.append(getTimeTable().getDay().toString());
+        builder.append(" | ");
+        builder.append(getTimeTable().getStartTime().toString());
+        builder.append(" | ");
+        builder.append(getTimeTable().getWeeks().toString());
+        builder.append(" | ");
+        builder.append(getTimeTable().getDuration().toString());
+        builder.append(" | ");
+        for (Student s : students) {
+            builder.append("$"); // Identifier for students
+            builder.append(s.toString());
+
+        }
+        builder.append(" | ");
+        builder.append(getModCode().toString());
+        builder.append(" | ");
         return builder.toString();
     }
 

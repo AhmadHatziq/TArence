@@ -22,6 +22,7 @@ class JsonSerializableApplication {
     public static final String MESSAGE_DUPLICATE_PERSON = "Persons list contains duplicate person(s).";
 
     private final List<JsonAdaptedPerson> persons = new ArrayList<>();
+    private final List<JsonAdaptedModule> modules = new ArrayList<>();
     
 
     /**
@@ -39,6 +40,7 @@ class JsonSerializableApplication {
      */
     public JsonSerializableApplication(ReadOnlyApplication source) {
         persons.addAll(source.getPersonList().stream().map(JsonAdaptedPerson::new).collect(Collectors.toList()));
+        modules.addAll(source.getModuleList().stream().map(JsonAdaptedModule::new).collect(Collectors.toList()));
     }
 
     /**
