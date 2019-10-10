@@ -51,13 +51,6 @@ public class JsonApplicationStorage implements ApplicationStorage {
         if (!jsonApplication.isPresent()) {
             return Optional.empty();
         }
-        for (JsonAdaptedModule j : jsonApplication.get().getModulesJsonStringArray()) {
-            System.out.println(j.getModuleName());
-            for (String t : j.getTutorialListForModule() ) {
-                System.out.println(t);
-            }
-        }
-
 
         try {
             return Optional.of(jsonApplication.get().toModelType());

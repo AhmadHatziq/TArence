@@ -110,4 +110,16 @@ public class Student extends Person {
         return builder.toString();
     }
 
+    public String toJsonString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(getName())
+                .append(" Email: ")
+                .append(getEmail())
+                .append(" Matric Number: ")
+                .append(getMatricNum())
+                .append(" NUSNET Id: ")
+                .append(getNusnetId());
+        return builder.toString();
+    }
+
 }

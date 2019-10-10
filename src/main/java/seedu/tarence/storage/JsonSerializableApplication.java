@@ -12,6 +12,7 @@ import seedu.tarence.commons.exceptions.IllegalValueException;
 import seedu.tarence.model.Application;
 import seedu.tarence.model.ReadOnlyApplication;
 import seedu.tarence.model.person.Person;
+import seedu.tarence.model.module.Module;
 
 /**
  * An Immutable application that is serializable to JSON format.
@@ -59,6 +60,11 @@ class JsonSerializableApplication {
             }
             application.addPerson(person);
         }
+
+        for (JsonAdaptedModule jsonAdaptedModule : modules) {
+            Module module = jsonAdaptedModule.toModelType();
+        }
+
         return application;
     }
 
