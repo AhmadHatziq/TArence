@@ -1,11 +1,9 @@
 package seedu.tarence.logic.commands;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.tarence.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.tarence.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.tarence.testutil.TypicalIndexes.INDEX_FIRST_IN_LIST;
-import static seedu.tarence.testutil.TypicalIndexes.INDEX_SECOND_IN_LIST;
 import static seedu.tarence.testutil.TypicalPersons.getTypicalApplication;
 
 import org.junit.jupiter.api.Test;
@@ -15,7 +13,6 @@ import seedu.tarence.commons.core.index.Index;
 import seedu.tarence.model.Model;
 import seedu.tarence.model.ModelManager;
 import seedu.tarence.model.UserPrefs;
-import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.module.Module;
 import seedu.tarence.testutil.ModuleBuilder;
 
@@ -31,7 +28,8 @@ public class DeleteModuleCommandTest {
     private Model model = new ModelManager(getTypicalApplication(), new UserPrefs());
 
     @Test
-    public void execute_validIndexUnfilteredList_success() {
+    public void execute_validModuleIndex_success() {
+        ModuleBuilder.DEFAULT_TUTORIALS.clear();
         Module moduleToDelete = new ModuleBuilder().withModCode(VALID_MODCODE).build();
         model.addModule(moduleToDelete);
         DeleteModuleCommand deleteModuleCommand = new DeleteModuleCommand(INDEX_FIRST_IN_LIST);
@@ -45,43 +43,33 @@ public class DeleteModuleCommandTest {
     }
 
     @Test
-    public void execute_invalidIndexUnfilteredList_throwsCommandException() {
+    public void execute_invalidModuleIndex_throwsCommandException() {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredTutorialList().size() + 1);
         DeleteModuleCommand deleteModuleCommand = new DeleteModuleCommand(outOfBoundIndex);
 
         assertCommandFailure(deleteModuleCommand, model, Messages.MESSAGE_INVALID_MODULE_DISPLAYED_INDEX);
     }
 
-    /* todo: implement later?
+    /* TODO: implement later?
     @Test
-    public void execute_validIndexFilteredList_success() {
-        showPersonAtIndex(model, INDEX_FIRST_IN_LIST);
+    public void execute_moduleWithTutorials_delayed() {
+        ModuleBuilder.DEFAULT_TUTORIALS.clear();
+        Module moduleToDelete = new ModuleBuilder().withModCode(VALID_MODCODE).build();
+        Tutorial tutorial = new TutorialBuilder().withModCode(VALID_MODCODE).build();
+        moduleToDelete.addTutorial(tutorial);
+        model.addModule(moduleToDelete);
 
-        Person personToDelete = model.getFilteredPersonList().get(INDEX_FIRST_IN_LIST.getZeroBased());
-        DeleteStudentCommand deleteStudentCommand = new DeleteStudentCommand(INDEX_FIRST_IN_LIST);
+        DeleteModuleCommand deleteModuleCommand = new DeleteModuleCommand(INDEX_FIRST_IN_LIST);
 
-        String expectedMessage = String.format(DeleteStudentCommand.MESSAGE_DELETE_PERSON_SUCCESS, personToDelete);
+        String expectedMessage = String.format(DeleteModuleCommand.MESSAGE_CONFIRM_DELETE_NONEMPTY_MODULE,
+                moduleToDelete,
+                moduleToDelete.getTutorials().size());
 
-        Model expectedModel = new ModelManager(model.getApplication(), new UserPrefs());
-        expectedModel.deletePerson(personToDelete);
-        showNoPerson(expectedModel);
+        ModelManager expectedModel = new ModelManager(model.getApplication(), new UserPrefs());
+        expectedModel.storePendingCommand(deleteModuleCommand);
 
-        assertCommandSuccess(deleteStudentCommand, model, expectedMessage, expectedModel);
+        assertCommandDelayed(deleteModuleCommand, model, expectedMessage, expectedModel);
     }
-
-    @Test
-    public void execute_invalidIndexFilteredList_throwsCommandException() {
-        showPersonAtIndex(model, INDEX_FIRST_IN_LIST);
-
-        Index outOfBoundIndex = INDEX_SECOND_PERSON;
-        // ensures that outOfBoundIndex is still in bounds of class list
-        assertTrue(outOfBoundIndex.getZeroBased() < model.getApplication().getPersonList().size());
-
-        DeleteStudentCommand deleteStudentCommand = new DeleteStudentCommand(outOfBoundIndex);
-
-        assertCommandFailure(deleteStudentCommand, model, Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
-    }
-    */
 
     @Test
     public void execute_moduleNameDoesNotExist_throwsCommandException() {

@@ -3,11 +3,14 @@ package seedu.tarence.model;
 import static java.util.Objects.requireNonNull;
 import static seedu.tarence.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 
 import javafx.collections.ObservableList;
 
+import seedu.tarence.logic.commands.Command;
 import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.module.Module;
 import seedu.tarence.model.module.UniqueModuleList;
@@ -17,6 +20,7 @@ import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
 import seedu.tarence.model.tutorial.UniqueTutorialList;
+import seedu.tarence.model.tutorial.Week;
 
 /**
  * Wraps all data at the application level
@@ -28,6 +32,8 @@ public class Application implements ReadOnlyApplication {
     private final UniquePersonList students;
     private final UniqueModuleList modules;
     private final UniqueTutorialList tutorials;
+
+    private Stack<Command> pendingCommands;
 
     /*
      * The 'unusual' code block below is a non-static initialization block, sometimes used to avoid duplication
@@ -41,6 +47,7 @@ public class Application implements ReadOnlyApplication {
         students = new UniquePersonList();
         modules = new UniqueModuleList();
         tutorials = new UniqueTutorialList();
+        pendingCommands = new Stack<>();
     }
 
     public Application() {}
@@ -67,8 +74,12 @@ public class Application implements ReadOnlyApplication {
      * Replaces the contents of the student list with {@code students}.
      * {@code persons} must not contain duplicate students.
      */
-    public void setStudents(List<Person> students) {
-        this.students.setPersons(students);
+    public void setStudents(List<Student> students) {
+        List<Person> personList = new ArrayList<>();
+        for (Student student : students) {
+            personList.add(student);
+        }
+        this.students.setPersons(personList);
     }
 
     /**
@@ -94,6 +105,7 @@ public class Application implements ReadOnlyApplication {
         requireNonNull(newData);
 
         setPersons(newData.getPersonList());
+        setStudents(newData.getStudentList());
         setModules(newData.getModuleList());
         setTutorials(newData.getTutorialList());
     }
@@ -153,6 +165,7 @@ public class Application implements ReadOnlyApplication {
             }
         }
     }
+
     ////=================== student-level operations    ================================================================
     /**
      * Returns true if a student with the same identity as {@code student} exists in the application.
@@ -177,7 +190,32 @@ public class Application implements ReadOnlyApplication {
      */
     public void setStudent(Student target, Student editedStudent) {
         requireNonNull(editedStudent);
-        persons.setPerson(target, editedStudent);
+        //students.setPerson(target, editedStudent);
+        removeStudent(target);
+
+        addStudent(editedStudent);
+        addStudentToTutorial(editedStudent);
+        /*
+        // Modify tutorial level
+        for (Tutorial tutorial : tutorials) {
+            if (tutorial.getTutName().equals(target.getTutName())) {
+                tutorial.setStudent(target, editedStudent);
+            }
+        }
+
+        // Modify Module level: TODO - refactor
+        for (Module module : modules) {
+            if (module.getModCode().equals(target.getModCode())) {
+                Module targetMod = module;
+                for (Tutorial tutorial : targetMod.getTutorials()) {
+                    if (tutorial.getTutName().equals(target.getTutName())) {
+                        tutorial.setStudent(target, editedStudent);
+                    }
+                }
+            }
+        }
+
+         */
     }
 
     /**
@@ -185,7 +223,24 @@ public class Application implements ReadOnlyApplication {
      * {@code key} must exist in the application.
      */
     public void removeStudent(Student key) {
-        persons.remove(key);
+        // Delete students from the main list
+        students.remove(key);
+
+
+        // Delete students from existing tutorials
+        for (Tutorial tutorial : tutorials) {
+            if (tutorial.getTutName().equals(key.getTutName())) {
+                tutorial.deleteStudent(key);
+            }
+        }
+
+        // Delete students from existing modules
+        for (Module module : modules) {
+            if (module.getModCode().equals(key.getModCode())) {
+                module.deleteStudent(key);
+                break;
+            }
+        }
     }
 
     ////=================== module-level operations    =================================================================
@@ -222,6 +277,16 @@ public class Application implements ReadOnlyApplication {
     public void removeModule(Module module) {
         requireNonNull(module);
         modules.remove(module);
+    }
+
+    /**
+     * Deletes all tutorials in a given module from the application.
+     */
+    public void removeTutorialsFromModule(Module module) {
+        for (Tutorial tutorial : module.getTutorials()) {
+            removeStudentsFromTutorial(tutorial);
+            tutorials.remove(tutorial);
+        }
     }
 
     /**
@@ -291,9 +356,33 @@ public class Application implements ReadOnlyApplication {
     public void removeTutorial(Tutorial tutorial) {
         requireNonNull(tutorial);
         tutorials.remove(tutorial);
+
+        // Delete from existing modules
+        for (Module module : modules) {
+            if (module.getModCode().equals(tutorial.getModCode())) {
+                module.deleteTutorial(tutorial);
+            }
+        }
     }
+
+    public void setAttendance(Tutorial tutorial, Week week, Student student) {
+        requireAllNonNull(tutorial, week, student);
+        tutorial.setAttendance(week, student);
+    }
+
     //// util methods
 
+    /**
+     * Deletes all students from the given tutorial.
+     */
+    public void removeStudentsFromTutorial(Tutorial tutorial) {
+        requireNonNull(tutorial);
+        for (Student student : tutorial.getStudents()) {
+            students.remove(student);
+        }
+    }
+
+    //// util methods
     @Override
     public String toString() {
         return persons.asUnmodifiableObservableList().size() + " persons";
@@ -318,6 +407,42 @@ public class Application implements ReadOnlyApplication {
     @Override
     public ObservableList<Tutorial> getTutorialList() {
         return tutorials.asUnmodifiableObservableList();
+    }
+
+    /**
+     * Stores a command for later execution, pending user confirmation.
+     */
+    public void storePendingCommand(Command command) {
+        pendingCommands.push(command);
+    }
+
+    /**
+     * Removes pending command from application and returns it for execution.
+     */
+    public Command retrievePendingCommand() {
+        if (hasPendingCommand()) {
+            return pendingCommands.pop();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Checks whether a pending command exists in the application.
+     */
+    public boolean hasPendingCommand() {
+        return pendingCommands.size() > 0;
+    }
+
+    /**
+     * Returns the pending command at the top of the execution stack if it exists, else null.
+     */
+    public Command peekPendingCommand() {
+        if (hasPendingCommand()) {
+            return pendingCommands.peek();
+        } else {
+            return null;
+        }
     }
 
     @Override

@@ -11,12 +11,15 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import seedu.tarence.commons.core.GuiSettings;
 import seedu.tarence.commons.core.LogsCenter;
+import seedu.tarence.logic.commands.Command;
 import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.module.Module;
+import seedu.tarence.model.person.NameContainsKeywordsPredicate;
 import seedu.tarence.model.person.Person;
 import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
+import seedu.tarence.model.tutorial.Week;
 
 /**
  * Represents the in-memory model of the application data.
@@ -134,6 +137,18 @@ public class ModelManager implements Model {
     public void addStudent(Student student) {
         application.addStudent(student);
         updateFilteredStudentList(PREDICATE_SHOW_ALL_STUDENTS);
+
+    }
+
+    @Override
+    public void setStudent(Student target, Student editedStudent) {
+        requireAllNonNull(target, editedStudent);
+        application.setStudent(target, editedStudent);
+    }
+
+    @Override
+    public void deleteStudent(Student student) {
+        application.removeStudent(student);
     }
 
     @Override
@@ -162,6 +177,12 @@ public class ModelManager implements Model {
     public void deleteModule(Module module) {
         requireNonNull(module);
         application.removeModule(module);
+    }
+
+    @Override
+    public void deleteTutorialsFromModule(Module module) {
+        requireNonNull(module);
+        application.removeTutorialsFromModule(module);
     }
 
     @Override
@@ -209,6 +230,17 @@ public class ModelManager implements Model {
         application.removeTutorial(tutorial);
     }
 
+    @Override
+    public void setAttendance(Tutorial tutorial, Week week, Student student) {
+        requireAllNonNull(tutorial, week, student);
+        application.setAttendance(tutorial, week, student);
+    }
+
+    @Override
+    public void deleteStudentsFromTutorial(Tutorial tutorial) {
+        requireNonNull(tutorial);
+        application.removeStudentsFromTutorial(tutorial);
+    }
     //=========== Filtered Person List Accessors =============================================================
 
     /**
@@ -260,6 +292,13 @@ public class ModelManager implements Model {
     }
 
     @Override
+    public void updateFilteredStudentList(NameContainsKeywordsPredicate predicate) {
+
+        requireNonNull(predicate);
+        filteredStudents.setPredicate(predicate);
+    }
+
+    @Override
     public void updateFilteredModuleList(Predicate<Module> predicate) {
         requireNonNull(predicate);
         filteredModules.setPredicate(predicate);
@@ -269,6 +308,27 @@ public class ModelManager implements Model {
     public void updateFilteredTutorialList(Predicate<Tutorial> predicate) {
         requireNonNull(predicate);
         filteredTutorials.setPredicate(predicate);
+    }
+
+    @Override
+    public void storePendingCommand(Command command) {
+        requireNonNull(command);
+        application.storePendingCommand(command);
+    }
+
+    @Override
+    public Command getPendingCommand() {
+        return application.retrievePendingCommand();
+    }
+
+    @Override
+    public boolean hasPendingCommand() {
+        return application.hasPendingCommand();
+    }
+
+    @Override
+    public Command peekPendingCommand() {
+        return application.peekPendingCommand();
     }
 
     @Override

@@ -15,15 +15,21 @@ import static seedu.tarence.testutil.Assert.assertThrows;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Optional;
 
 import seedu.tarence.commons.core.index.Index;
 import seedu.tarence.logic.commands.exceptions.CommandException;
 import seedu.tarence.model.Application;
 import seedu.tarence.model.Model;
+import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.person.NameContainsKeywordsPredicate;
 import seedu.tarence.model.person.Person;
+import seedu.tarence.model.student.MatricNum;
+import seedu.tarence.model.student.NusnetId;
+import seedu.tarence.model.student.Student;
+import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.testutil.EditPersonDescriptorBuilder;
+import seedu.tarence.testutil.EditStudentDescriptorBuilder;
 
 /**
  * Contains helper methods for testing commands.
@@ -39,6 +45,7 @@ public class CommandTestUtil {
     public static final String VALID_MODULE_AMY = "CS1010";
     public static final String VALID_MODULE_BOB = "CS2030";
     public static final String VALID_NUSNET_AMY = "E0123456";
+    public static final String VALID_NUSNET_BOB = "E0035152";
     public static final String VALID_TUTORIAL_NAME_AMY = "T01";
     public static final String VALID_TUTORIAL_NAME_BOB = "T10";
     public static final String VALID_TUTORIAL_DAY_AMY = "MONDAY";
@@ -71,6 +78,9 @@ public class CommandTestUtil {
     public static final ArrayList<Integer> VALID_WEEKS_ODD_LIST = new ArrayList<>(Arrays.asList(3, 5, 7, 9, 11, 13));
     public static final String VALID_WEEKS_RANGE = "5-10";
     public static final ArrayList<Integer> VALID_WEEKS_RANGE_LIST = new ArrayList<>(Arrays.asList(5, 6, 7, 8, 9, 10));
+    public static final int VALID_WEEK = 1;
+
+    public static final String INVALID_MODCODE = "ABCD1100S";
 
     public static final String INVALID_WEEKS_RANGE = "1-14";
 
@@ -82,25 +92,41 @@ public class CommandTestUtil {
     public static final String VALID_WEEKS_DESC = " " + PREFIX_TUTORIAL_WEEKS + VALID_WEEKS;
     public static final String VALID_WEEKS_ODD_DESC = " " + PREFIX_TUTORIAL_WEEKS + VALID_WEEKS_ODD;
     public static final String VALID_WEEKS_RANGE_DESC = " " + PREFIX_TUTORIAL_WEEKS + VALID_WEEKS_RANGE;
-
+    public static final String VALID_WEEK_DESC = " " + PREFIX_TUTORIAL_WEEKS + VALID_WEEK;
     public static final String INVALID_WEEKS_RANGE_DESC = " " + PREFIX_TUTORIAL_WEEKS + INVALID_WEEKS_RANGE;
+
+    public static final String INVALID_MODCODE_DESC = " " + PREFIX_MODULE + INVALID_MODCODE;
+
 
     public static final String INVALID_NAME_DESC = " " + PREFIX_NAME + "James&"; // '&' not allowed in names
     public static final String INVALID_EMAIL_DESC = " " + PREFIX_EMAIL + "bob!yahoo"; // missing '@' symbol
 
-    public static final String INVALID_TUTORIAL_INDEX_1 = " " + PREFIX_TUTORIAL_INDEX + "sa&";
-    public static final String INVALID_TUTORIAL_INDEX_2 = " " + PREFIX_TUTORIAL_INDEX + "☹";
-    public static final String INVALID_TUTORIAL_INDEX_3 = " " + PREFIX_TUTORIAL_INDEX + "0";
+    public static final String INVALID_TUTORIAL_INDEX_DESC_1 = " " + PREFIX_TUTORIAL_INDEX + "sa&";
+    public static final String INVALID_TUTORIAL_INDEX_DESC_2 = " " + PREFIX_TUTORIAL_INDEX + "☹";
+    public static final String INVALID_TUTORIAL_INDEX_DESC_3 = " " + PREFIX_TUTORIAL_INDEX + "0";
+
 
     public static final String PREAMBLE_WHITESPACE = "\t  \r  \n";
     public static final String PREAMBLE_NON_EMPTY = "NonEmptyPreamble";
 
     public static final EditCommand.EditPersonDescriptor DESC_AMY;
     public static final EditCommand.EditPersonDescriptor DESC_BOB;
+    public static final EditCommand.EditStudentDescriptor DESC_STUDENT_AMY;
+    public static final EditCommand.EditStudentDescriptor DESC_STUDENT_BOB;
 
     static {
         DESC_AMY = new EditPersonDescriptorBuilder().withName(VALID_NAME_AMY).withEmail(VALID_EMAIL_AMY).build();
         DESC_BOB = new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).withEmail(VALID_EMAIL_BOB).build();
+        DESC_STUDENT_AMY = new EditStudentDescriptorBuilder().withName(VALID_NAME_AMY)
+                .withEmail(VALID_EMAIL_AMY).withModCode(new ModCode(VALID_MODCODE))
+                .withTutName(new TutName(VALID_TUTORIAL_NAME))
+                .withMatricNum(Optional.of(new MatricNum(VALID_MATRIC_AMY)))
+                .withNusnetId(Optional.of(new NusnetId(VALID_NUSNET_AMY))).build();
+        DESC_STUDENT_BOB = new EditStudentDescriptorBuilder().withName(VALID_NAME_AMY)
+                .withEmail(VALID_EMAIL_BOB).withModCode(new ModCode(VALID_MODCODE))
+                .withTutName(new TutName(VALID_TUTORIAL_NAME))
+                .withMatricNum(Optional.of(new MatricNum(VALID_MATRIC_BOB)))
+                .withNusnetId(Optional.of(new NusnetId(VALID_NUSNET_BOB))).build();
     }
 
     /**
@@ -112,7 +138,7 @@ public class CommandTestUtil {
             Model expectedModel) {
         try {
             CommandResult result = command.execute(actualModel);
-            assertEquals(expectedCommandResult, result);
+            assertEquals(expectedCommandResult.toString(), result.toString());
             assertEquals(expectedModel, actualModel);
         } catch (CommandException ce) {
             throw new AssertionError("Execution of command should not fail.", ce);
@@ -139,12 +165,28 @@ public class CommandTestUtil {
         // we are unable to defensively copy the model for comparison later, so we can
         // only do so by copying its components.
         Application expectedApplication = new Application(actualModel.getApplication());
-        List<Person> expectedFilteredList = new ArrayList<>(actualModel.getFilteredPersonList());
 
         assertThrows(CommandException.class, expectedMessage, () -> command.execute(actualModel));
         assertEquals(expectedApplication, actualModel.getApplication());
-        assertEquals(expectedFilteredList, actualModel.getFilteredPersonList());
     }
+
+    /**
+     * Executes a given {@code command} where the expected result is deferring its execution pending user confirmation.
+     * Checks that the command is correctly stored by the model for later execution and that the appropriate
+     * confirmation dialogue is sent to the user.
+     */
+    public static void assertCommandDelayed(Command command, Model actualModel, String expectedMessage,
+            Model expectedModel) {
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage);
+        try {
+            CommandResult actualCommandResult = command.execute(actualModel);
+            assertEquals(actualCommandResult, expectedCommandResult);
+            assertEquals(actualModel, expectedModel);
+        } catch (CommandException ce) {
+            throw new AssertionError("Execution of command should not fail.", ce);
+        }
+    }
+
     /**
      * Updates {@code model}'s application to show only the person at the given {@code targetIndex} in the
      * {@code model}'s application.
@@ -157,6 +199,20 @@ public class CommandTestUtil {
         model.updateFilteredPersonList(new NameContainsKeywordsPredicate(Arrays.asList(splitName[0])));
 
         assertEquals(1, model.getFilteredPersonList().size());
+    }
+
+    /**
+     * Updates {@code model}'s application to show only the student at the given {@code targetIndex} in the
+     * {@code model}'s application.
+     */
+    public static void showStudentAtIndex(Model model, Index targetIndex) {
+        assertTrue(targetIndex.getZeroBased() < model.getFilteredStudentList().size());
+
+        Student student = model.getFilteredStudentList().get(targetIndex.getZeroBased());
+        final String[] splitName = student.getName().fullName.split("\\s+");
+        model.updateFilteredStudentList(new NameContainsKeywordsPredicate(Arrays.asList(splitName[0])));
+
+        assertEquals(1, model.getFilteredStudentList().size());
     }
 
 }

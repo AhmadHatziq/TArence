@@ -116,7 +116,7 @@ public class ParserUtil {
         if (!ModCode.isValidModCode(trimmedModCode)) {
             throw new ParseException(ModCode.MESSAGE_CONSTRAINTS);
         }
-        return new ModCode(trimmedModCode);
+        return new ModCode(trimmedModCode.toUpperCase());
     }
 
     /**
@@ -183,15 +183,16 @@ public class ParserUtil {
     }
 
     /**
-     * Parses a {@code String weeks} into an ArrayList of Integers.
+     * Parses a {@code String weeks} into an Set of Weeks.
      *
      * @param weeks User string. Eg 1,2,7
-     * @return ArrayList of Weeks.
-     * @throws ParseException if unable to parse the string into Integers.
+     * @return Set of Weeks.
+     * @throws ParseException if unable to parse the string into a Set of Weeks.
      */
     public static Set<Week> parseWeeks(String weeks) throws ParseException {
         requireNonNull(weeks);
         Set<Week> listOfWeeks = new TreeSet<>();
+
 
         // check for user input of "odd" or "even"
         if (weeks.toLowerCase().equals("odd")) { // weeks 3, 5, 7, 9, 11, 13
@@ -224,14 +225,29 @@ public class ParserUtil {
         // default - assume user input of list of weeks
         String[] weekNumbers = weeks.split(",");
 
-        try {
-            for (String weekNumber : weekNumbers) {
-                listOfWeeks.add(new Week(Integer.parseInt(weekNumber)));
-            }
-        } catch (IllegalArgumentException e) {
-            throw new ParseException("Invalid week numbers entered. Should contain only numbers from 1 to 13.");
+        for (String weekNumber : weekNumbers) {
+            listOfWeeks.add(parseWeek(weekNumber));
+
         }
         return listOfWeeks;
+    }
+
+    /**
+     * Parses a {@code String weekNumber} into a Week.
+     *
+     * @param weekNumber User string. Eg 1,2,7
+     * @return Week.
+     * @throws ParseException if unable to parse the string into a Week.
+     */
+    public static Week parseWeek(String weekNumber) throws ParseException {
+        requireNonNull(weekNumber);
+        Week week;
+        try {
+            week = new Week(Integer.parseInt(weekNumber));
+        } catch (IllegalArgumentException e) {
+            throw new ParseException("Invalid week number(s) entered. Should contain only numbers from 1 to 13.");
+        }
+        return week;
     }
 
     /**

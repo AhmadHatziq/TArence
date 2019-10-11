@@ -5,12 +5,15 @@ import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
 import seedu.tarence.commons.core.GuiSettings;
+import seedu.tarence.logic.commands.Command;
 import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.module.Module;
+import seedu.tarence.model.person.NameContainsKeywordsPredicate;
 import seedu.tarence.model.person.Person;
 import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
+import seedu.tarence.model.tutorial.Week;
 
 /**
  * The API of the Model component.
@@ -93,6 +96,20 @@ public interface Model {
      */
     boolean hasStudent(Student student);
 
+    /**
+     * Removes the student from the studentList
+     * {@code student} must already exist in the application.
+     */
+    void deleteStudent(Student student);
+
+
+    /**
+     * Replaces the given student {@code target} with {@code editedStudent}.
+     * {@code target} must exist in the application.
+     * The student identity of {@code editedStudent} must not be the same as another
+     * existing student in the application.
+     */
+    void setStudent(Student target, Student editedStudent);
 
     /**
      * Adds the given student.
@@ -123,6 +140,12 @@ public interface Model {
      * @throws NullPointerException if {@code predicate} is null.
      */
     void updateFilteredStudentList(Predicate<Student> predicate);
+
+    /**
+     * Updates the filter of the filtered student list to filter by the given NameContainsKeywordsPredicate
+     * Special case only used for find command
+     */
+    void updateFilteredStudentList(NameContainsKeywordsPredicate predicate);
 
     /**
      * Updates the filter of the filtered module list to filter by the given {@code predicate}.
@@ -158,11 +181,15 @@ public interface Model {
      */
     void deleteModule(Module module);
 
+    void deleteTutorialsFromModule(Module module);
+
     boolean hasTutorial(Tutorial tutorial);
 
     void addTutorial(Tutorial tutorial);
 
     void deleteTutorial(Tutorial tutorial);
+
+    void deleteStudentsFromTutorial(Tutorial tutorial);
 
     void addTutorialToModule(Tutorial tutorial);
 
@@ -177,4 +204,30 @@ public interface Model {
      * Checks if there are multiple tutorials of the same name in the application.
      */
     int getNumberOfTutorialsOfName(TutName tutName);
+
+    /**
+     * Sets attendance of a student of a tutorial in the application.
+     */
+    public void setAttendance(Tutorial tutorial,
+            Week week, Student student);
+
+    /**
+     * Stores a command to be executed pending user confirmation.
+     */
+    void storePendingCommand(Command command);
+
+    /**
+     * Removes pending command and returns it for execution if it exists, else null.
+     */
+    Command getPendingCommand();
+
+    /**
+     * Checks if a pending command exists in the application.
+     */
+    boolean hasPendingCommand();
+
+    /**
+     * Returns the pending command at the top of the execution stack if it exists, else null.
+     */
+    Command peekPendingCommand();
 }
