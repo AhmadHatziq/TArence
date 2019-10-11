@@ -12,6 +12,7 @@ import seedu.tarence.commons.exceptions.IllegalValueException;
 import seedu.tarence.model.Application;
 import seedu.tarence.model.ReadOnlyApplication;
 import seedu.tarence.model.person.Person;
+import seedu.tarence.model.module.Module;
 
 /**
  * An Immutable application that is serializable to JSON format.
@@ -22,13 +23,19 @@ class JsonSerializableApplication {
     public static final String MESSAGE_DUPLICATE_PERSON = "Persons list contains duplicate person(s).";
 
     private final List<JsonAdaptedPerson> persons = new ArrayList<>();
+    private final List<JsonAdaptedModule> modules = new ArrayList<>();
 
     /**
      * Constructs a {@code JsonSerializableApplication} with the given persons.
+     * Reads the Json file and converts to model.
      */
     @JsonCreator
-    public JsonSerializableApplication(@JsonProperty("persons") List<JsonAdaptedPerson> persons) {
+    public JsonSerializableApplication(@JsonProperty("persons") List<JsonAdaptedPerson> persons,
+                                       @JsonProperty("modules") List<JsonAdaptedModule> modules) {
         this.persons.addAll(persons);
+
+        // Toggles if modules is read or not
+        // this.modules.addAll(modules);
     }
 
     /**
@@ -38,10 +45,15 @@ class JsonSerializableApplication {
      */
     public JsonSerializableApplication(ReadOnlyApplication source) {
         persons.addAll(source.getPersonList().stream().map(JsonAdaptedPerson::new).collect(Collectors.toList()));
+
+        // A JsonAdaptedModule is created for each module in the list.
+        modules.addAll(source.getModuleList().stream().map(JsonAdaptedModule::new).collect(Collectors.toList()));
     }
 
     /**
      * Converts this application into the model's {@code Application} object.
+     * Converts Json to models.
+     *
      *
      * @throws IllegalValueException if there were any data constraints violated.
      */
@@ -54,7 +66,19 @@ class JsonSerializableApplication {
             }
             application.addPerson(person);
         }
+
+        /*
+        for (JsonAdaptedModule jsonAdaptedModule : modules) {
+            Module module = jsonAdaptedModule.toModelType();
+        }
+
+         */
+
         return application;
+    }
+
+    public List<JsonAdaptedModule> getModulesJsonStringArray() {
+        return this.modules;
     }
 
 }
