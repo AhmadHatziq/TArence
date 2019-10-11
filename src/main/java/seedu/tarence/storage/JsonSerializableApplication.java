@@ -24,16 +24,18 @@ class JsonSerializableApplication {
 
     private final List<JsonAdaptedPerson> persons = new ArrayList<>();
     private final List<JsonAdaptedModule> modules = new ArrayList<>();
-    
 
     /**
      * Constructs a {@code JsonSerializableApplication} with the given persons.
+     * Reads the Json file and converts to model.
      */
     @JsonCreator
     public JsonSerializableApplication(@JsonProperty("persons") List<JsonAdaptedPerson> persons,
                                        @JsonProperty("modules") List<JsonAdaptedModule> modules) {
         this.persons.addAll(persons);
-        this.modules.addAll(modules);
+
+        // Toggles if modules is read or not
+        // this.modules.addAll(modules);
     }
 
     /**
@@ -43,11 +45,15 @@ class JsonSerializableApplication {
      */
     public JsonSerializableApplication(ReadOnlyApplication source) {
         persons.addAll(source.getPersonList().stream().map(JsonAdaptedPerson::new).collect(Collectors.toList()));
+
+        // A JsonAdaptedModule is created for each module in the list.
         modules.addAll(source.getModuleList().stream().map(JsonAdaptedModule::new).collect(Collectors.toList()));
     }
 
     /**
      * Converts this application into the model's {@code Application} object.
+     * Converts Json to models.
+     *
      *
      * @throws IllegalValueException if there were any data constraints violated.
      */
@@ -61,9 +67,12 @@ class JsonSerializableApplication {
             application.addPerson(person);
         }
 
+        /*
         for (JsonAdaptedModule jsonAdaptedModule : modules) {
             Module module = jsonAdaptedModule.toModelType();
         }
+
+         */
 
         return application;
     }

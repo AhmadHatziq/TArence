@@ -1,6 +1,7 @@
 package seedu.tarence.storage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -26,24 +27,95 @@ import seedu.tarence.model.util.SampleDataUtil;
  */
 @JsonRootName(value = "modules")
 public class JsonAdaptedModule {
-    private String moduleName;
-    private ArrayList<String> tutorialListForModule;
 
+    // Json fields
+    private String moduleCode;
+    private HashMap<String, String> tutorialMap;
+
+    // Serializes the Module model into a Json object.
     public JsonAdaptedModule(Module source) {
-        moduleName = source.getModCode().toString();
-        tutorialListForModule = new ArrayList<String>();
+
+        moduleCode = source.getModCode().toString();
+
+        tutorialMap = new HashMap<String, String>();
+
         for (Tutorial t : source.getTutorials()) {
-            tutorialListForModule.add(t.toJsonString());
+            HashMap<String, String> singleTutorialMap = new HashMap<String, String>();
+
+            String tutorialName = t.getTutName().toString();
+            String tutorialDayOfWeek = t.getTimeTable().getDay().toString();
+            String tutorialStartTime = t.getTimeTable().getStartTime().toString();
+            String tutorialWeeks = t.getTimeTable().getWeeks().toString();
+            String tutorialDuration = t.getTimeTable().getDuration().toString();
+
+            // Creates the studentListString.
+            // Sample output for 2 students:
+            // [{tutorialName=Lab Session, moduleCode=CS1010S, name=Ellie Yee, matricNumber=Optional[A0155413M],
+            // nusnetId=Optional[E0031550], email=e0035152@u.nus.edu.sg}],
+            // [{tutorialName=Lab Session, moduleCode=CS1010S, name=Prof Damith, matricNumber=Optional.empty,
+            // nusnetId=Optional.empty, email=e0012352@u.nus.edu.sg}]
+            String studentListString = "[";
+
+            for (Student s : t.getStudents() ) {
+                String studentName = s.getName().toString();
+                String studentEmail = s.getEmail().toString();
+                String studentMatricNumber = s.getMatricNum().toString();
+                String studentNusnetId = s.getNusnetId().toString();
+                String studentModuleCode = s.getModCode().toString();
+                String studentTutorialName = s.getTutName().toString();
+
+                HashMap<String, String> studentMap = new HashMap<String, String>();
+                studentMap.put("name", studentName);
+                studentMap.put("email", studentEmail);
+                studentMap.put("matricNumber", studentMatricNumber);
+                studentMap.put("nusnetId", studentNusnetId);
+                studentMap.put("moduleCode", studentModuleCode);
+                studentMap.put("tutorialName", studentTutorialName);
+
+                studentListString = studentListString + studentMap.toString() + "],[";
+            }
+
+            // Remove the last instance of "[,]" from studentListString
+            if (t.getStudents().size() != 0) {
+                studentListString = studentListString.substring(0, (studentListString.length() - 2));
+            } else {
+                // There are no students in the list. studentListString is just "[]".
+                studentListString = studentListString + "]";
+            }
+            // End of studentListString block
+
+            String tutorialModuleCode = t.getModCode().toString();
+
+            // Add into HashMap<String,String>, singleTutorialMap
+            singleTutorialMap.put("tutorialName", tutorialName);
+            singleTutorialMap.put("tutorialDayOfWeek", tutorialDayOfWeek);
+            singleTutorialMap.put("tutorialStartTime", tutorialStartTime);
+            singleTutorialMap.put("tutorialWeeks", tutorialWeeks);
+            singleTutorialMap.put("tutorialDuration", tutorialDuration);
+            singleTutorialMap.put("studentListString", studentListString);
+            singleTutorialMap.put("tutorialModuleCode", tutorialModuleCode);
+
+            tutorialMap.put(tutorialName, singleTutorialMap.toString());
         }
     }
 
+
     @JsonCreator
-    public JsonAdaptedModule(@JsonProperty("moduleName") String moduleName,
-                             @JsonProperty("tutorialListForModule") ArrayList<String> tutorialListForModule) {
-        this.moduleName = moduleName;
-        this.tutorialListForModule = tutorialListForModule;
+    public JsonAdaptedModule(@JsonProperty("moduleCode") String moduleName,
+                             @JsonProperty("tutorialMap") HashMap<String, String> map)  {
+        this.moduleCode = moduleName;
+        this.tutorialMap = map;
+
+
+        for (String key : map.keySet()) {
+            String value = map.get(key);
+            System.out.println(key + " : " + value);
+        }
     }
 
+
+
+    /*
     public Module toModelType() throws IllegalArgumentException {
         ModCode modcode = new ModCode(moduleName);
 
@@ -80,6 +152,8 @@ public class JsonAdaptedModule {
         }
         return SampleDataUtil.getSampleModule();
     }
+
+     */
 
     public Student jsonStringToStudent(String studentString, ModCode modCode, String tutorialName) {
         String name = studentString.substring(0, studentString.indexOf("Email:")).trim();
@@ -140,12 +214,5 @@ public class JsonAdaptedModule {
         return (studentString.contains("Email:") && studentString.contains("Matric Number:")
                 && studentString.contains("NUSNET Id:"));
     }
-
-    public String getModuleName() {
-        return this.moduleName;
-    }
-
-    public ArrayList<String> getTutorialListForModule() {
-        return this.tutorialListForModule;
-    }
 }
+

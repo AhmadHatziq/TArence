@@ -2,7 +2,9 @@ package seedu.tarence.storage;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -75,6 +77,8 @@ public class JsonApplicationStorage implements ApplicationStorage {
         requireNonNull(filePath);
 
         FileUtil.createIfMissing(filePath);
+
+        // File save of application file
         JsonUtil.saveJsonFile(new JsonSerializableApplication(application), filePath);
     }
 
