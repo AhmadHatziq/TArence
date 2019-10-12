@@ -27,7 +27,6 @@ import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
 import seedu.tarence.model.tutorial.Week;
-import seedu.tarence.model.util.SampleDataUtil;
 
 /**
  * Jackson friendly version of a Module.
@@ -62,7 +61,7 @@ public class JsonAdaptedModule {
         this.tutorialMap = map;
     }
 
-    // Constructor from Module object. Invoked during saving the file.
+    // Constructor from Module object. Invoked during saving of the file.
     public JsonAdaptedModule(Module source) {
         moduleCode = source.getModCode().toString();
         tutorialMap = new LinkedHashMap<String, String>();
@@ -70,7 +69,7 @@ public class JsonAdaptedModule {
         for (Tutorial t : source.getTutorials()) {
             LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
 
-            // Obtain all the fields that define a Tutorial object.
+            // Obtain all the fields that defines a single Tutorial object.
             String tutorialName = t.getTutName().toString();
             String tutorialDayOfWeek = t.getTimeTable().getDay().toString();
             String tutorialStartTime = t.getTimeTable().getStartTime().toString();
@@ -139,10 +138,16 @@ public class JsonAdaptedModule {
         }
     }
 
+    /**
+     * Converts a studentListString to a list of Students.
+     *
+     * @param studentListString A String representing 0,1 or more Students.
+     * @return List of Student objects.
+     */
     public List<Student> studentStringToList(String studentListString) {
         List<Student> studentList = new ArrayList<Student>();
         if (studentListString.equals("[]")) {
-            return studentList;
+            return studentList; //studentString is empty.
         }
 
         String[] students = studentListString.split("\\]\\,\\[");
@@ -155,7 +160,21 @@ public class JsonAdaptedModule {
         return studentList;
     }
 
+    /**
+     * Converts a studentString, representing a single student, to a Student object.
+     *
+     * @param studentString String sequence representing a single Student.
+     * @return Student object.
+     */
     public Student studentStringToStudent(String studentString) {
+        String studentNameString = extractField(STUDENT_NAME, STUDENT_EMAIL, studentString);
+        String studentEmailString = extractField(STUDENT_EMAIL, STUDENT_MATRIC_NUMBER, studentString);
+        String studentMatricNumberString = extractField(STUDENT_MATRIC_NUMBER, STUDENT_NUSNET_ID, studentString);
+        String studentNusnetIdString = extractField(STUDENT_NUSNET_ID, STUDENT_MODULE_CODE, studentString);
+        String studentModuleCodeString = extractField(STUDENT_MODULE_CODE, STUDENT_TUTORIAL_NAME, studentString);
+        String studentTutorialNameString = extractLastField(STUDENT_TUTORIAL_NAME, studentString);
+
+        /*
         String studentNameString = studentString.substring(studentString.indexOf(STUDENT_NAME) +
                 STUDENT_NAME.length() + 1, studentString.indexOf(STUDENT_EMAIL) - 2);
 
@@ -173,6 +192,8 @@ public class JsonAdaptedModule {
 
         String studentTutorialNameString = studentString.substring(studentString.indexOf(STUDENT_TUTORIAL_NAME) +
                 STUDENT_TUTORIAL_NAME.length() + 1).replace("}", "").trim();
+
+         */
 
         Name studentName = new Name(studentNameString);
 
@@ -202,6 +223,32 @@ public class JsonAdaptedModule {
                 studentModuleCode, studentTutorialName);
 
         return studentFromJson;
+    }
+
+    /**
+     * Returns the last field of an identifier.
+     *
+     * @param identifier Last field to be extracted from a String sequence.
+     * @param sequence String that contains the last field and identifier.
+     * @return Exact String field of the identifier.
+     */
+    public String extractLastField(String identifier, String sequence) {
+        return sequence.substring(sequence.indexOf(identifier) +
+                identifier.length() + 1).replace("}", "").trim();
+    }
+
+    /**
+     * Returns the exact field of an identifier.
+     * Pre-condition: Desired field must not be the last field of the string.
+     *
+     * @param identifier Desired field to extract.
+     * @param nextIdentified Subsequent identifier located after the desired identified.
+     * @param sequence String that contains the fields and identifiers.
+     * @return Exact String field of the identifier.
+     */
+    public String extractField(String identifier, String nextIdentified, String sequence) {
+        return sequence.substring(sequence.indexOf(identifier) +
+                identifier.length() + 1, sequence.indexOf(nextIdentified) - 2).trim();
     }
 
     /**
