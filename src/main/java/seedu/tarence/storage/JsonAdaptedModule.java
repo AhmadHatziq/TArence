@@ -33,7 +33,30 @@ public class JsonAdaptedModule {
     private String moduleCode;
     private LinkedHashMap<String, String> tutorialMap; //Implemented LinkedHashMap to preserve ordering.
 
-    // Serializes the Module model into a Json object.
+    // Identifiers to store the fields
+    private static final String TUTORIAL_NAME = "tutorialName";
+    private static final String TUTORIAL_DAY = "tutorialDayOfWeek";
+    private static final String TUTORIAL_START_TIME = "tutorialStartTime";
+    private static final String TUTORIAL_WEEKS = "tutorialWeeks";
+    private static final String TUTORIAL_DURATION = "tutorialDuration";
+    private static final String TUTORIAL_MODULE_CODE = "tutorialModuleCode";
+    private static final String TUTORIAL_STUDENT_LIST = "tutorialStudentList";
+    private static final String STUDENT_NAME = "studentName";
+    private static final String STUDENT_EMAIL = "studentEmail";
+    private static final String STUDENT_MATRIC_NUMBER = "studentMatricNumber";
+    private static final String STUDENT_NUSNET_ID = "studentNusnetId";
+    private static final String STUDENT_MODULE_CODE = "studentModuleCode";
+    private static final String STUDENT_TUTORIAL_NAME = "studentTutorialName";
+
+    // Constructor from Json file.
+    @JsonCreator
+    public JsonAdaptedModule(@JsonProperty("moduleCode") String moduleName,
+                             @JsonProperty("tutorialMap") LinkedHashMap<String, String> map)  {
+        this.moduleCode = moduleName;
+        this.tutorialMap = map;
+    }
+
+    // Constructor from Module object.
     public JsonAdaptedModule(Module source) {
 
         moduleCode = source.getModCode().toString();
@@ -43,85 +66,39 @@ public class JsonAdaptedModule {
         for (Tutorial t : source.getTutorials()) {
             LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
 
+            // Obtain all the fields that define a Tutorial object.
             String tutorialName = t.getTutName().toString();
             String tutorialDayOfWeek = t.getTimeTable().getDay().toString();
             String tutorialStartTime = t.getTimeTable().getStartTime().toString();
             String tutorialWeeks = t.getTimeTable().getWeeks().toString();
             String tutorialDuration = t.getTimeTable().getDuration().toString();
-
-            // Creates the studentListString.
-            // Sample output for 2 students:
-            // [{tutorialName=Lab Session, moduleCode=CS1010S, name=Ellie Yee, matricNumber=Optional[A0155413M],
-            // nusnetId=Optional[E0031550], email=e0035152@u.nus.edu.sg}],
-            // [{tutorialName=Lab Session, moduleCode=CS1010S, name=Prof Damith, matricNumber=Optional.empty,
-            // nusnetId=Optional.empty, email=e0012352@u.nus.edu.sg}]
-            String studentListString = "[";
-
-            for (Student s : t.getStudents() ) {
-                String studentName = s.getName().toString();
-                String studentEmail = s.getEmail().toString();
-                String studentMatricNumber = s.getMatricNum().toString();
-                String studentNusnetId = s.getNusnetId().toString();
-                String studentModuleCode = s.getModCode().toString();
-                String studentTutorialName = s.getTutName().toString();
-
-                LinkedHashMap<String, String> studentMap = new LinkedHashMap<String, String>();
-                studentMap.put("name", studentName);
-                studentMap.put("email", studentEmail);
-                studentMap.put("matricNumber", studentMatricNumber);
-                studentMap.put("nusnetId", studentNusnetId);
-                studentMap.put("moduleCode", studentModuleCode);
-                studentMap.put("tutorialName", studentTutorialName);
-
-                studentListString = studentListString + studentMap.toString() + "],[";
-            }
-
-            // Remove the last instance of "[,]" from studentListString
-            if (t.getStudents().size() != 0) {
-                studentListString = studentListString.substring(0, (studentListString.length() - 2));
-            } else {
-                // There are no students in the list. studentListString is just "[]".
-                studentListString = studentListString + "]";
-            }
-            // End of studentListString block
-
+            String studentListString = studentListToString(t.getStudents());
             String tutorialModuleCode = t.getModCode().toString();
 
             // Add into LinkedHashMap<String,String>, singleTutorialMap
-            singleTutorialMap.put("tutorialName", tutorialName);
-            singleTutorialMap.put("tutorialDayOfWeek", tutorialDayOfWeek);
-            singleTutorialMap.put("tutorialStartTime", tutorialStartTime);
-            singleTutorialMap.put("tutorialWeeks", tutorialWeeks);
-            singleTutorialMap.put("tutorialDuration", tutorialDuration);
-            singleTutorialMap.put("studentListString", studentListString);
-            singleTutorialMap.put("tutorialModuleCode", tutorialModuleCode);
+            singleTutorialMap.put(TUTORIAL_NAME, tutorialName);
+            singleTutorialMap.put(TUTORIAL_DAY, tutorialDayOfWeek);
+            singleTutorialMap.put(TUTORIAL_START_TIME, tutorialStartTime);
+            singleTutorialMap.put(TUTORIAL_WEEKS, tutorialWeeks);
+            singleTutorialMap.put(TUTORIAL_DURATION, tutorialDuration);
+            singleTutorialMap.put(TUTORIAL_STUDENT_LIST, studentListString);
+            singleTutorialMap.put(TUTORIAL_MODULE_CODE, tutorialModuleCode);
 
             tutorialMap.put(tutorialName, singleTutorialMap.toString());
         }
     }
 
-    // Called during reading of Json File.
-    @JsonCreator
-    public JsonAdaptedModule(@JsonProperty("moduleCode") String moduleName,
-                             @JsonProperty("tutorialMap") LinkedHashMap<String, String> map)  {
-        this.moduleCode = moduleName;
-        this.tutorialMap = map;
-    }
+
 
     public Module toModelType() throws IllegalArgumentException {
-        System.out.println("Module name: " + moduleCode);
+
         for (String tutorialName : tutorialMap.keySet()) {
 
             String tutorialString = tutorialMap.get(tutorialName);
             // tutorialString contains info about the whole tutorial ie name, day, list of students etc
 
             // Converts tutorialString to a LinkedhashMap<String,String> for easy parsing
-            LinkedHashMap<String, String> tutorialMapFromJson = new LinkedHashMap<String, String>();
-
-            // Relevant terms to extract are tutorialName, tutorialDayOfWeek, studentListString, tutorialModuleCode,
-            // tutorialStartTime, tutorialDuration, tutorialWeeks.
-
-
+            LinkedHashMap<String, String> tutorialMapFromJson = tutorialStringToMap(tutorialString);
 
         }
 
@@ -173,7 +150,41 @@ public class JsonAdaptedModule {
 
      */
 
+    public LinkedHashMap<String, String> tutorialStringToMap (String tutorialString) {
+        LinkedHashMap<String, String> tutorialStringToMap = new LinkedHashMap<String, String>();
 
+        // Relevant terms to extract are tutorialName, tutorialDayOfWeek, studentListString, tutorialModuleCode,
+        // tutorialStartTime, tutorialDuration, tutorialWeeks.
+
+        String tutorialNameFromTutorialString = tutorialString.substring(tutorialString.indexOf("tutorialName=") +
+                "tutorialName=".length(), tutorialString.indexOf("tutorialDayOfWeek=") - 2);
+
+        return tutorialStringToMap;
+    }
+
+    public String studentListToString(List<Student> studentList) {
+        String studentListString = "[";
+
+        for (Student s : studentList ) {
+            LinkedHashMap<String, String> studentMap = new LinkedHashMap<String, String>();
+            studentMap.put(STUDENT_NAME, s.getName().toString());
+            studentMap.put(STUDENT_EMAIL, s.getEmail().toString());
+            studentMap.put(STUDENT_MATRIC_NUMBER, s.getMatricNum().toString());
+            studentMap.put(STUDENT_NUSNET_ID, s.getNusnetId().toString());
+            studentMap.put(STUDENT_MODULE_CODE, s.getModCode().toString());
+            studentMap.put(STUDENT_TUTORIAL_NAME, s.getTutName().toString());
+            studentListString = studentListString + studentMap.toString() + "],[";
+        }
+
+        // Remove the last instance of "[,]" from studentListString
+        if (studentList.size() != 0) {
+            studentListString = studentListString.substring(0, (studentListString.length() - 2));
+        } else {
+            // There are no students in the list. studentListString is just "[]".
+            studentListString = studentListString + "]";
+        }
+        return studentListString;
+    }
 
     public Student jsonStringToStudent(String studentString, ModCode modCode, String tutorialName) {
         String name = studentString.substring(0, studentString.indexOf("Email:")).trim();
