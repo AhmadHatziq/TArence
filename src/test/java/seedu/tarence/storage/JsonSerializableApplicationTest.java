@@ -1,17 +1,17 @@
 package seedu.tarence.storage;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static seedu.tarence.testutil.Assert.assertThrows;
+//import static org.junit.jupiter.api.Assertions.assertEquals;
+//import static seedu.tarence.testutil.Assert.assertThrows;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Test;
 
-import seedu.tarence.commons.exceptions.IllegalValueException;
-import seedu.tarence.commons.util.JsonUtil;
-import seedu.tarence.model.Application;
-import seedu.tarence.testutil.TypicalPersons;
+//import seedu.tarence.commons.exceptions.IllegalValueException;
+//import seedu.tarence.commons.util.JsonUtil;
+//import seedu.tarence.model.Application;
+//import seedu.tarence.testutil.TypicalPersons;
 
 public class JsonSerializableApplicationTest {
 
