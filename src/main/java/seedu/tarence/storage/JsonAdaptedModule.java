@@ -106,7 +106,7 @@ public class JsonAdaptedModule {
             LinkedHashMap<String, String> tutorialMapFromJson = tutorialStringToMap(tutorialMap.get(tutorialName));
 
             // Creates a Tutorial Object from the tutorialString
-            Tutorial tutorialFromJson = tutorialStringToTutorial(tutorialMapFromJson);
+            Tutorial tutorialFromJson = tutorialMapToTutorial(tutorialMapFromJson);
 
             // Adds the Tutorial into the List.
             tutorials.add(tutorialFromJson);
@@ -121,7 +121,7 @@ public class JsonAdaptedModule {
     }
 
     // Returns a Tutorial Object given the TutorialMap constructed from Json.
-    public Tutorial tutorialStringToTutorial(LinkedHashMap<String, String> tutorialMap)
+    public Tutorial tutorialMapToTutorial(LinkedHashMap<String, String> tutorialMap)
             throws IllegalArgumentException {
         try {
             List<Student> StudentList = studentStringToList(tutorialMap.get(TUTORIAL_STUDENT_LIST));
@@ -139,7 +139,7 @@ public class JsonAdaptedModule {
     }
 
     /**
-     * Converts a studentListString to a list of Students.
+     * Converts a student ListString to a list of Students.
      *
      * @param studentListString A String representing 0,1 or more Students.
      * @return List of Student objects.
@@ -167,6 +167,10 @@ public class JsonAdaptedModule {
      * @return Student object.
      */
     public Student studentStringToStudent(String studentString) {
+        if (!isValidStudentString(studentString)) {
+            throw new IllegalArgumentException("Student string has invalid fields");
+        }
+
         // Extracts the correct Strings needed to create a Student object.
         String studentNameString = extractField(STUDENT_NAME, STUDENT_EMAIL, studentString);
         String studentEmailString = extractField(STUDENT_EMAIL, STUDENT_MATRIC_NUMBER, studentString);
@@ -181,8 +185,6 @@ public class JsonAdaptedModule {
         return studentFromJson;
     }
 
-
-
     /**
      * Converts a tutorialString to a LinkedHashMap. Represents the components needed to construct a Tutorial object.
      *
@@ -190,38 +192,30 @@ public class JsonAdaptedModule {
      * @return LinkedHashMap.
      */
     public LinkedHashMap<String, String> tutorialStringToMap(String tutorialString) {
-        LinkedHashMap<String, String> tutorialStringToMap = new LinkedHashMap<String, String>();
+        if (!isValidTutorialString(tutorialString)) {
+            throw new IllegalArgumentException("Tutorial string has invalid fields");
+        }
 
+        LinkedHashMap<String, String> tutorialStringToMap = new LinkedHashMap<String, String>();
+        // Extracts the correct Strings needed to populate the LinkedHashMap.
         // Relevant terms to extract are tutorialName, tutorialDayOfWeek, studentListString, tutorialModuleCode,
         // tutorialStartTime, tutorialDuration, tutorialWeeks.
+        String tutorialNameFromTutorialString = extractField(TUTORIAL_NAME, TUTORIAL_DAY, tutorialString);
+        String tutorialDayOfWeek = extractField(TUTORIAL_DAY, TUTORIAL_START_TIME, tutorialString);
+        String tutorialStartTime = extractField(TUTORIAL_START_TIME, TUTORIAL_WEEKS, tutorialString);
+        String tutorialWeeks = extractField(TUTORIAL_WEEKS, TUTORIAL_DURATION, tutorialString);
+        String tutorialDuration = extractField(TUTORIAL_DURATION, TUTORIAL_STUDENT_LIST, tutorialString);
+        String tutorialStudentList = extractField(TUTORIAL_STUDENT_LIST, TUTORIAL_MODULE_CODE, tutorialString);
+        String tutorialModuleCode = extractLastField(TUTORIAL_MODULE_CODE, tutorialString);
 
-        String tutorialNameFromTutorialString = tutorialString.substring(tutorialString.indexOf(TUTORIAL_NAME) +
-                TUTORIAL_NAME.length() + 1, tutorialString.indexOf(TUTORIAL_DAY) - 2);
-        tutorialStringToMap.put(TUTORIAL_NAME, tutorialNameFromTutorialString.trim());
-
-        String tutorialDayOfWeek = tutorialString.substring(tutorialString.indexOf(TUTORIAL_DAY) +
-                TUTORIAL_DAY.length() + 1, tutorialString.indexOf(TUTORIAL_START_TIME) - 2);
-        tutorialStringToMap.put(TUTORIAL_DAY, tutorialDayOfWeek.trim());
-
-        String tutorialStartTime = tutorialString.substring(tutorialString.indexOf(TUTORIAL_START_TIME) +
-                TUTORIAL_START_TIME.length() + 1, tutorialString.indexOf(TUTORIAL_WEEKS) - 2);
-        tutorialStringToMap.put(TUTORIAL_START_TIME, tutorialStartTime.trim());
-
-        String tutorialWeeks = tutorialString.substring(tutorialString.indexOf(TUTORIAL_WEEKS) +
-                TUTORIAL_WEEKS.length() + 1, tutorialString.indexOf(TUTORIAL_DURATION) - 2);
-        tutorialStringToMap.put(TUTORIAL_WEEKS, tutorialWeeks.trim());
-
-        String tutorialDuration = tutorialString.substring(tutorialString.indexOf(TUTORIAL_DURATION) +
-                TUTORIAL_DURATION.length() + 1, tutorialString.indexOf(TUTORIAL_STUDENT_LIST) - 2);
-        tutorialStringToMap.put(TUTORIAL_DURATION, tutorialDuration.trim());
-
-        String tutorialStudentLiST = tutorialString.substring(tutorialString.indexOf(TUTORIAL_STUDENT_LIST) +
-                TUTORIAL_STUDENT_LIST.length() + 1, tutorialString.indexOf(TUTORIAL_MODULE_CODE) - 2);
-        tutorialStringToMap.put(TUTORIAL_STUDENT_LIST, tutorialStudentLiST.trim());
-
-        String tutorialModuleCode = tutorialString.substring(tutorialString.indexOf(TUTORIAL_MODULE_CODE) +
-                TUTORIAL_MODULE_CODE.length() + 1).replace("}", "");
-        tutorialStringToMap.put(TUTORIAL_MODULE_CODE, tutorialModuleCode.trim());
+        // Places the extracted Strings into a HashMap
+        tutorialStringToMap.put(TUTORIAL_NAME, tutorialNameFromTutorialString);
+        tutorialStringToMap.put(TUTORIAL_DAY, tutorialDayOfWeek);
+        tutorialStringToMap.put(TUTORIAL_START_TIME, tutorialStartTime);
+        tutorialStringToMap.put(TUTORIAL_WEEKS, tutorialWeeks);
+        tutorialStringToMap.put(TUTORIAL_DURATION, tutorialDuration);
+        tutorialStringToMap.put(TUTORIAL_STUDENT_LIST, tutorialStudentList);
+        tutorialStringToMap.put(TUTORIAL_MODULE_CODE, tutorialModuleCode);
 
         return tutorialStringToMap;
     }
@@ -319,13 +313,13 @@ public class JsonAdaptedModule {
      * Pre-condition: Desired field must not be the last field of the string.
      *
      * @param identifier Desired field to extract.
-     * @param nextIdentified Subsequent identifier located after the desired identified.
+     * @param nextIdentifier Subsequent identifier located after the desired identified.
      * @param sequence String that contains the fields and identifiers.
      * @return Exact String field of the identifier.
      */
-    public String extractField(String identifier, String nextIdentified, String sequence) {
+    public String extractField(String identifier, String nextIdentifier, String sequence) {
         return sequence.substring(sequence.indexOf(identifier) +
-                identifier.length() + 1, sequence.indexOf(nextIdentified) - 2).trim();
+                identifier.length() + 1, sequence.indexOf(nextIdentifier) - 2).trim();
     }
 
     /**
@@ -336,8 +330,16 @@ public class JsonAdaptedModule {
      * @return Boolean.
      */
     public Boolean isValidStudentString (String studentString) {
-        return (studentString.contains("Email:") && studentString.contains("Matric Number:")
-                && studentString.contains("NUSNET Id:"));
+        return (studentString.contains(STUDENT_EMAIL) && studentString.contains(STUDENT_MATRIC_NUMBER)
+                && studentString.contains(STUDENT_MODULE_CODE) && studentString.contains(STUDENT_NAME)
+                && studentString.contains(STUDENT_NUSNET_ID) && studentString.contains(STUDENT_TUTORIAL_NAME));
+    }
+
+    public Boolean isValidTutorialString (String tutorialString) {
+        return (tutorialString.contains(TUTORIAL_WEEKS) && tutorialString.contains(TUTORIAL_DAY)
+                && tutorialString.contains(TUTORIAL_DURATION) && tutorialString.contains(TUTORIAL_MODULE_CODE)
+                && tutorialString.contains(TUTORIAL_NAME) && tutorialString.contains(TUTORIAL_START_TIME)
+                && tutorialString.contains(TUTORIAL_STUDENT_LIST));
     }
 }
 

@@ -13,6 +13,8 @@ import seedu.tarence.model.Application;
 import seedu.tarence.model.ReadOnlyApplication;
 import seedu.tarence.model.person.Person;
 import seedu.tarence.model.module.Module;
+import seedu.tarence.model.student.Student;
+import seedu.tarence.model.tutorial.Tutorial;
 
 /**
  * An Immutable application that is serializable to JSON format.
@@ -21,6 +23,9 @@ import seedu.tarence.model.module.Module;
 class JsonSerializableApplication {
 
     public static final String MESSAGE_DUPLICATE_PERSON = "Persons list contains duplicate person(s).";
+    public static final String MESSAGE_DUPLICATE_MODULE = "Module list contains duplicate module(s).";
+    public static final String MESSAGE_DUPLICATE_TUTORIAL = "Tutorial list contains duplicate tutorial(s).";
+    public static final String MESSAGE_DUPLICATE_STUDENT = "Student list contains duplicate student(s).";
 
     private final List<JsonAdaptedPerson> persons = new ArrayList<>();
     private final List<JsonAdaptedModule> modules = new ArrayList<>();
@@ -59,6 +64,7 @@ class JsonSerializableApplication {
      */
     public Application toModelType() throws IllegalValueException {
         Application application = new Application();
+        Application bypassApp = new Application();
 
 
         for (JsonAdaptedPerson jsonAdaptedPerson : persons) {
@@ -69,15 +75,30 @@ class JsonSerializableApplication {
             application.addPerson(person);
         }
 
+        // Reads the saved module from file and populates application with it.
         for (JsonAdaptedModule jsonAdaptedModule : modules) {
-
             Module module = jsonAdaptedModule.toModelType();
-            // module will be created and not added to application's module list yet
-            System.out.println("Module created with data: " + module.toString());
+            if (application.hasModule(module)) {
+                throw new IllegalValueException(MESSAGE_DUPLICATE_MODULE);
+            }
+            application.addModule(module);
         }
 
-
-
+        // Populates the tutorial and student lists inside application.
+        for (Module m : application.getModuleList()) {
+            for (Tutorial t : m.getTutorials()) {
+                if (application.hasTutorial(t)) {
+                    throw new IllegalValueException(MESSAGE_DUPLICATE_TUTORIAL);
+                }
+                application.addTutorial(t);
+                for (Student s : t.getStudents()) {
+                    if (application.hasStudent(s)) {
+                        throw new IllegalValueException(MESSAGE_DUPLICATE_STUDENT);
+                    }
+                    application.addStudent(s);
+                }
+            }
+        }
         return application;
     }
 
