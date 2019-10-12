@@ -167,6 +167,7 @@ public class JsonAdaptedModule {
      * @return Student object.
      */
     public Student studentStringToStudent(String studentString) {
+        // Extracts the correct Strings needed to create a Student object.
         String studentNameString = extractField(STUDENT_NAME, STUDENT_EMAIL, studentString);
         String studentEmailString = extractField(STUDENT_EMAIL, STUDENT_MATRIC_NUMBER, studentString);
         String studentMatricNumberString = extractField(STUDENT_MATRIC_NUMBER, STUDENT_NUSNET_ID, studentString);
@@ -174,82 +175,13 @@ public class JsonAdaptedModule {
         String studentModuleCodeString = extractField(STUDENT_MODULE_CODE, STUDENT_TUTORIAL_NAME, studentString);
         String studentTutorialNameString = extractLastField(STUDENT_TUTORIAL_NAME, studentString);
 
-        /*
-        String studentNameString = studentString.substring(studentString.indexOf(STUDENT_NAME) +
-                STUDENT_NAME.length() + 1, studentString.indexOf(STUDENT_EMAIL) - 2);
-
-        String studentEmailString = studentString.substring(studentString.indexOf(STUDENT_EMAIL) +
-                STUDENT_EMAIL.length() + 1, studentString.indexOf(STUDENT_MATRIC_NUMBER) - 2).trim();
-
-        String studentMatricNumberString = studentString.substring(studentString.indexOf(STUDENT_MATRIC_NUMBER) +
-                STUDENT_MATRIC_NUMBER.length() + 1, studentString.indexOf(STUDENT_NUSNET_ID) - 2).trim();
-
-        String studentNusnetIdString = studentString.substring(studentString.indexOf(STUDENT_NUSNET_ID) +
-                STUDENT_NUSNET_ID.length() + 1, studentString.indexOf(STUDENT_MODULE_CODE) - 2).trim();
-
-        String studentModuleCodeString = studentString.substring(studentString.indexOf(STUDENT_MODULE_CODE) +
-                STUDENT_MODULE_CODE.length() + 1, studentString.indexOf(STUDENT_TUTORIAL_NAME) - 2).trim();
-
-        String studentTutorialNameString = studentString.substring(studentString.indexOf(STUDENT_TUTORIAL_NAME) +
-                STUDENT_TUTORIAL_NAME.length() + 1).replace("}", "").trim();
-
-         */
-
-        Name studentName = new Name(studentNameString);
-
-        Email studentEmail = new Email(studentEmailString);
-
-        Optional<MatricNum> studentMatricNumber = Optional.empty();
-        if (studentMatricNumberString.contains("empty")) {
-            studentMatricNumber = Optional.empty();
-        } else {
-            studentMatricNumberString = studentMatricNumberString.replace("Optional", "");
-            studentMatricNumber = Optional.of(new MatricNum(studentMatricNumberString));
-        }
-
-        Optional<NusnetId> studentNusnetId = Optional.empty();
-        if (studentNusnetIdString.contains("empty")) {
-            studentNusnetId = Optional.empty();
-        } else {
-            studentNusnetIdString = studentNusnetIdString.replace("Optional", "");
-            studentNusnetId = Optional.of(new NusnetId(studentNusnetIdString));
-        }
-
-        ModCode studentModuleCode = new ModCode(studentModuleCodeString);
-
-        TutName studentTutorialName = new TutName(studentTutorialNameString);
-
-        Student studentFromJson = new Student(studentName, studentEmail, studentMatricNumber, studentNusnetId,
-                studentModuleCode, studentTutorialName);
+        Student studentFromJson = studentStringsToStudent(studentNameString, studentEmailString, studentMatricNumberString,
+                studentNusnetIdString, studentModuleCodeString, studentTutorialNameString);
 
         return studentFromJson;
     }
 
-    /**
-     * Returns the last field of an identifier.
-     *
-     * @param identifier Last field to be extracted from a String sequence.
-     * @param sequence String that contains the last field and identifier.
-     * @return Exact String field of the identifier.
-     */
-    public String extractLastField(String identifier, String sequence) {
-        return sequence.substring(sequence.indexOf(identifier) +
-                identifier.length() + 1).replace("}", "").trim();
-    }
 
-    /**
-     * Returns the exact field of an identifier.
-     * Pre-condition: Desired field must not be the last field of the string.
-     *
-     * @param identifier Desired field to extract.
-     * @param nextIdentified Subsequent identifier located after the desired identified.
-     * @param sequence String that contains the fields and identifiers.
-     * @return Exact String field of the identifier.
-     */
-    public String extractField(String identifier, String nextIdentified, String sequence) {
-        return sequence.substring(sequence.indexOf(identifier) +
-                identifier.length() + 1, sequence.indexOf(nextIdentified) - 2).trim();
-    }
 
     /**
      * Converts a tutorialString to a LinkedHashMap. Represents the components needed to construct a Tutorial object.
@@ -294,6 +226,58 @@ public class JsonAdaptedModule {
         return tutorialStringToMap;
     }
 
+    /**
+     * Creates a Student Object with the given parsed String params.
+     *
+     * @param studentNameString Parsed student name string.
+     * @param studentEmailString Parsed student email string.
+     * @param studentMatricNumberString Parsed student matriculation number string.
+     * @param studentNusnetIdString Parsed student NUSNET ID string.
+     * @param studentModuleCodeString Parsed student module code string.
+     * @param studentTutorialNameString Parsed student tutorial string.
+     * @return Student object.
+     */
+    public Student studentStringsToStudent(String studentNameString, String studentEmailString,
+                                           String studentMatricNumberString, String studentNusnetIdString,
+                                           String studentModuleCodeString, String studentTutorialNameString) {
+
+        // Populates the fields needed to create a Student object.
+        Name studentName = new Name(studentNameString);
+
+        Email studentEmail = new Email(studentEmailString);
+
+        Optional<MatricNum> studentMatricNumber = Optional.empty();
+        if (studentMatricNumberString.contains("empty")) {
+            studentMatricNumber = Optional.empty();
+        } else {
+            studentMatricNumberString = studentMatricNumberString.replace("Optional", "");
+            studentMatricNumber = Optional.of(new MatricNum(studentMatricNumberString));
+        }
+
+        Optional<NusnetId> studentNusnetId = Optional.empty();
+        if (studentNusnetIdString.contains("empty")) {
+            studentNusnetId = Optional.empty();
+        } else {
+            studentNusnetIdString = studentNusnetIdString.replace("Optional", "");
+            studentNusnetId = Optional.of(new NusnetId(studentNusnetIdString));
+        }
+
+        ModCode studentModuleCode = new ModCode(studentModuleCodeString);
+
+        TutName studentTutorialName = new TutName(studentTutorialNameString);
+
+        return new Student(studentName, studentEmail, studentMatricNumber, studentNusnetId,
+                studentModuleCode, studentTutorialName);
+    }
+
+    /**
+     * Converts a list of Students to a String.
+     * Eg. [{studentName=Ellie Yee, studentEmail=e0035152@u.nus.edu.sg, studentMatricNumber=OptionalA0155413M,
+     * studentNusnetId=OptionalE0031550, studentModuleCode=CS1010S, studentTutorialName=Lab Session}]
+     *
+     * @param studentList List of Student objects.
+     * @return String representation of a Student List.
+     */
     public String studentListToString(List<Student> studentList) {
         String studentListString = "[";
 
@@ -316,6 +300,32 @@ public class JsonAdaptedModule {
             studentListString = studentListString + "]";
         }
         return studentListString;
+    }
+
+    /**
+     * Returns the last field of an identifier.
+     *
+     * @param identifier Last field to be extracted from a String sequence.
+     * @param sequence String that contains the last field and identifier.
+     * @return Exact String field of the identifier.
+     */
+    public String extractLastField(String identifier, String sequence) {
+        return sequence.substring(sequence.indexOf(identifier) +
+                identifier.length() + 1).replace("}", "").trim();
+    }
+
+    /**
+     * Returns the exact field of an identifier.
+     * Pre-condition: Desired field must not be the last field of the string.
+     *
+     * @param identifier Desired field to extract.
+     * @param nextIdentified Subsequent identifier located after the desired identified.
+     * @param sequence String that contains the fields and identifiers.
+     * @return Exact String field of the identifier.
+     */
+    public String extractField(String identifier, String nextIdentified, String sequence) {
+        return sequence.substring(sequence.indexOf(identifier) +
+                identifier.length() + 1, sequence.indexOf(nextIdentified) - 2).trim();
     }
 
     /**
