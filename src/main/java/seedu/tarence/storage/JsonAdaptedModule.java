@@ -1,17 +1,22 @@
 package seedu.tarence.storage;
 
+import java.time.DayOfWeek;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
+import seedu.tarence.logic.parser.ParserUtil;
+import seedu.tarence.logic.parser.exceptions.ParseException;
 import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.module.Module;
 import seedu.tarence.model.person.Email;
@@ -21,6 +26,7 @@ import seedu.tarence.model.student.NusnetId;
 import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
+import seedu.tarence.model.tutorial.Week;
 import seedu.tarence.model.util.SampleDataUtil;
 
 /**
@@ -31,7 +37,7 @@ public class JsonAdaptedModule {
 
     // Json fields
     private String moduleCode;
-    private LinkedHashMap<String, String> tutorialMap; //Implemented LinkedHashMap to preserve ordering.
+    private LinkedHashMap<String, String> tutorialMap; // Implemented LinkedHashMap to preserve ordering.
 
     // Identifiers to store the fields
     private static final String TUTORIAL_NAME = "tutorialName";
@@ -48,7 +54,7 @@ public class JsonAdaptedModule {
     private static final String STUDENT_MODULE_CODE = "studentModuleCode";
     private static final String STUDENT_TUTORIAL_NAME = "studentTutorialName";
 
-    // Constructor from Json file.
+    // Constructor from Json file. Invoked during reading the file.
     @JsonCreator
     public JsonAdaptedModule(@JsonProperty("moduleCode") String moduleName,
                              @JsonProperty("tutorialMap") LinkedHashMap<String, String> map)  {
@@ -56,11 +62,9 @@ public class JsonAdaptedModule {
         this.tutorialMap = map;
     }
 
-    // Constructor from Module object.
+    // Constructor from Module object. Invoked during saving the file.
     public JsonAdaptedModule(Module source) {
-
         moduleCode = source.getModCode().toString();
-
         tutorialMap = new LinkedHashMap<String, String>();
 
         for (Tutorial t : source.getTutorials()) {
@@ -89,75 +93,156 @@ public class JsonAdaptedModule {
     }
 
 
-
+    /**
+     * Converts JsonAdaptedModule into a Module object. Invoked during reading of Json file.
+     *
+     * @return Module object.
+     * @throws IllegalArgumentException when there is an error in reading one of the fields.
+     */
     public Module toModelType() throws IllegalArgumentException {
+        List<Tutorial> tutorials = new ArrayList<Tutorial>();
 
         for (String tutorialName : tutorialMap.keySet()) {
+            // Parses the tutorialString into a LinkedHashMap of the Tutorial's components.
+            LinkedHashMap<String, String> tutorialMapFromJson = tutorialStringToMap(tutorialMap.get(tutorialName));
 
-            String tutorialString = tutorialMap.get(tutorialName);
-            // tutorialString contains info about the whole tutorial ie name, day, list of students etc
+            // Creates a Tutorial Object from the tutorialString
+            Tutorial tutorialFromJson = tutorialStringToTutorial(tutorialMapFromJson);
 
-            // Converts tutorialString to a LinkedhashMap<String,String> for easy parsing
-            LinkedHashMap<String, String> tutorialMapFromJson = tutorialStringToMap(tutorialString);
-
+            // Adds the Tutorial into the List.
+            tutorials.add(tutorialFromJson);
         }
 
-        return SampleDataUtil.getSampleModule();
-    }
-
-    /*
-    Converts JsonAdoptedModule to a Module.
-    Reads in the Json String, parses it and recreates Module
-     */
-    // Leftover code from previous session
-    /*
-    public Module toModelType() throws IllegalArgumentException {
-        ModCode modcode = new ModCode(moduleName);
-
-        ArrayList<Tutorial> tutorials = new ArrayList<Tutorial>();
-        for (String tutorialString : tutorialListForModule) {
-            String[] words = tutorialString.split("\\|");
-
-            // Get String arguments to create the list of Tutorials needed for the Module object.
-            String tutorialName = words[0].trim();
-            String day = words[1].trim();
-            String startTime = words[2].trim();
-            String weekString = words[3].trim();
-            String duration = words[4].trim();
-            String students = words[5].trim();
-            String moduleNameFromString = words[6].trim();
-
-            // Create list of students. In a list of students, students are split based on '$'
-            String[] studentStrings = students.split("\\$");
-            List<Student> studentListForTutorial = new ArrayList<Student>();
-
-            for (String studentString : studentStrings) {
-                // Creates a Student object if the string is valid.
-                if (isValidStudentString(studentString)) {
-                    Student studentFromJson = jsonStringToStudent(studentString, modcode, tutorialName);
-
-                    System.out.println("Student created from Json");
-                    System.out.println("Student details: " + studentFromJson.toString());
-                    studentListForTutorial.add(studentFromJson);
-
-                }
-
-            }
-
+        try {
+            ModCode modCodeFromJson = ParserUtil.parseModCode(moduleCode);
+            return new Module(modCodeFromJson, tutorials);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Error in parsing Module Code.: " + e.getMessage());
         }
-        return SampleDataUtil.getSampleModule();
     }
 
-     */
+    // Returns a Tutorial Object given the TutorialMap constructed from Json.
+    public Tutorial tutorialStringToTutorial(LinkedHashMap<String, String> tutorialMap)
+            throws IllegalArgumentException {
+        try {
+            List<Student> StudentList = studentStringToList(tutorialMap.get(TUTORIAL_STUDENT_LIST));
+            TutName tutorialName = new TutName(tutorialMap.get(TUTORIAL_NAME));
+            DayOfWeek day = ParserUtil.parseDayOfWeek(tutorialMap.get(TUTORIAL_DAY));
+            Duration duration = Duration.parse(tutorialMap.get(TUTORIAL_DURATION));
+            Set<Week> weeks = ParserUtil.parseWeeks(tutorialMap.get(TUTORIAL_WEEKS));
+            LocalTime startTime = LocalTime.parse(tutorialMap.get(TUTORIAL_START_TIME), DateTimeFormatter.ISO_TIME);
+            ModCode modCode = ParserUtil.parseModCode(tutorialMap.get(TUTORIAL_MODULE_CODE));
 
-    public LinkedHashMap<String, String> tutorialStringToMap (String tutorialString) {
+            return new Tutorial(tutorialName, day, startTime, weeks, duration, StudentList, modCode);
+        } catch (ParseException | DateTimeParseException e) {
+            throw new IllegalArgumentException("Error in reading field. " + e.getMessage());
+        }
+    }
+
+    public List<Student> studentStringToList(String studentListString) {
+        List<Student> studentList = new ArrayList<Student>();
+        if (studentListString.equals("[]")) {
+            return studentList;
+        }
+
+        String[] students = studentListString.split("\\]\\,\\[");
+
+        for (String s : students) {
+            String studentString = s.replace("[", "").replace("]", "");
+            Student studentFromJson = studentStringToStudent(studentString);
+            studentList.add(studentFromJson);
+        }
+        return studentList;
+    }
+
+    public Student studentStringToStudent(String studentString) {
+        String studentNameString = studentString.substring(studentString.indexOf(STUDENT_NAME) +
+                STUDENT_NAME.length() + 1, studentString.indexOf(STUDENT_EMAIL) - 2);
+
+        String studentEmailString = studentString.substring(studentString.indexOf(STUDENT_EMAIL) +
+                STUDENT_EMAIL.length() + 1, studentString.indexOf(STUDENT_MATRIC_NUMBER) - 2).trim();
+
+        String studentMatricNumberString = studentString.substring(studentString.indexOf(STUDENT_MATRIC_NUMBER) +
+                STUDENT_MATRIC_NUMBER.length() + 1, studentString.indexOf(STUDENT_NUSNET_ID) - 2).trim();
+
+        String studentNusnetIdString = studentString.substring(studentString.indexOf(STUDENT_NUSNET_ID) +
+                STUDENT_NUSNET_ID.length() + 1, studentString.indexOf(STUDENT_MODULE_CODE) - 2).trim();
+
+        String studentModuleCodeString = studentString.substring(studentString.indexOf(STUDENT_MODULE_CODE) +
+                STUDENT_MODULE_CODE.length() + 1, studentString.indexOf(STUDENT_TUTORIAL_NAME) - 2).trim();
+
+        String studentTutorialNameString = studentString.substring(studentString.indexOf(STUDENT_TUTORIAL_NAME) +
+                STUDENT_TUTORIAL_NAME.length() + 1).replace("}", "").trim();
+
+        Name studentName = new Name(studentNameString);
+
+        Email studentEmail = new Email(studentEmailString);
+
+        Optional<MatricNum> studentMatricNumber = Optional.empty();
+        if (studentMatricNumberString.contains("empty")) {
+            studentMatricNumber = Optional.empty();
+        } else {
+            studentMatricNumberString = studentMatricNumberString.replace("Optional", "");
+            studentMatricNumber = Optional.of(new MatricNum(studentMatricNumberString));
+        }
+
+        Optional<NusnetId> studentNusnetId = Optional.empty();
+        if (studentNusnetIdString.contains("empty")) {
+            studentNusnetId = Optional.empty();
+        } else {
+            studentNusnetIdString = studentNusnetIdString.replace("Optional", "");
+            studentNusnetId = Optional.of(new NusnetId(studentNusnetIdString));
+        }
+
+        ModCode studentModuleCode = new ModCode(studentModuleCodeString);
+
+        TutName studentTutorialName = new TutName(studentTutorialNameString);
+
+        Student studentFromJson = new Student(studentName, studentEmail, studentMatricNumber, studentNusnetId,
+                studentModuleCode, studentTutorialName);
+
+        return studentFromJson;
+    }
+
+    /**
+     * Converts a tutorialString to a LinkedHashMap. Represents the components needed to construct a Tutorial object.
+     *
+     * @param tutorialString String.
+     * @return LinkedHashMap.
+     */
+    public LinkedHashMap<String, String> tutorialStringToMap(String tutorialString) {
         LinkedHashMap<String, String> tutorialStringToMap = new LinkedHashMap<String, String>();
 
         // Relevant terms to extract are tutorialName, tutorialDayOfWeek, studentListString, tutorialModuleCode,
         // tutorialStartTime, tutorialDuration, tutorialWeeks.
 
-        String tutorialNameFromTutorialString = tutorialString.substring(tutorialString.indexOf("tutorialName=") +
-                "tutorialName=".length(), tutorialString.indexOf("tutorialDayOfWeek=") - 2);
+        String tutorialNameFromTutorialString = tutorialString.substring(tutorialString.indexOf(TUTORIAL_NAME) +
+                TUTORIAL_NAME.length() + 1, tutorialString.indexOf(TUTORIAL_DAY) - 2);
+        tutorialStringToMap.put(TUTORIAL_NAME, tutorialNameFromTutorialString.trim());
+
+        String tutorialDayOfWeek = tutorialString.substring(tutorialString.indexOf(TUTORIAL_DAY) +
+                TUTORIAL_DAY.length() + 1, tutorialString.indexOf(TUTORIAL_START_TIME) - 2);
+        tutorialStringToMap.put(TUTORIAL_DAY, tutorialDayOfWeek.trim());
+
+        String tutorialStartTime = tutorialString.substring(tutorialString.indexOf(TUTORIAL_START_TIME) +
+                TUTORIAL_START_TIME.length() + 1, tutorialString.indexOf(TUTORIAL_WEEKS) - 2);
+        tutorialStringToMap.put(TUTORIAL_START_TIME, tutorialStartTime.trim());
+
+        String tutorialWeeks = tutorialString.substring(tutorialString.indexOf(TUTORIAL_WEEKS) +
+                TUTORIAL_WEEKS.length() + 1, tutorialString.indexOf(TUTORIAL_DURATION) - 2);
+        tutorialStringToMap.put(TUTORIAL_WEEKS, tutorialWeeks.trim());
+
+        String tutorialDuration = tutorialString.substring(tutorialString.indexOf(TUTORIAL_DURATION) +
+                TUTORIAL_DURATION.length() + 1, tutorialString.indexOf(TUTORIAL_STUDENT_LIST) - 2);
+        tutorialStringToMap.put(TUTORIAL_DURATION, tutorialDuration.trim());
+
+        String tutorialStudentLiST = tutorialString.substring(tutorialString.indexOf(TUTORIAL_STUDENT_LIST) +
+                TUTORIAL_STUDENT_LIST.length() + 1, tutorialString.indexOf(TUTORIAL_MODULE_CODE) - 2);
+        tutorialStringToMap.put(TUTORIAL_STUDENT_LIST, tutorialStudentLiST.trim());
+
+        String tutorialModuleCode = tutorialString.substring(tutorialString.indexOf(TUTORIAL_MODULE_CODE) +
+                TUTORIAL_MODULE_CODE.length() + 1).replace("}", "");
+        tutorialStringToMap.put(TUTORIAL_MODULE_CODE, tutorialModuleCode.trim());
 
         return tutorialStringToMap;
     }
@@ -185,54 +270,6 @@ public class JsonAdaptedModule {
         }
         return studentListString;
     }
-
-    public Student jsonStringToStudent(String studentString, ModCode modCode, String tutorialName) {
-        String name = studentString.substring(0, studentString.indexOf("Email:")).trim();
-        String email = studentString.substring(studentString.indexOf("Email:") + "Email:".length(),
-                studentString.indexOf("Matric Number:")).trim();
-        String matricNum = studentString.substring(studentString.indexOf("Matric Number:")
-                + "Matric Number:".length(), studentString.indexOf("NUSNET Id:")).trim();
-        String nusnetId = studentString.substring(studentString.indexOf("NUSNET Id:" )
-                + "NUSNET Id:".length()).strip();
-
-                    /*
-                    System.out.println("Name: " + name);
-                    System.out.println("Email: " + email);
-                    System.out.println("Matric Num: " + matricNum);
-                    System.out.println("NUSNET ID: " + nusnetId);
-                    */
-        Optional<MatricNum> jsonStudentMatricNum = Optional.empty();
-        if (matricNum.contains("empty")) {
-            jsonStudentMatricNum = Optional.empty();
-        } else {
-            // Parse the string as matricNum is "Optional{A0155413M]"
-            matricNum = matricNum.replace("Optional[", "");
-            matricNum = matricNum.replace("]", "");
-
-            jsonStudentMatricNum = Optional.of(new MatricNum(matricNum));
-        }
-
-        Optional<NusnetId> jsonStudentNusnetId = Optional.empty();
-        if (nusnetId.contains("empty")) {
-            jsonStudentNusnetId = Optional.empty();
-        } else {
-            // Parse the string as nusnedId is "Optional[E0031550]"
-            nusnetId = nusnetId.replace("Optional[", "");
-            nusnetId = nusnetId.replace("]", "");
-
-            jsonStudentNusnetId = Optional.of(new NusnetId(nusnetId));
-        }
-
-        Name jsonStudentName = new Name(name);
-        Email jsonStudentEmail = new Email(email);
-        ModCode jsonStudentModCode = modCode;
-        TutName jsonTutorialName = new TutName(tutorialName);
-
-        return new Student(jsonStudentName, jsonStudentEmail, jsonStudentMatricNum,
-                jsonStudentNusnetId, jsonStudentModCode, jsonTutorialName);
-
-    }
-
 
     /**
      * Checks if the studentString contains is valid ie contains the strings "Email:", "Matric Number:" and

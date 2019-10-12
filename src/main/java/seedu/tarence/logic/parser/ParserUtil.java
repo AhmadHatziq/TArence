@@ -193,6 +193,11 @@ public class ParserUtil {
         requireNonNull(weeks);
         Set<Week> listOfWeeks = new TreeSet<>();
 
+        // Remove '[', ']' and blank spaces. For parsing from saved Json file.
+        weeks = weeks.replace("[","")
+                .replace("]","")
+                .replace(" ", "");
+
 
         // check for user input of "odd" or "even"
         if (weeks.toLowerCase().equals("odd")) { // weeks 3, 5, 7, 9, 11, 13

@@ -137,10 +137,10 @@ public class Tutorial {
         builder.append(getTimeTable().getDuration().toString());
         builder.append(" | Students: ");
         for (Student s : students) {
-            builder.append(""); // Identifier for students
             builder.append(s.toString());
 
         }
+        builder.append(" | ");
         builder.append(getModCode().toString());
 
         return builder.toString();

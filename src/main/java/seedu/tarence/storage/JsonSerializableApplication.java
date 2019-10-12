@@ -35,7 +35,7 @@ class JsonSerializableApplication {
         this.persons.addAll(persons);
 
         // Toggles if modules is read or not
-        // this.modules.addAll(modules);
+        this.modules.addAll(modules);
     }
 
     /**
@@ -73,6 +73,7 @@ class JsonSerializableApplication {
 
             Module module = jsonAdaptedModule.toModelType();
             // module will be created and not added to application's module list yet
+            System.out.println("Module created with data: " + module.toString());
         }
 
 
