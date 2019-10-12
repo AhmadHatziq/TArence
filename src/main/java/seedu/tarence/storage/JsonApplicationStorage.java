@@ -48,8 +48,11 @@ public class JsonApplicationStorage implements ApplicationStorage {
     public Optional<ReadOnlyApplication> readApplication(Path filePath) throws DataConversionException {
         requireNonNull(filePath);
 
+        // From the Json file, creates an optional JsonSerializableApplication.
+        // Relies on @JsonCreator of JsonSerializableApplication class.
         Optional<JsonSerializableApplication> jsonApplication = JsonUtil.readJsonFile(
                 filePath, JsonSerializableApplication.class);
+
         if (!jsonApplication.isPresent()) {
             return Optional.empty();
         }

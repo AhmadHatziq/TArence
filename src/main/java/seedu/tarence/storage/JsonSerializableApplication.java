@@ -59,6 +59,8 @@ class JsonSerializableApplication {
      */
     public Application toModelType() throws IllegalValueException {
         Application application = new Application();
+
+
         for (JsonAdaptedPerson jsonAdaptedPerson : persons) {
             Person person = jsonAdaptedPerson.toModelType();
             if (application.hasPerson(person)) {
@@ -67,17 +69,18 @@ class JsonSerializableApplication {
             application.addPerson(person);
         }
 
-        /*
         for (JsonAdaptedModule jsonAdaptedModule : modules) {
+
             Module module = jsonAdaptedModule.toModelType();
+            // module will be created and not added to application's module list yet
         }
 
-         */
+
 
         return application;
     }
 
-    public List<JsonAdaptedModule> getModulesJsonStringArray() {
+    public List<JsonAdaptedModule> getJsonAdaptedModules() {
         return this.modules;
     }
 

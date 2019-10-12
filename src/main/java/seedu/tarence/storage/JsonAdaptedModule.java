@@ -2,6 +2,7 @@ package seedu.tarence.storage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -30,17 +31,17 @@ public class JsonAdaptedModule {
 
     // Json fields
     private String moduleCode;
-    private HashMap<String, String> tutorialMap;
+    private LinkedHashMap<String, String> tutorialMap; //Implemented LinkedHashMap to preserve ordering.
 
     // Serializes the Module model into a Json object.
     public JsonAdaptedModule(Module source) {
 
         moduleCode = source.getModCode().toString();
 
-        tutorialMap = new HashMap<String, String>();
+        tutorialMap = new LinkedHashMap<String, String>();
 
         for (Tutorial t : source.getTutorials()) {
-            HashMap<String, String> singleTutorialMap = new HashMap<String, String>();
+            LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
 
             String tutorialName = t.getTutName().toString();
             String tutorialDayOfWeek = t.getTimeTable().getDay().toString();
@@ -64,7 +65,7 @@ public class JsonAdaptedModule {
                 String studentModuleCode = s.getModCode().toString();
                 String studentTutorialName = s.getTutName().toString();
 
-                HashMap<String, String> studentMap = new HashMap<String, String>();
+                LinkedHashMap<String, String> studentMap = new LinkedHashMap<String, String>();
                 studentMap.put("name", studentName);
                 studentMap.put("email", studentEmail);
                 studentMap.put("matricNumber", studentMatricNumber);
@@ -86,7 +87,7 @@ public class JsonAdaptedModule {
 
             String tutorialModuleCode = t.getModCode().toString();
 
-            // Add into HashMap<String,String>, singleTutorialMap
+            // Add into LinkedHashMap<String,String>, singleTutorialMap
             singleTutorialMap.put("tutorialName", tutorialName);
             singleTutorialMap.put("tutorialDayOfWeek", tutorialDayOfWeek);
             singleTutorialMap.put("tutorialStartTime", tutorialStartTime);
@@ -99,22 +100,39 @@ public class JsonAdaptedModule {
         }
     }
 
-
+    // Called during reading of Json File.
     @JsonCreator
     public JsonAdaptedModule(@JsonProperty("moduleCode") String moduleName,
-                             @JsonProperty("tutorialMap") HashMap<String, String> map)  {
+                             @JsonProperty("tutorialMap") LinkedHashMap<String, String> map)  {
         this.moduleCode = moduleName;
         this.tutorialMap = map;
-
-
-        for (String key : map.keySet()) {
-            String value = map.get(key);
-            System.out.println(key + " : " + value);
-        }
     }
 
+    public Module toModelType() throws IllegalArgumentException {
+        System.out.println("Module name: " + moduleCode);
+        for (String tutorialName : tutorialMap.keySet()) {
+
+            String tutorialString = tutorialMap.get(tutorialName);
+            // tutorialString contains info about the whole tutorial ie name, day, list of students etc
+
+            // Converts tutorialString to a LinkedhashMap<String,String> for easy parsing
+            LinkedHashMap<String, String> tutorialMapFromJson = new LinkedHashMap<String, String>();
+
+            // Relevant terms to extract are tutorialName, tutorialDayOfWeek, studentListString, tutorialModuleCode,
+            // tutorialStartTime, tutorialDuration, tutorialWeeks.
 
 
+
+        }
+
+        return SampleDataUtil.getSampleModule();
+    }
+
+    /*
+    Converts JsonAdoptedModule to a Module.
+    Reads in the Json String, parses it and recreates Module
+     */
+    // Leftover code from previous session
     /*
     public Module toModelType() throws IllegalArgumentException {
         ModCode modcode = new ModCode(moduleName);
@@ -154,6 +172,8 @@ public class JsonAdaptedModule {
     }
 
      */
+
+
 
     public Student jsonStringToStudent(String studentString, ModCode modCode, String tutorialName) {
         String name = studentString.substring(0, studentString.indexOf("Email:")).trim();
