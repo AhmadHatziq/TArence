@@ -194,9 +194,7 @@ public class ParserUtil {
         Set<Week> listOfWeeks = new TreeSet<>();
 
         // Remove '[', ']' and blank spaces. For parsing from saved Json file.
-        weeks = weeks.replace("[","")
-                .replace("]","")
-                .replace(" ", "");
+        weeks = weeks.replace("[", "").replace("]", "").replace(" ", "");
 
 
         // check for user input of "odd" or "even"

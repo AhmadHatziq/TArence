@@ -34,10 +34,6 @@ import seedu.tarence.model.tutorial.Week;
 @JsonRootName(value = "modules")
 public class JsonAdaptedModule {
 
-    // Json fields
-    private String moduleCode;
-    private LinkedHashMap<String, String> tutorialMap; // Implemented LinkedHashMap to preserve ordering.
-
     // Identifiers to store the fields
     private static final String TUTORIAL_NAME = "tutorialName";
     private static final String TUTORIAL_DAY = "tutorialDayOfWeek";
@@ -53,10 +49,14 @@ public class JsonAdaptedModule {
     private static final String STUDENT_MODULE_CODE = "studentModuleCode";
     private static final String STUDENT_TUTORIAL_NAME = "studentTutorialName";
 
+    // Json fields
+    private String moduleCode;
+    private LinkedHashMap<String, String> tutorialMap; // Implemented LinkedHashMap to preserve ordering.
+
     // Constructor from Json file. Invoked during reading the file.
     @JsonCreator
     public JsonAdaptedModule(@JsonProperty("moduleCode") String moduleName,
-                             @JsonProperty("tutorialMap") LinkedHashMap<String, String> map)  {
+                             @JsonProperty("tutorialMap") LinkedHashMap<String, String> map) {
         this.moduleCode = moduleName;
         this.tutorialMap = map;
     }
@@ -120,11 +120,17 @@ public class JsonAdaptedModule {
         }
     }
 
-    // Returns a Tutorial Object given the TutorialMap constructed from Json.
+    /**
+     * Returns a Tutorial Object given the TutorialMap constructed from Json.
+     *
+     * @param tutorialMap LinkedHashMap obtained after parsing Tutorial String.
+     * @return Tutorial object.
+     * @throws IllegalArgumentException when Tutorial components are unable to be parsed correctly from Strings.
+     */
     public Tutorial tutorialMapToTutorial(LinkedHashMap<String, String> tutorialMap)
             throws IllegalArgumentException {
         try {
-            List<Student> StudentList = studentStringToList(tutorialMap.get(TUTORIAL_STUDENT_LIST));
+            List<Student> studentList = studentStringToList(tutorialMap.get(TUTORIAL_STUDENT_LIST));
             TutName tutorialName = new TutName(tutorialMap.get(TUTORIAL_NAME));
             DayOfWeek day = ParserUtil.parseDayOfWeek(tutorialMap.get(TUTORIAL_DAY));
             Duration duration = Duration.parse(tutorialMap.get(TUTORIAL_DURATION));
@@ -132,7 +138,7 @@ public class JsonAdaptedModule {
             LocalTime startTime = LocalTime.parse(tutorialMap.get(TUTORIAL_START_TIME), DateTimeFormatter.ISO_TIME);
             ModCode modCode = ParserUtil.parseModCode(tutorialMap.get(TUTORIAL_MODULE_CODE));
 
-            return new Tutorial(tutorialName, day, startTime, weeks, duration, StudentList, modCode);
+            return new Tutorial(tutorialName, day, startTime, weeks, duration, studentList, modCode);
         } catch (ParseException | DateTimeParseException e) {
             throw new IllegalArgumentException("Error in reading field. " + e.getMessage());
         }
@@ -179,8 +185,9 @@ public class JsonAdaptedModule {
         String studentModuleCodeString = extractField(STUDENT_MODULE_CODE, STUDENT_TUTORIAL_NAME, studentString);
         String studentTutorialNameString = extractLastField(STUDENT_TUTORIAL_NAME, studentString);
 
-        Student studentFromJson = studentStringsToStudent(studentNameString, studentEmailString, studentMatricNumberString,
-                studentNusnetIdString, studentModuleCodeString, studentTutorialNameString);
+        Student studentFromJson = studentStringsToStudent(studentNameString, studentEmailString,
+                studentMatricNumberString, studentNusnetIdString,
+                studentModuleCodeString, studentTutorialNameString);
 
         return studentFromJson;
     }
@@ -275,7 +282,7 @@ public class JsonAdaptedModule {
     public String studentListToString(List<Student> studentList) {
         String studentListString = "[";
 
-        for (Student s : studentList ) {
+        for (Student s : studentList) {
             LinkedHashMap<String, String> studentMap = new LinkedHashMap<String, String>();
             studentMap.put(STUDENT_NAME, s.getName().toString());
             studentMap.put(STUDENT_EMAIL, s.getEmail().toString());
@@ -304,8 +311,8 @@ public class JsonAdaptedModule {
      * @return Exact String field of the identifier.
      */
     public String extractLastField(String identifier, String sequence) {
-        return sequence.substring(sequence.indexOf(identifier) +
-                identifier.length() + 1).replace("}", "").trim();
+        return sequence.substring(sequence.indexOf(identifier)
+                + identifier.length() + 1).replace("}", "").trim();
     }
 
     /**
@@ -318,13 +325,12 @@ public class JsonAdaptedModule {
      * @return Exact String field of the identifier.
      */
     public String extractField(String identifier, String nextIdentifier, String sequence) {
-        return sequence.substring(sequence.indexOf(identifier) +
-                identifier.length() + 1, sequence.indexOf(nextIdentifier) - 2).trim();
+        return sequence.substring(sequence.indexOf(identifier)
+                + identifier.length() + 1, sequence.indexOf(nextIdentifier) - 2).trim();
     }
 
     /**
-     * Checks if the studentString contains is valid ie contains the strings "Email:", "Matric Number:" and
-     * "NUSNED Id:".
+     * Checks if the studentString contains valid fields.
      *
      * @param studentString String representing a Student from Json object.
      * @return Boolean.
@@ -335,6 +341,12 @@ public class JsonAdaptedModule {
                 && studentString.contains(STUDENT_NUSNET_ID) && studentString.contains(STUDENT_TUTORIAL_NAME));
     }
 
+    /**
+     * Checks if the tutorialString contains valid fields.
+     *
+     * @param tutorialString
+     * @return
+     */
     public Boolean isValidTutorialString (String tutorialString) {
         return (tutorialString.contains(TUTORIAL_WEEKS) && tutorialString.contains(TUTORIAL_DAY)
                 && tutorialString.contains(TUTORIAL_DURATION) && tutorialString.contains(TUTORIAL_MODULE_CODE)

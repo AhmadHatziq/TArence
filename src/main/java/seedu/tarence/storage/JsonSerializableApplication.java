@@ -11,8 +11,8 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import seedu.tarence.commons.exceptions.IllegalValueException;
 import seedu.tarence.model.Application;
 import seedu.tarence.model.ReadOnlyApplication;
-import seedu.tarence.model.person.Person;
 import seedu.tarence.model.module.Module;
+import seedu.tarence.model.person.Person;
 import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.Tutorial;
 

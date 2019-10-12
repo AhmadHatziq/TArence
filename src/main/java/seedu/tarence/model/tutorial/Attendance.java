@@ -9,7 +9,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 
-
 import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.exceptions.StudentNotFoundException;
 import seedu.tarence.model.tutorial.exceptions.WeekNotFoundException;
@@ -20,7 +19,6 @@ import seedu.tarence.model.tutorial.exceptions.WeekNotFoundException;
  */
 public class Attendance {
     private final Map<Week, Map<Student, Boolean>> attendance;
-  
     /**
      * Every field must be present and not null.
      */

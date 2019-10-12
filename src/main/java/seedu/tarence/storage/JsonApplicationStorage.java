@@ -2,9 +2,7 @@ package seedu.tarence.storage;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -15,7 +13,6 @@ import seedu.tarence.commons.exceptions.IllegalValueException;
 import seedu.tarence.commons.util.FileUtil;
 import seedu.tarence.commons.util.JsonUtil;
 import seedu.tarence.model.ReadOnlyApplication;
-import seedu.tarence.model.tutorial.Tutorial;
 
 /**
  * A class to access the application data stored as a json file on the hard disk.
