@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
+import seedu.tarence.commons.exceptions.IllegalValueException;
 import seedu.tarence.logic.parser.ParserUtil;
 import seedu.tarence.logic.parser.exceptions.ParseException;
 import seedu.tarence.model.module.ModCode;
@@ -35,36 +36,40 @@ import seedu.tarence.model.tutorial.Week;
 public class JsonAdaptedModule {
 
     // Identifiers to store the fields
-    private static final String TUTORIAL_NAME = "tutorialName";
-    private static final String TUTORIAL_DAY = "tutorialDayOfWeek";
-    private static final String TUTORIAL_START_TIME = "tutorialStartTime";
-    private static final String TUTORIAL_WEEKS = "tutorialWeeks";
-    private static final String TUTORIAL_DURATION = "tutorialDuration";
-    private static final String TUTORIAL_MODULE_CODE = "tutorialModuleCode";
-    private static final String TUTORIAL_STUDENT_LIST = "tutorialStudentList";
-    private static final String STUDENT_NAME = "studentName";
-    private static final String STUDENT_EMAIL = "studentEmail";
-    private static final String STUDENT_MATRIC_NUMBER = "studentMatricNumber";
-    private static final String STUDENT_NUSNET_ID = "studentNusnetId";
-    private static final String STUDENT_MODULE_CODE = "studentModuleCode";
-    private static final String STUDENT_TUTORIAL_NAME = "studentTutorialName";
+    public static final String TUTORIAL_NAME = "tutorialName";
+    public static final String TUTORIAL_DAY = "tutorialDayOfWeek";
+    public static final String TUTORIAL_START_TIME = "tutorialStartTime";
+    public static final String TUTORIAL_WEEKS = "tutorialWeeks";
+    public static final String TUTORIAL_DURATION = "tutorialDuration";
+    public static final String TUTORIAL_MODULE_CODE = "tutorialModuleCode";
+    public static final String TUTORIAL_STUDENT_LIST = "tutorialStudentList";
+    public static final String STUDENT_NAME = "studentName";
+    public static final String STUDENT_EMAIL = "studentEmail";
+    public static final String STUDENT_MATRIC_NUMBER = "studentMatricNumber";
+    public static final String STUDENT_NUSNET_ID = "studentNusnetId";
+    public static final String STUDENT_MODULE_CODE = "studentModuleCode";
+    public static final String STUDENT_TUTORIAL_NAME = "studentTutorialName";
+
+    public static final String MISSING_FIELD_MESSAGE_FORMAT = "Tutorial's %s field is missing!";
+    public static final String MISSING_GENERIC_FIELD = "Error in reading field! ";
+    public static final String INVALID_FIELD = "Invalid field in %s";
 
     // Json fields
     private String moduleCode;
-    private LinkedHashMap<String, String> tutorialMap; // Implemented LinkedHashMap to preserve ordering.
+    private LinkedHashMap<String, String> mapOfDifferentTutorials; // Implemented LinkedHashMap to preserve ordering.
 
     // Constructor from Json file. Invoked during reading the file.
     @JsonCreator
     public JsonAdaptedModule(@JsonProperty("moduleCode") String moduleName,
                              @JsonProperty("tutorialMap") LinkedHashMap<String, String> map) {
         this.moduleCode = moduleName;
-        this.tutorialMap = map;
+        this.mapOfDifferentTutorials = map;
     }
 
     // Constructor from Module object. Invoked during saving of the file.
     public JsonAdaptedModule(Module source) {
         moduleCode = source.getModCode().toString();
-        tutorialMap = new LinkedHashMap<String, String>();
+        mapOfDifferentTutorials = new LinkedHashMap<String, String>();
 
         for (Tutorial t : source.getTutorials()) {
             LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
@@ -87,7 +92,7 @@ public class JsonAdaptedModule {
             singleTutorialMap.put(TUTORIAL_STUDENT_LIST, studentListString);
             singleTutorialMap.put(TUTORIAL_MODULE_CODE, tutorialModuleCode);
 
-            tutorialMap.put(tutorialName, singleTutorialMap.toString());
+            mapOfDifferentTutorials.put(tutorialName, singleTutorialMap.toString());
         }
     }
 
@@ -96,17 +101,17 @@ public class JsonAdaptedModule {
      * Converts JsonAdaptedModule into a Module object. Invoked during reading of Json file.
      *
      * @return Module object.
-     * @throws IllegalArgumentException when there is an error in reading one of the fields.
+     * @throws IllegalValueException when there is an error in reading one of the fields.
      */
-    public Module toModelType() throws IllegalArgumentException {
+    public Module toModelType() throws IllegalValueException {
         List<Tutorial> tutorials = new ArrayList<Tutorial>();
 
-        for (String tutorialName : tutorialMap.keySet()) {
+        for (String tutorialName : mapOfDifferentTutorials.keySet()) {
             // Parses the tutorialString into a LinkedHashMap of the Tutorial's components.
-            LinkedHashMap<String, String> tutorialMapFromJson = tutorialStringToMap(tutorialMap.get(tutorialName));
+            LinkedHashMap<String, String> mapOfSingleTutorial = tutorialStringToMap(mapOfDifferentTutorials.get(tutorialName));
 
             // Creates a Tutorial Object from the tutorialString
-            Tutorial tutorialFromJson = tutorialMapToTutorial(tutorialMapFromJson);
+            Tutorial tutorialFromJson = tutorialMapToTutorial(mapOfSingleTutorial);
 
             // Adds the Tutorial into the List.
             tutorials.add(tutorialFromJson);
@@ -116,7 +121,7 @@ public class JsonAdaptedModule {
             ModCode modCodeFromJson = ParserUtil.parseModCode(moduleCode);
             return new Module(modCodeFromJson, tutorials);
         } catch (ParseException e) {
-            throw new IllegalArgumentException("Error in parsing Module Code.: " + e.getMessage());
+            throw new IllegalValueException(String.format(INVALID_FIELD, Module.class.getSimpleName()));
         }
     }
 
@@ -125,22 +130,27 @@ public class JsonAdaptedModule {
      *
      * @param tutorialMap LinkedHashMap obtained after parsing Tutorial String.
      * @return Tutorial object.
-     * @throws IllegalArgumentException when Tutorial components are unable to be parsed correctly from Strings.
+     * @throws IllegalValueException when Tutorial components are unable to be parsed correctly from Strings.
      */
     public Tutorial tutorialMapToTutorial(LinkedHashMap<String, String> tutorialMap)
-            throws IllegalArgumentException {
+            throws IllegalValueException {
         try {
             List<Student> studentList = studentStringToList(tutorialMap.get(TUTORIAL_STUDENT_LIST));
             TutName tutorialName = new TutName(tutorialMap.get(TUTORIAL_NAME));
             DayOfWeek day = ParserUtil.parseDayOfWeek(tutorialMap.get(TUTORIAL_DAY));
-            Duration duration = Duration.parse(tutorialMap.get(TUTORIAL_DURATION));
             Set<Week> weeks = ParserUtil.parseWeeks(tutorialMap.get(TUTORIAL_WEEKS));
-            LocalTime startTime = LocalTime.parse(tutorialMap.get(TUTORIAL_START_TIME), DateTimeFormatter.ISO_TIME);
             ModCode modCode = ParserUtil.parseModCode(tutorialMap.get(TUTORIAL_MODULE_CODE));
+            Duration duration = Duration.parse(tutorialMap.get(TUTORIAL_DURATION));
+            LocalTime startTime = LocalTime.parse(tutorialMap.get(TUTORIAL_START_TIME), DateTimeFormatter.ISO_TIME);
 
             return new Tutorial(tutorialName, day, startTime, weeks, duration, studentList, modCode);
-        } catch (ParseException | DateTimeParseException e) {
-            throw new IllegalArgumentException("Error in reading field. " + e.getMessage());
+        } catch (ParseException e) {
+            throw new IllegalValueException(MISSING_GENERIC_FIELD + e.getMessage());
+        } catch (DateTimeParseException e) {
+            // Thrown by either Duration or LocalTime objects.
+            String errorMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, Duration.class.getSimpleName())
+                    + " Or " + String.format(MISSING_FIELD_MESSAGE_FORMAT, LocalTime.class.getSimpleName());
+            throw new IllegalValueException(errorMessage);
         }
     }
 
@@ -150,7 +160,7 @@ public class JsonAdaptedModule {
      * @param studentListString A String representing 0,1 or more Students.
      * @return List of Student objects.
      */
-    public List<Student> studentStringToList(String studentListString) {
+    public List<Student> studentStringToList(String studentListString) throws IllegalValueException {
         List<Student> studentList = new ArrayList<Student>();
         if (studentListString.equals("[]")) {
             return studentList; //studentString is empty.
@@ -172,9 +182,9 @@ public class JsonAdaptedModule {
      * @param studentString String sequence representing a single Student.
      * @return Student object.
      */
-    public Student studentStringToStudent(String studentString) {
+    public Student studentStringToStudent(String studentString) throws IllegalValueException {
         if (!isValidStudentString(studentString)) {
-            throw new IllegalArgumentException("Student string has invalid fields");
+            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Student.class.getSimpleName()));
         }
 
         // Extracts the correct Strings needed to create a Student object.
@@ -198,9 +208,9 @@ public class JsonAdaptedModule {
      * @param tutorialString String.
      * @return LinkedHashMap.
      */
-    public LinkedHashMap<String, String> tutorialStringToMap(String tutorialString) {
+    public LinkedHashMap<String, String> tutorialStringToMap(String tutorialString) throws IllegalValueException {
         if (!isValidTutorialString(tutorialString)) {
-            throw new IllegalArgumentException("Tutorial string has invalid fields");
+            throw new IllegalValueException("Tutorial string has invalid fields");
         }
 
         LinkedHashMap<String, String> tutorialStringToMap = new LinkedHashMap<String, String>();
@@ -330,7 +340,7 @@ public class JsonAdaptedModule {
     }
 
     /**
-     * Checks if the studentString contains valid fields.
+     * Checks if the studentString contains valid fields and the order correct.
      *
      * @param studentString String representing a Student from Json object.
      * @return Boolean.
@@ -338,20 +348,49 @@ public class JsonAdaptedModule {
     public Boolean isValidStudentString (String studentString) {
         return (studentString.contains(STUDENT_EMAIL) && studentString.contains(STUDENT_MATRIC_NUMBER)
                 && studentString.contains(STUDENT_MODULE_CODE) && studentString.contains(STUDENT_NAME)
-                && studentString.contains(STUDENT_NUSNET_ID) && studentString.contains(STUDENT_TUTORIAL_NAME));
+                && studentString.contains(STUDENT_NUSNET_ID) && studentString.contains(STUDENT_TUTORIAL_NAME)
+                && (studentString.indexOf(STUDENT_NAME) < studentString.indexOf(STUDENT_EMAIL))
+                && (studentString.indexOf(STUDENT_EMAIL) < studentString.indexOf(STUDENT_MATRIC_NUMBER))
+                && (studentString.indexOf(STUDENT_MATRIC_NUMBER) < studentString.indexOf(STUDENT_NUSNET_ID))
+                && (studentString.indexOf(STUDENT_NUSNET_ID) < studentString.indexOf(STUDENT_MODULE_CODE))
+                && (studentString.indexOf(STUDENT_MODULE_CODE) < studentString.indexOf(STUDENT_TUTORIAL_NAME)));
     }
 
     /**
      * Checks if the tutorialString contains valid fields.
      *
      * @param tutorialString
-     * @return
+     * @return Boolean.
      */
     public Boolean isValidTutorialString (String tutorialString) {
         return (tutorialString.contains(TUTORIAL_WEEKS) && tutorialString.contains(TUTORIAL_DAY)
                 && tutorialString.contains(TUTORIAL_DURATION) && tutorialString.contains(TUTORIAL_MODULE_CODE)
                 && tutorialString.contains(TUTORIAL_NAME) && tutorialString.contains(TUTORIAL_START_TIME)
-                && tutorialString.contains(TUTORIAL_STUDENT_LIST));
+                && tutorialString.contains(TUTORIAL_STUDENT_LIST)
+                && (tutorialString.indexOf(TUTORIAL_NAME) < tutorialString.indexOf(TUTORIAL_DAY))
+                && (tutorialString.indexOf(TUTORIAL_DAY) < tutorialString.indexOf(TUTORIAL_START_TIME))
+                && (tutorialString.indexOf(TUTORIAL_START_TIME) < tutorialString.indexOf(TUTORIAL_WEEKS))
+                && (tutorialString.indexOf(TUTORIAL_WEEKS) < tutorialString.indexOf(TUTORIAL_DURATION))
+                && (tutorialString.indexOf(TUTORIAL_DURATION) < tutorialString.indexOf(TUTORIAL_STUDENT_LIST))
+                && (tutorialString.indexOf(TUTORIAL_STUDENT_LIST) < tutorialString.indexOf(TUTORIAL_MODULE_CODE)));
+    }
+
+    /**
+     * Getter function for String moduleCode.
+     *
+     * @return String module code.
+     */
+    public String getModuleCode() {
+        return moduleCode;
+    }
+
+    /**
+     * Getter function for Linked Hashmap tutorialMap.
+     *
+     * @return Tutorial Linked HashMap.
+     */
+    public LinkedHashMap<String, String> getMapOfDifferentTutorials() {
+        return mapOfDifferentTutorials;
     }
 }
 
