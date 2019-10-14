@@ -77,7 +77,7 @@ public class JsonAdaptedModuleTest {
     public void toModelType_TutorialMapWithInvalidDuration_throwsIllegalValueExcepion() {
         JsonAdaptedModule module = new JsonAdaptedModule(VALID_MODULE_CODE,
                 JsonUtil.getMapOfSingleTutorialWithInvalidTutorialDuration());
-        String expectedMessage = "Tutorial's Duration field is missing! Or Tutorial's LocalTime field is missing!";
+        String expectedMessage = "Tutorial's Duration field is invalid! Or Tutorial's LocalTime field is invalid!";
         assertThrows(IllegalValueException.class, expectedMessage, module::toModelType);
     }
 
@@ -85,7 +85,7 @@ public class JsonAdaptedModuleTest {
     public void toModelType_TutorialMapWithInvalidStartTime_throwsIllegalValueExcepion() {
         JsonAdaptedModule module = new JsonAdaptedModule(VALID_MODULE_CODE,
                 JsonUtil.getMapOfSingleTutorialWithInvalidTutorialStartTime());
-        String expectedMessage = "Tutorial's Duration field is missing! Or Tutorial's LocalTime field is missing!";
+        String expectedMessage = "Tutorial's Duration field is invalid! Or Tutorial's LocalTime field is invalid!";
         assertThrows(IllegalValueException.class, expectedMessage, module::toModelType);
     }
 

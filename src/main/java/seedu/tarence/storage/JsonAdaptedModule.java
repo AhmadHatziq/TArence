@@ -51,6 +51,7 @@ public class JsonAdaptedModule {
     public static final String STUDENT_TUTORIAL_NAME = "studentTutorialName";
 
     public static final String MISSING_FIELD_MESSAGE_FORMAT = "Tutorial's %s field is missing!";
+    public static final String INVALID_FIELD_MESSAGE_FORMAT = "Tutorial's %s field is invalid!";
     public static final String MISSING_GENERIC_FIELD = "Error in reading field! ";
     public static final String INVALID_FIELD = "Invalid field in %s";
 
@@ -148,8 +149,8 @@ public class JsonAdaptedModule {
             throw new IllegalValueException(MISSING_GENERIC_FIELD + e.getMessage());
         } catch (DateTimeParseException e) {
             // Thrown by either Duration or LocalTime objects.
-            String errorMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, Duration.class.getSimpleName())
-                    + " Or " + String.format(MISSING_FIELD_MESSAGE_FORMAT, LocalTime.class.getSimpleName());
+            String errorMessage = String.format(INVALID_FIELD_MESSAGE_FORMAT, Duration.class.getSimpleName())
+                    + " Or " + String.format(INVALID_FIELD_MESSAGE_FORMAT, LocalTime.class.getSimpleName());
             throw new IllegalValueException(errorMessage);
         }
     }
