@@ -2,6 +2,7 @@ package seedu.tarence.logic;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
@@ -43,10 +44,11 @@ public class LogicManager implements Logic {
 
         CommandResult commandResult;
         Command command;
+        Optional<Tutorial> tutorialToStore = Optional.empty();
 
         // processes multiple commands in user input if they exit
         String[] commandStrings = commandText.split("&");
-        // TODO: add model.appendPendingCommand()
+        // pushes commands from back to front on top of the pending commands stack
         for (int i = commandStrings.length - 1; i >= 0; i--) {
             Command tempCommand = applicationParser.parseCommand(commandStrings[i]);
             model.storePendingCommand(tempCommand);
@@ -56,6 +58,7 @@ public class LogicManager implements Logic {
         // clears log of pending commands until it meets a command that requires further user input
         while (model.hasPendingCommand() && !model.peekPendingCommand().needsInput()) {
             command = model.getPendingCommand(); // first user-inputted command
+            System.out.println(model.peekPendingCommand());
 
             // if next command requires user input, checks if current command is relevant
             if (model.hasPendingCommand()
@@ -80,10 +83,19 @@ public class LogicManager implements Logic {
             } catch (IOException ioe) {
                 throw new CommandException(FILE_OPS_ERROR_MESSAGE + ioe, ioe);
             }
+
+            // If attendance is to be displayed, it will be passed into the commandResult
+            if (currCommandResult.isShowAttendance()) {
+                tutorialToStore = Optional.of(currCommandResult.getTutorialAttendance());
+            }
         }
 
         // creates a new command concatenating all command result messages into a single result
-        commandResult = new CommandResult(combinedFeedback.toString());
+        if (tutorialToStore.isPresent()) {
+            commandResult = new CommandResult(combinedFeedback.toString(), tutorialToStore.get());
+        } else {
+            commandResult = new CommandResult(combinedFeedback.toString());
+        }
 
         return commandResult;
     }

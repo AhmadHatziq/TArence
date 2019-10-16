@@ -44,11 +44,6 @@ public class MarkAttendanceCommandTest {
     public static final Integer VALID_TUT_INDEX = 1;
 
     @Test
-    public void constructor_null_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> new MarkAttendanceCommand(null, null, null, null));
-    }
-
-    @Test
     public void execute_personAcceptedByModel_markAttendanceSuccessful() throws Exception {
         ModelStubAcceptingStudentAdded modelStub = new ModelStubAcceptingStudentAdded();
 
@@ -72,7 +67,7 @@ public class MarkAttendanceCommandTest {
         final Name validStudName = validStudent.getName();
 
         CommandResult commandResult = new MarkAttendanceCommand(
-                validModCode, validTutName, validWeek, validStudName).execute(modelStub);
+                validModCode, validTutName, null, validWeek, validStudName).execute(modelStub);
 
         assertEquals(String.format(MarkAttendanceCommand.MESSAGE_MARK_ATTENDANCE_SUCCESS, validStudName, "present"),
                 commandResult.getFeedbackToUser());
@@ -92,7 +87,7 @@ public class MarkAttendanceCommandTest {
         final Week validWeek = new Week(3);
         final Name validStudName = validStudent.getName();
         MarkAttendanceCommand markAttendanceCommand = new MarkAttendanceCommand(
-                validModCode, validTutName, validWeek, validStudName);
+                validModCode, validTutName, null, validWeek, validStudName);
 
         assertThrows(CommandException.class,
             Messages.MESSAGE_INVALID_TUTORIAL_IN_MODULE, () -> markAttendanceCommand.execute(modelStub));
@@ -113,7 +108,7 @@ public class MarkAttendanceCommandTest {
         final Week validWeek = new Week(3);
         final Name validStudName = validStudent.getName();
         MarkAttendanceCommand markAttendanceCommand = new MarkAttendanceCommand(
-                validModCode, validTutName, validWeek, validStudName);
+                validModCode, validTutName, null, validWeek, validStudName);
 
         assertThrows(CommandException.class,
             Messages.MESSAGE_INVALID_TUTORIAL_IN_MODULE, () -> markAttendanceCommand.execute(modelStub));
@@ -141,7 +136,7 @@ public class MarkAttendanceCommandTest {
         final Week validWeek = new Week(3);
         final Name validStudName = validStudent.getName();
         MarkAttendanceCommand markAttendanceCommand = new MarkAttendanceCommand(
-                validModCode, validTutName, validWeek, validStudName);
+                validModCode, validTutName, null, validWeek, validStudName);
 
         assertThrows(CommandException.class,
             Messages.MESSAGE_INVALID_STUDENT_IN_TUTORIAL, () -> markAttendanceCommand.execute(modelStub));
@@ -156,16 +151,16 @@ public class MarkAttendanceCommandTest {
         final TutName validTutName = new TutName(VALID_TUT_NAME);
         final Week validWeek = new Week(3);
         MarkAttendanceCommand markAliceCommand = new MarkAttendanceCommand(
-                validModCode, validTutName, validWeek, alice.getName());
+                validModCode, validTutName, null, validWeek, alice.getName());
         MarkAttendanceCommand markBobCommand = new MarkAttendanceCommand(
-            validModCode, validTutName, validWeek, bob.getName());
+            validModCode, validTutName, null, validWeek, bob.getName());
 
         // same object -> returns true
         assertTrue(markAliceCommand.equals(markAliceCommand));
 
         // same values -> returns true
         MarkAttendanceCommand markAliceCommandCopy = new MarkAttendanceCommand(
-            validModCode, validTutName, validWeek, alice.getName());
+            validModCode, validTutName, null, validWeek, alice.getName());
         assertTrue(markAliceCommandCopy.equals(markAliceCommand));
 
         // different types -> returns false
