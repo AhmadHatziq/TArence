@@ -8,6 +8,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,6 +26,7 @@ import seedu.tarence.model.person.Name;
 import seedu.tarence.model.student.MatricNum;
 import seedu.tarence.model.student.NusnetId;
 import seedu.tarence.model.student.Student;
+import seedu.tarence.model.tutorial.Attendance;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
 import seedu.tarence.model.tutorial.Week;
@@ -43,12 +45,14 @@ public class JsonAdaptedModule {
     public static final String TUTORIAL_DURATION = "tutorialDuration";
     public static final String TUTORIAL_MODULE_CODE = "tutorialModuleCode";
     public static final String TUTORIAL_STUDENT_LIST = "tutorialStudentList";
+    public static final String TUTORIAL_ATTENDANCE_LIST = "tutorialAttendanceList";
     public static final String STUDENT_NAME = "studentName";
     public static final String STUDENT_EMAIL = "studentEmail";
     public static final String STUDENT_MATRIC_NUMBER = "studentMatricNumber";
     public static final String STUDENT_NUSNET_ID = "studentNusnetId";
     public static final String STUDENT_MODULE_CODE = "studentModuleCode";
     public static final String STUDENT_TUTORIAL_NAME = "studentTutorialName";
+    public static final String STUDENT_ATTENDANCE_STATUS = "studentAttendance";
 
     public static final String MISSING_FIELD_MESSAGE_FORMAT = "Tutorial's %s field is missing!";
     public static final String INVALID_FIELD_MESSAGE_FORMAT = "Tutorial's %s field is invalid!";
@@ -83,18 +87,52 @@ public class JsonAdaptedModule {
             String tutorialDuration = t.getTimeTable().getDuration().toString();
             String studentListString = studentListToString(t.getStudents());
             String tutorialModuleCode = t.getModCode().toString();
+            String tutorialAttendanceString = attendanceListToString(t.getAttendance());
 
             // Add into LinkedHashMap<String,String>, singleTutorialMap
+            // Order matters**
             singleTutorialMap.put(TUTORIAL_NAME, tutorialName);
             singleTutorialMap.put(TUTORIAL_DAY, tutorialDayOfWeek);
             singleTutorialMap.put(TUTORIAL_START_TIME, tutorialStartTime);
             singleTutorialMap.put(TUTORIAL_WEEKS, tutorialWeeks);
             singleTutorialMap.put(TUTORIAL_DURATION, tutorialDuration);
             singleTutorialMap.put(TUTORIAL_STUDENT_LIST, studentListString);
+            singleTutorialMap.put(TUTORIAL_ATTENDANCE_LIST, tutorialAttendanceString);
             singleTutorialMap.put(TUTORIAL_MODULE_CODE, tutorialModuleCode);
 
             mapOfDifferentTutorials.put(tutorialName, singleTutorialMap.toString());
         }
+    }
+
+    public String attendanceListToString (Attendance attendance) {
+        Map<Week, Map<Student, Boolean>> attendanceMap = attendance.getAttendanceMap();
+        LinkedHashMap<String, String> attendanceStringMap = new LinkedHashMap<String, String>();
+
+        for (Week week : attendanceMap.keySet()) {
+            Map<Student, Boolean> singleWeek = attendanceMap.get(week);
+
+            // Pre-condition: Student already exists
+            String attendanceString = "[";
+            for (Student s : singleWeek.keySet()) {
+                LinkedHashMap<String, String> studentMap = new LinkedHashMap<String, String>();
+                studentMap.put(STUDENT_NAME, s.getName().toString());
+                studentMap.put(STUDENT_EMAIL, s.getEmail().toString());
+                studentMap.put(STUDENT_MATRIC_NUMBER, s.getMatricNum().toString());
+                studentMap.put(STUDENT_NUSNET_ID, s.getNusnetId().toString());
+                studentMap.put(STUDENT_MODULE_CODE, s.getModCode().toString());
+                studentMap.put(STUDENT_TUTORIAL_NAME, s.getTutName().toString());
+                studentMap.put(STUDENT_ATTENDANCE_STATUS, singleWeek.get(s).toString());
+                attendanceString = attendanceString + studentMap.toString() + "],[";
+            }
+
+            // Remove last instance of square bracket
+            attendanceString = attendanceString.substring(0, (attendanceString.length() - 2));
+            // Mapping of weeks to studentStrings eg {1=[{studentObe}],[{studentTwo}],
+            //                                         2=[{studentOne}],[{studentTwo}]}
+
+            attendanceStringMap.put(week.toString(), attendanceString);
+        }
+        return attendanceStringMap.toString();
     }
 
 
@@ -135,9 +173,11 @@ public class JsonAdaptedModule {
      */
     public Tutorial tutorialMapToTutorial(LinkedHashMap<String, String> tutorialMap)
             throws IllegalValueException {
+        String attendanceListString = tutorialMap.get(TUTORIAL_ATTENDANCE_LIST);
+        System.out.println("Attendance String: " + attendanceListString);
         try {
             List<Student> studentList = studentStringToList(tutorialMap.get(TUTORIAL_STUDENT_LIST));
-            TutName tutorialName = new TutName(tutorialMap.get(TUTORIAL_NAME));
+            TutName tutorialName = ParserUtil.parseTutorialName(tutorialMap.get(TUTORIAL_NAME));
             DayOfWeek day = ParserUtil.parseDayOfWeek(tutorialMap.get(TUTORIAL_DAY));
             Set<Week> weeks = ParserUtil.parseWeeks(tutorialMap.get(TUTORIAL_WEEKS));
             ModCode modCode = ParserUtil.parseModCode(tutorialMap.get(TUTORIAL_MODULE_CODE));
@@ -145,7 +185,7 @@ public class JsonAdaptedModule {
             LocalTime startTime = LocalTime.parse(tutorialMap.get(TUTORIAL_START_TIME), DateTimeFormatter.ISO_TIME);
 
             return new Tutorial(tutorialName, day, startTime, weeks, duration, studentList, modCode);
-        } catch (ParseException e) {
+        } catch (ParseException | IllegalArgumentException e) {
             throw new IllegalValueException(MISSING_GENERIC_FIELD + e.getMessage());
         } catch (DateTimeParseException e) {
             // Thrown by either Duration or LocalTime objects.
@@ -223,7 +263,8 @@ public class JsonAdaptedModule {
         String tutorialStartTime = extractField(TUTORIAL_START_TIME, TUTORIAL_WEEKS, tutorialString);
         String tutorialWeeks = extractField(TUTORIAL_WEEKS, TUTORIAL_DURATION, tutorialString);
         String tutorialDuration = extractField(TUTORIAL_DURATION, TUTORIAL_STUDENT_LIST, tutorialString);
-        String tutorialStudentList = extractField(TUTORIAL_STUDENT_LIST, TUTORIAL_MODULE_CODE, tutorialString);
+        String tutorialStudentList = extractField(TUTORIAL_STUDENT_LIST, TUTORIAL_ATTENDANCE_LIST, tutorialString);
+        String tutorialAttendanceList = extractField(TUTORIAL_ATTENDANCE_LIST,TUTORIAL_MODULE_CODE, tutorialString);
         String tutorialModuleCode = extractLastField(TUTORIAL_MODULE_CODE, tutorialString);
 
         // Places the extracted Strings into a HashMap
@@ -233,6 +274,7 @@ public class JsonAdaptedModule {
         tutorialStringToMap.put(TUTORIAL_WEEKS, tutorialWeeks);
         tutorialStringToMap.put(TUTORIAL_DURATION, tutorialDuration);
         tutorialStringToMap.put(TUTORIAL_STUDENT_LIST, tutorialStudentList);
+        tutorialStringToMap.put(TUTORIAL_ATTENDANCE_LIST, tutorialAttendanceList);
         tutorialStringToMap.put(TUTORIAL_MODULE_CODE, tutorialModuleCode);
 
         return tutorialStringToMap;

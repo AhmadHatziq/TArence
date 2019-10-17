@@ -2,7 +2,6 @@ package seedu.tarence.storage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static seedu.tarence.testutil.Assert.assertThrows;
-import static seedu.tarence.logic.parser.ParserMessages.MESSAGE_INVALID_WEEK_RANGE;
 
 import java.util.LinkedHashMap;
 
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import seedu.tarence.commons.exceptions.IllegalValueException;
 import seedu.tarence.model.module.ModCode;
-import seedu.tarence.model.tutorial.Week;
 import seedu.tarence.model.util.SampleDataUtil;
 import seedu.tarence.testutil.JsonUtil;
 

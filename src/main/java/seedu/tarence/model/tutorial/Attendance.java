@@ -136,4 +136,13 @@ public class Attendance {
     public String toString() {
         return attendance.toString();
     }
+
+    public String toSaveString() {
+        return attendance.toString();
+    }
+
+    public Map<Week, Map<Student, Boolean>> getAttendanceMap() {
+        return attendance;
+    }
+
 }
