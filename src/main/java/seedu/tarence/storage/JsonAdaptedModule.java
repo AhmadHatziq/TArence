@@ -106,6 +106,11 @@ public class JsonAdaptedModule {
         }
     }
 
+    /**
+     * Invoked when saving an Attendance object.
+     * @param attendance Attendance object.
+     * @return String representation of Attendance object.
+     */
     public String attendanceListToString (Attendance attendance) {
         Map<Week, Map<Student, Boolean>> attendanceMap = attendance.getAttendanceMap();
         LinkedHashMap<String, String> attendanceStringMap = new LinkedHashMap<String, String>();
@@ -113,7 +118,6 @@ public class JsonAdaptedModule {
         for (Week week : attendanceMap.keySet()) {
             Map<Student, Boolean> singleWeek = attendanceMap.get(week);
 
-            // Pre-condition: Student already exists.
             // Each student is encompassed in [].
             String attendanceString = "[";
             for (Student s : singleWeek.keySet()) {
@@ -128,8 +132,14 @@ public class JsonAdaptedModule {
                 attendanceString = attendanceString + studentMap.toString() + "],[";
             }
 
-            // Remove last instance of square bracket
-            attendanceString = attendanceString.substring(0, (attendanceString.length() - 2));
+            // Case when there are no students.
+            if (attendanceString.equals("[")) {
+                attendanceString += "]";
+            } else {
+                // Remove the last square bracket
+                attendanceString = attendanceString.substring(0, (attendanceString.length() - 2));
+            }
+
             // Mapping of weeks to studentStrings eg {1=[{studentObe}],[{studentTwo}],
             //                                         2=[{studentOne}],[{studentTwo}]}
             attendanceStringMap.put(week.toString(), attendanceString);
@@ -197,28 +207,47 @@ public class JsonAdaptedModule {
         }
     }
 
-    public Attendance attendanceStringToAttendance (String attendanceString, Set<Week> weeks) {
-        Set<Week> sortedWeeks = new TreeSet<Week>(weeks);
-        Week largestWeek = Collections.max(sortedWeeks);
+    public Attendance attendanceStringToAttendance (String attendanceString, Set<Week> weeks) throws IllegalValueException {
+        Map<Week, Map<Student, Boolean>> attendance;
+        Week largestWeek = Collections.max(weeks);
 
         // Convert the set to an ordered arrayList of weeks,
         ArrayList<Week> arrayOfWeeks = new ArrayList<Week>();
-        arrayOfWeeks.addAll(sortedWeeks);
+        arrayOfWeeks.addAll(weeks);
 
         LinkedHashMap<Week, String> attendanceMap = new LinkedHashMap<Week, String>();
         for (int i = 0; i < arrayOfWeeks.size(); i++) {
             Week currentWeek = arrayOfWeeks.get(i);
             if (currentWeek != largestWeek) {
                 Week nextWeek = arrayOfWeeks.get(i+1);
-                int startIndex = attendanceString.indexOf(currentWeek + "=");
-                int endIndex = attendanceString.indexOf(nextWeek + "=");
-                String weeklyAttendanceString = attendanceString.substring(startIndex, endIndex);
-                System.out.println(weeks.toString() + ": " + weeklyAttendanceString);
+
+                // Use "1=" and "2=" as identifiers. Assumes "1=" will not appreay anywhere else in the studentString.
+                String studentAttendanceString = extractField(currentWeek.toString() + "=",
+                        nextWeek.toString() + "=", attendanceString);
+                Map<Student, Boolean> studentBooleanMap = studentAttendanceStringToMap(studentAttendanceString);
+
+
+
+
+
             }
         }
 
         // Stub
         return SampleDataUtil.getSampleTutorial().getAttendance();
+    }
+
+    public Map<Student, Boolean> studentAttendanceStringToMap(String studentAttendanceString) {
+        Map<Student, Boolean> studentBooleanMap = new LinkedHashMap<Student, Boolean>();
+        String[] students = studentAttendanceString.split("\\]\\,\\[");
+
+
+
+        for (String s : students) {
+            System.out.println(s.replace("]","").replace("[",""));
+
+        }
+        return studentBooleanMap;
     }
 
     /**
