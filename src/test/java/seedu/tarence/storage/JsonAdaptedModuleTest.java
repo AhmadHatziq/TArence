@@ -33,15 +33,15 @@ public class JsonAdaptedModuleTest {
     public static final LinkedHashMap<String, String> VALID_TUTORIAL_MAP = JsonUtil.getValidMapOfDifferentTutorials();
 
     @Test
-    public void isValidStudentString_studentStringWithoutNameField_returnsFalse (){
+    public void isValidStudentString_studentStringWithoutNameField_returnsFalse() {
         JsonAdaptedModule module = new JsonAdaptedModule(SampleDataUtil.getSampleModule());
-        assertEquals(false, module.isValidStudentString(INVALID_STUDENT_STRING_MISSING_STUDENT_NAME) );
+        assertEquals(false, module.isValidStudentString(INVALID_STUDENT_STRING_MISSING_STUDENT_NAME));
     }
 
     @Test
-    public void isValidStudentString_studentStringInWrongOrder_returnsFalse (){
+    public void isValidStudentString_studentStringInWrongOrder_returnsFalse() {
         JsonAdaptedModule module = new JsonAdaptedModule(SampleDataUtil.getSampleModule());
-        assertEquals(false, module.isValidStudentString(INVALID_STUDENT_STRING_WRONG_ORDER_OF_FIELDS) );
+        assertEquals(false, module.isValidStudentString(INVALID_STUDENT_STRING_WRONG_ORDER_OF_FIELDS));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class JsonAdaptedModuleTest {
     }
 
     @Test
-    public void toModelType_TutorialMapWithInvalidDuration_throwsIllegalValueExcepion() {
+    public void toModelType_tutorialMapWithInvalidDuration_throwsIllegalValueExcepion() {
         JsonAdaptedModule module = new JsonAdaptedModule(VALID_MODULE_CODE,
                 JsonUtil.getMapOfSingleTutorialWithInvalidTutorialDuration());
         String expectedMessage = "Tutorial's Duration field is invalid! Or Tutorial's LocalTime field is invalid!";
@@ -80,7 +80,7 @@ public class JsonAdaptedModuleTest {
     }
 
     @Test
-    public void toModelType_TutorialMapWithInvalidStartTime_throwsIllegalValueExcepion() {
+    public void toModelType_tutorialMapWithInvalidStartTime_throwsIllegalValueExcepion() {
         JsonAdaptedModule module = new JsonAdaptedModule(VALID_MODULE_CODE,
                 JsonUtil.getMapOfSingleTutorialWithInvalidTutorialStartTime());
         String expectedMessage = "Tutorial's Duration field is invalid! Or Tutorial's LocalTime field is invalid!";
@@ -88,7 +88,7 @@ public class JsonAdaptedModuleTest {
     }
 
     @Test
-    public void toModelType_TutorialMapWithInvalidWeeks_throwsIllegalValueExcepion() {
+    public void toModelType_tutorialMapWithInvalidWeeks_throwsIllegalValueExcepion() {
         JsonAdaptedModule module = new JsonAdaptedModule(VALID_MODULE_CODE,
                 JsonUtil.getMapOfSingleTutorialWithInvalidTutorialWeeks());
         String expectedMessage = "Error in reading field! Invalid week number(s) entered. "
@@ -97,7 +97,7 @@ public class JsonAdaptedModuleTest {
     }
 
     @Test
-    public void toModelType_TutorialMapWithInvalidModuleCode_throwsIllegalValueExcepion() {
+    public void toModelType_tutorialMapWithInvalidModuleCode_throwsIllegalValueExcepion() {
         JsonAdaptedModule module = new JsonAdaptedModule(VALID_MODULE_CODE,
                 JsonUtil.getMapOfSingleTutorialWithInvalidModuleCode());
         String expectedMessage = "Error in reading field! " + ModCode.MESSAGE_CONSTRAINTS;

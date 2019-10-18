@@ -160,7 +160,8 @@ public class JsonAdaptedModule {
 
         for (String tutorialName : mapOfDifferentTutorials.keySet()) {
             // Parses the tutorialString into a LinkedHashMap of the Tutorial's components.
-            LinkedHashMap<String, String> mapOfSingleTutorial = tutorialStringToMap(mapOfDifferentTutorials.get(tutorialName));
+            LinkedHashMap<String, String> mapOfSingleTutorial = tutorialStringToMap(
+                    mapOfDifferentTutorials.get(tutorialName));
 
             // Creates a Tutorial Object from the tutorialString
             Tutorial tutorialFromJson = tutorialMapToTutorial(mapOfSingleTutorial);
@@ -213,7 +214,19 @@ public class JsonAdaptedModule {
         }
     }
 
-    public Attendance attendanceStringToAttendance (String attendanceString, Set<Week> weeks) throws IllegalValueException {
+    /**
+     * Converts an attendanceString eg "[{studentName=Ellie Yee, studentEmail=e0035152@u.nus.edu.sg,
+     * studentMatricNumber=Optional[A0155413M], studentNusnetId=Optional[E0031550],
+     * studentModuleCode=CS1010S, studentTutorialName=Lab Session, studentAttendance=false}]"
+     * to a Student-Boolean pair and then an Attendance object.
+     *
+     * @param attendanceString See comments.
+     * @param weeks Set of Weeks.
+     * @return An attendance object.
+     * @throws IllegalValueException when there is an error during parsing.
+     */
+    public Attendance attendanceStringToAttendance (String attendanceString, Set<Week> weeks)
+            throws IllegalValueException {
         Map<Week, Map<Student, Boolean>> attendance = new TreeMap<>();
         Week largestWeek = Collections.max(weeks);
 
@@ -226,7 +239,7 @@ public class JsonAdaptedModule {
             Map<Student, Boolean> studentBooleanMap = new HashMap<Student, Boolean>();
 
             if (currentWeek != largestWeek) {
-                Week nextWeek = arrayOfWeeks.get(i+1);
+                Week nextWeek = arrayOfWeeks.get(i + 1);
                 String studentAttendanceString = extractField(currentWeek.toString() + "=",
                         nextWeek.toString() + "=", attendanceString);
                 studentBooleanMap = studentAttendanceStringToMap(studentAttendanceString);
@@ -250,7 +263,8 @@ public class JsonAdaptedModule {
      * @param studentAttendanceString A String representing students and their respective attendances for one week.
      * @return A Map of Student-Boolean, which will be used to construct the Attendance object.
      */
-    public Map<Student, Boolean> studentAttendanceStringToMap(String studentAttendanceString) throws IllegalValueException {
+    public Map<Student, Boolean> studentAttendanceStringToMap(String studentAttendanceString)
+            throws IllegalValueException {
         Map<Student, Boolean> studentBooleanMap = new LinkedHashMap<Student, Boolean>();
 
         // Splits all the studentStrings to each individual student.
@@ -266,13 +280,17 @@ public class JsonAdaptedModule {
                 // Creates a Student Object & retrieves the Boolean Attendance status
                 String studentNameString = extractField(STUDENT_NAME, STUDENT_EMAIL, stringForOneStudent);
                 String studentEmailString = extractField(STUDENT_EMAIL, STUDENT_MATRIC_NUMBER, stringForOneStudent);
-                String studentMatricNumberString = extractField(STUDENT_MATRIC_NUMBER, STUDENT_NUSNET_ID, stringForOneStudent);
-                String studentNusnetIdString = extractField(STUDENT_NUSNET_ID, STUDENT_MODULE_CODE, stringForOneStudent);
-                String studentModuleCodeString = extractField(STUDENT_MODULE_CODE, STUDENT_TUTORIAL_NAME, stringForOneStudent);
-                String studentTutorialNameString = extractField(STUDENT_TUTORIAL_NAME, STUDENT_ATTENDANCE_STATUS, stringForOneStudent);
-
+                String studentMatricNumberString = extractField(STUDENT_MATRIC_NUMBER, STUDENT_NUSNET_ID,
+                        stringForOneStudent);
+                String studentNusnetIdString = extractField(STUDENT_NUSNET_ID, STUDENT_MODULE_CODE,
+                        stringForOneStudent);
+                String studentModuleCodeString = extractField(STUDENT_MODULE_CODE, STUDENT_TUTORIAL_NAME,
+                        stringForOneStudent);
+                String studentTutorialNameString = extractField(STUDENT_TUTORIAL_NAME, STUDENT_ATTENDANCE_STATUS,
+                        stringForOneStudent);
                 Student studentFromAttendance = studentStringsToStudent(studentNameString, studentEmailString,
-                        studentMatricNumberString, studentNusnetIdString, studentModuleCodeString,studentTutorialNameString);
+                        studentMatricNumberString, studentNusnetIdString,
+                        studentModuleCodeString, studentTutorialNameString);
 
                 String studentAttendanceStatus = extractLastField(STUDENT_ATTENDANCE_STATUS, stringForOneStudent);
                 Boolean attendanceStatus = Boolean.parseBoolean(studentAttendanceStatus);
@@ -351,7 +369,7 @@ public class JsonAdaptedModule {
         String tutorialWeeks = extractField(TUTORIAL_WEEKS, TUTORIAL_DURATION, tutorialString);
         String tutorialDuration = extractField(TUTORIAL_DURATION, TUTORIAL_STUDENT_LIST, tutorialString);
         String tutorialStudentList = extractField(TUTORIAL_STUDENT_LIST, TUTORIAL_ATTENDANCE_LIST, tutorialString);
-        String tutorialAttendanceList = extractField(TUTORIAL_ATTENDANCE_LIST,TUTORIAL_MODULE_CODE, tutorialString);
+        String tutorialAttendanceList = extractField(TUTORIAL_ATTENDANCE_LIST, TUTORIAL_MODULE_CODE, tutorialString);
         String tutorialModuleCode = extractLastField(TUTORIAL_MODULE_CODE, tutorialString);
 
         // Places the extracted Strings into a HashMap

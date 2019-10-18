@@ -12,7 +12,6 @@ import java.util.TreeMap;
 import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.exceptions.StudentNotFoundException;
 import seedu.tarence.model.tutorial.exceptions.WeekNotFoundException;
-import seedu.tarence.model.util.SampleDataUtil;
 
 /**
  * Represents an Attendance for a Tutorial.
