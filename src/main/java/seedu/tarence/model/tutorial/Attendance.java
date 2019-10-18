@@ -12,6 +12,7 @@ import java.util.TreeMap;
 import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.exceptions.StudentNotFoundException;
 import seedu.tarence.model.tutorial.exceptions.WeekNotFoundException;
+import seedu.tarence.model.util.SampleDataUtil;
 
 /**
  * Represents an Attendance for a Tutorial.
@@ -32,6 +33,14 @@ public class Attendance {
                 attendance.get(week).put(student, false);
             }
         }
+    }
+
+    /**
+     * Constructor for creating an Attendance from Json string.
+     * @param attendance
+     */
+    public Attendance(Map<Week, Map<Student, Boolean>> attendance) {
+        this.attendance = attendance;
     }
 
     public Map<Week, Map<Student, Boolean>> getAttendance() {
@@ -56,6 +65,7 @@ public class Attendance {
      */
     public boolean isPresent(Week week, Student student) throws StudentNotFoundException, WeekNotFoundException {
         if (!this.getWeek(week).containsKey(student)) {
+
             throw new StudentNotFoundException();
         }
 

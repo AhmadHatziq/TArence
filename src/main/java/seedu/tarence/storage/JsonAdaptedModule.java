@@ -7,12 +7,13 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -32,7 +33,7 @@ import seedu.tarence.model.tutorial.Attendance;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
 import seedu.tarence.model.tutorial.Week;
-import seedu.tarence.model.util.SampleDataUtil;
+//import seedu.tarence.model.util.SampleDataUtil;
 
 /**
  * Jackson friendly version of a Module.
@@ -196,7 +197,12 @@ public class JsonAdaptedModule {
             LocalTime startTime = LocalTime.parse(tutorialMap.get(TUTORIAL_START_TIME), DateTimeFormatter.ISO_TIME);
             Attendance attendance = attendanceStringToAttendance(tutorialMap.get(TUTORIAL_ATTENDANCE_LIST), weeks);
 
-            return new Tutorial(tutorialName, day, startTime, weeks, duration, studentList, modCode);
+
+            Tutorial t = new Tutorial(tutorialName, day, startTime, weeks, duration, studentList, modCode, attendance);
+            //System.out.println(t.getAttendance().toString());
+
+
+            return t;
         } catch (ParseException | IllegalArgumentException e) {
             throw new IllegalValueException(MISSING_GENERIC_FIELD + e.getMessage());
         } catch (DateTimeParseException e) {
@@ -208,44 +214,70 @@ public class JsonAdaptedModule {
     }
 
     public Attendance attendanceStringToAttendance (String attendanceString, Set<Week> weeks) throws IllegalValueException {
-        Map<Week, Map<Student, Boolean>> attendance;
+        Map<Week, Map<Student, Boolean>> attendance = new TreeMap<>();
         Week largestWeek = Collections.max(weeks);
 
         // Convert the set to an ordered arrayList of weeks,
         ArrayList<Week> arrayOfWeeks = new ArrayList<Week>();
         arrayOfWeeks.addAll(weeks);
 
-        LinkedHashMap<Week, String> attendanceMap = new LinkedHashMap<Week, String>();
         for (int i = 0; i < arrayOfWeeks.size(); i++) {
             Week currentWeek = arrayOfWeeks.get(i);
+            Map<Student, Boolean> studentBooleanMap = new HashMap<Student, Boolean>();
+
             if (currentWeek != largestWeek) {
                 Week nextWeek = arrayOfWeeks.get(i+1);
-
-                // Use "1=" and "2=" as identifiers. Assumes "1=" will not appreay anywhere else in the studentString.
                 String studentAttendanceString = extractField(currentWeek.toString() + "=",
                         nextWeek.toString() + "=", attendanceString);
-                Map<Student, Boolean> studentBooleanMap = studentAttendanceStringToMap(studentAttendanceString);
-
-
-
-
-
+                studentBooleanMap = studentAttendanceStringToMap(studentAttendanceString);
+            } else if (currentWeek == largestWeek) {
+                String studentAttendanceString = extractLastField(currentWeek.toString() + "=",
+                        attendanceString);
+                studentBooleanMap = studentAttendanceStringToMap(studentAttendanceString);
             }
+            attendance.put(currentWeek, studentBooleanMap);
         }
 
+        return new Attendance(attendance);
+
         // Stub
-        return SampleDataUtil.getSampleTutorial().getAttendance();
+        // return SampleDataUtil.getSampleTutorial().getAttendance();
     }
 
-    public Map<Student, Boolean> studentAttendanceStringToMap(String studentAttendanceString) {
+    /**
+     * Used to parse a studentString with attendance field, to a Map of Student objects and Booleans.
+     *
+     * @param studentAttendanceString A String representing students and their respective attendances for one week.
+     * @return A Map of Student-Boolean, which will be used to construct the Attendance object.
+     */
+    public Map<Student, Boolean> studentAttendanceStringToMap(String studentAttendanceString) throws IllegalValueException {
         Map<Student, Boolean> studentBooleanMap = new LinkedHashMap<Student, Boolean>();
+
+        // Splits all the studentStrings to each individual student.
         String[] students = studentAttendanceString.split("\\]\\,\\[");
+        for (String stringForOneStudent : students) {
 
+            // Checks if the identifiers that represent a Student String is present
+            // No error is thrown as some tutorials can be empty and have an empty list of students.
+            if (isValidStudentString(stringForOneStudent)) {
+                // Removes all square brackets for each student string sequence.
+                stringForOneStudent = (stringForOneStudent.replace("]", "").replace("[", ""));
 
+                // Creates a Student Object & retrieves the Boolean Attendance status
+                String studentNameString = extractField(STUDENT_NAME, STUDENT_EMAIL, stringForOneStudent);
+                String studentEmailString = extractField(STUDENT_EMAIL, STUDENT_MATRIC_NUMBER, stringForOneStudent);
+                String studentMatricNumberString = extractField(STUDENT_MATRIC_NUMBER, STUDENT_NUSNET_ID, stringForOneStudent);
+                String studentNusnetIdString = extractField(STUDENT_NUSNET_ID, STUDENT_MODULE_CODE, stringForOneStudent);
+                String studentModuleCodeString = extractField(STUDENT_MODULE_CODE, STUDENT_TUTORIAL_NAME, stringForOneStudent);
+                String studentTutorialNameString = extractField(STUDENT_TUTORIAL_NAME, STUDENT_ATTENDANCE_STATUS, stringForOneStudent);
 
-        for (String s : students) {
-            System.out.println(s.replace("]","").replace("[",""));
+                Student studentFromAttendance = studentStringsToStudent(studentNameString, studentEmailString,
+                        studentMatricNumberString, studentNusnetIdString, studentModuleCodeString,studentTutorialNameString);
 
+                String studentAttendanceStatus = extractLastField(STUDENT_ATTENDANCE_STATUS, stringForOneStudent);
+                Boolean attendanceStatus = Boolean.parseBoolean(studentAttendanceStatus);
+                studentBooleanMap.put(studentFromAttendance, attendanceStatus);
+            }
         }
         return studentBooleanMap;
     }
