@@ -42,11 +42,7 @@ public abstract class Command {
      * @param tutName The target tutorial that must be present in the suggested modules.
      * @param model The model in which to search.
      * @return a list of modcodes fulfilling the above criteria.
-<<<<<<< HEAD
      * @throws CommandException
-=======
-     * @throws CommandException if no similar modules are found.
->>>>>>> a568e68f7bd163d3a156e02bfd675099e215afad
      */
     List<ModCode> getSimilarModCodesWithTutorial (ModCode modCode, TutName tutName, Model model)
             throws CommandException {
@@ -63,37 +59,12 @@ public abstract class Command {
      * @param tutName The incorrectly entered tutorial name from the user.
      * @param model The model in which to search.
      * @return a list of tutnames fulfilling the above criteria.
-<<<<<<< HEAD
      * @throws CommandException
-=======
-     * @throws CommandException if no similar tutorial names are found.
->>>>>>> a568e68f7bd163d3a156e02bfd675099e215afad
      */
     List<TutName> getSimilarTutNamesWithModule (ModCode modCode, TutName tutName, Model model)
             throws CommandException {
         return new Finder(model).findSimilarTutNames(tutName)
                 .stream().filter(similarTutName -> model.hasTutorialInModule(modCode, similarTutName))
                 .collect(Collectors.toList());
-<<<<<<< HEAD
-=======
-    }
-
-    /**
-     * Returns a list of {@code Name}s similar to the given one, and corresponding to a student in a tutorial/module
-     * combination. Used for generating suggested corrections to student name input errors by the user.
-     * @param modCode The target module the suggested student must be in.
-     * @param tutName The target tutorial the suggested student must be in.
-     * @param studName The incorrectly entered student name from the user.
-     * @param model The model in which to search.
-     * @return a list of similar student names fulfilling the above criteria.
-     * @throws CommandException if no similar students are found.
-     */
-    List<Name> getSimilarStudNamesWithTutorialAndModule (ModCode modCode, TutName tutName, Name studName, Model model)
-            throws CommandException {
-        return new Finder(model).findSimilarNames(studName)
-                .stream()
-                .filter(similarStudName -> model.hasStudentInTutorialAndModule(similarStudName, tutName, modCode))
-                .collect(Collectors.toList());
->>>>>>> a568e68f7bd163d3a156e02bfd675099e215afad
     }
 }
