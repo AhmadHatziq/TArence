@@ -10,6 +10,8 @@ import seedu.tarence.logic.commands.exceptions.CommandException;
 import seedu.tarence.model.Model;
 import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.module.Module;
+import seedu.tarence.model.person.Name;
+import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
 
@@ -26,6 +28,7 @@ public class Finder {
     // thresholds for similarity differ between parameters due to their varying expected lengths
     private int thresholdModCode = 80;
     private int thresholdTutName = 70;
+    private int thresholdStudentName = 80;
 
     public Finder(Model model) {
         this.model = model;

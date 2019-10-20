@@ -16,6 +16,7 @@ import seedu.tarence.logic.commands.Command;
 import seedu.tarence.logic.parser.PartialInput;
 import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.module.Module;
+import seedu.tarence.model.person.Name;
 import seedu.tarence.model.person.NameContainsKeywordsPredicate;
 import seedu.tarence.model.person.Person;
 import seedu.tarence.model.student.Student;
@@ -158,6 +159,12 @@ public class ModelManager implements Model {
         requireNonNull(student);
         application.addStudentToTutorial(student);
         updateFilteredModuleList(PREDICATE_SHOW_ALL_MODULES);
+    }
+
+    @Override
+    public boolean hasStudentInTutorialAndModule(Name studName, TutName tutName, ModCode modCode) {
+        requireAllNonNull(studName, tutName, modCode);
+        return application.hasStudentInTutorialAndModule(studName, tutName, modCode);
     }
 
     //=========== T.A.rence: Module methods ============================================================================
