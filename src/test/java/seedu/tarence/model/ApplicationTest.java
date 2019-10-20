@@ -19,17 +19,17 @@ import org.junit.jupiter.api.Test;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import seedu.tarence.model.builder.ModuleBuilder;
+import seedu.tarence.model.builder.PersonBuilder;
+import seedu.tarence.model.builder.StudentBuilder;
+import seedu.tarence.model.builder.TutorialBuilder;
 import seedu.tarence.model.module.Module;
 import seedu.tarence.model.module.exceptions.DuplicateModuleException;
 import seedu.tarence.model.person.Person;
 import seedu.tarence.model.person.exceptions.DuplicatePersonException;
 import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.Tutorial;
-import seedu.tarence.model.tutorial.exeptions.DuplicateTutorialException;
-import seedu.tarence.testutil.ModuleBuilder;
-import seedu.tarence.testutil.PersonBuilder;
-import seedu.tarence.testutil.StudentBuilder;
-import seedu.tarence.testutil.TutorialBuilder;
+import seedu.tarence.model.tutorial.exceptions.DuplicateTutorialException;
 
 public class ApplicationTest {
 
@@ -207,7 +207,7 @@ public class ApplicationTest {
      */
     private static class ApplicationStub implements ReadOnlyApplication {
         private final ObservableList<Person> persons = FXCollections.observableArrayList();
-        private final ObservableList<Person> students = FXCollections.observableArrayList();
+        private final ObservableList<Student> students = FXCollections.observableArrayList();
         private final ObservableList<Module> modules = FXCollections.observableArrayList();
         private final ObservableList<Tutorial> tutorials = FXCollections.observableArrayList();
 
@@ -215,7 +215,7 @@ public class ApplicationTest {
             this.persons.setAll(persons);
         }
 
-        public void setStudents(Collection<Person> students) {
+        public void setStudents(Collection<Student> students) {
             this.students.setAll(students);
         }
 
@@ -232,7 +232,7 @@ public class ApplicationTest {
             return persons;
         }
         @Override
-        public ObservableList<Person> getStudentList() {
+        public ObservableList<Student> getStudentList() {
             return students;
         }
         @Override

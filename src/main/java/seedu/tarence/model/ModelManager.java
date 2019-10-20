@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static seedu.tarence.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
@@ -11,12 +12,17 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import seedu.tarence.commons.core.GuiSettings;
 import seedu.tarence.commons.core.LogsCenter;
+import seedu.tarence.logic.commands.Command;
+import seedu.tarence.logic.parser.PartialInput;
 import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.module.Module;
+import seedu.tarence.model.person.Name;
+import seedu.tarence.model.person.NameContainsKeywordsPredicate;
 import seedu.tarence.model.person.Person;
 import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
+import seedu.tarence.model.tutorial.Week;
 
 /**
  * Represents the in-memory model of the application data.
@@ -27,7 +33,7 @@ public class ModelManager implements Model {
     private final Application application;
     private final UserPrefs userPrefs;
     private final FilteredList<Person> filteredPersons;
-    private final FilteredList<Person> filteredStudents;
+    private final FilteredList<Student> filteredStudents;
     private final FilteredList<Module> filteredModules;
     private final FilteredList<Tutorial> filteredTutorials;
 
@@ -133,7 +139,19 @@ public class ModelManager implements Model {
     @Override
     public void addStudent(Student student) {
         application.addStudent(student);
-        updateFilteredStudentList(PREDICATE_SHOW_ALL_PERSONS);
+        updateFilteredStudentList(PREDICATE_SHOW_ALL_STUDENTS);
+
+    }
+
+    @Override
+    public void setStudent(Student target, Student editedStudent) {
+        requireAllNonNull(target, editedStudent);
+        application.setStudent(target, editedStudent);
+    }
+
+    @Override
+    public void deleteStudent(Student student) {
+        application.removeStudent(student);
     }
 
     @Override
@@ -141,6 +159,12 @@ public class ModelManager implements Model {
         requireNonNull(student);
         application.addStudentToTutorial(student);
         updateFilteredModuleList(PREDICATE_SHOW_ALL_MODULES);
+    }
+
+    @Override
+    public boolean hasStudentInTutorialAndModule(Name studName, TutName tutName, ModCode modCode) {
+        requireAllNonNull(studName, tutName, modCode);
+        return application.hasStudentInTutorialAndModule(studName, tutName, modCode);
     }
 
     //=========== T.A.rence: Module methods ============================================================================
@@ -162,6 +186,12 @@ public class ModelManager implements Model {
     public void deleteModule(Module module) {
         requireNonNull(module);
         application.removeModule(module);
+    }
+
+    @Override
+    public void deleteTutorialsFromModule(Module module) {
+        requireNonNull(module);
+        application.removeTutorialsFromModule(module);
     }
 
     @Override
@@ -209,6 +239,17 @@ public class ModelManager implements Model {
         application.removeTutorial(tutorial);
     }
 
+    @Override
+    public void setAttendance(Tutorial tutorial, Week week, Student student) {
+        requireAllNonNull(tutorial, week, student);
+        application.setAttendance(tutorial, week, student);
+    }
+
+    @Override
+    public void deleteStudentsFromTutorial(Tutorial tutorial) {
+        requireNonNull(tutorial);
+        application.removeStudentsFromTutorial(tutorial);
+    }
     //=========== Filtered Person List Accessors =============================================================
 
     /**
@@ -225,7 +266,7 @@ public class ModelManager implements Model {
      * the internal list of {@code versionedApplication}
      */
     @Override
-    public ObservableList<Person> getFilteredStudentList() {
+    public ObservableList<Student> getFilteredStudentList() {
         return filteredStudents;
     }
 
@@ -254,7 +295,14 @@ public class ModelManager implements Model {
     }
 
     @Override
-    public void updateFilteredStudentList(Predicate<Person> predicate) {
+    public void updateFilteredStudentList(Predicate<Student> predicate) {
+        requireNonNull(predicate);
+        filteredStudents.setPredicate(predicate);
+    }
+
+    @Override
+    public void updateFilteredStudentList(NameContainsKeywordsPredicate predicate) {
+
         requireNonNull(predicate);
         filteredStudents.setPredicate(predicate);
     }
@@ -269,6 +317,84 @@ public class ModelManager implements Model {
     public void updateFilteredTutorialList(Predicate<Tutorial> predicate) {
         requireNonNull(predicate);
         filteredTutorials.setPredicate(predicate);
+    }
+
+    @Override
+    public void storePendingCommand(Command command) {
+        requireNonNull(command);
+        application.storePendingCommand(command);
+    }
+
+    @Override
+    public Command getPendingCommand() {
+        return application.retrievePendingCommand();
+    }
+
+    @Override
+    public boolean hasPendingCommand() {
+        return application.hasPendingCommand();
+    }
+
+    @Override
+    public Command peekPendingCommand() {
+        return application.peekPendingCommand();
+    }
+
+    @Override
+    public void storeSuggestedCommands(List<Command> suggestedCommands,
+                                       String suggestedCorrections) {
+        requireAllNonNull(suggestedCommands, suggestedCorrections);
+        application.storeSuggestedCommands(suggestedCommands, suggestedCorrections);
+    }
+
+    @Override
+    public List<Command> getSuggestedCommands() {
+        return application.getSuggestedCommands();
+    }
+
+    @Override
+    public String getSuggestedCorrections() {
+        return application.getSuggestedCorrections();
+    }
+
+    @Override
+    public void deleteSuggestedCommands() {
+        application.deleteSuggestedCommands();
+    }
+
+    @Override
+    public void storeSuggestedCompletions(PartialInput suggestedCompletions) {
+        application.storeSuggestedCompletions(suggestedCompletions);
+    }
+
+    @Override
+    public PartialInput getSuggestedCompletions() {
+        return application.getSuggestedCompletions();
+    }
+
+    @Override
+    public void deleteSuggestedCompletions() {
+        application.deleteSuggestedCompletions();
+    }
+
+    @Override
+    public boolean hasSuggestedCompletions() {
+        return application.hasSuggestionCompletions();
+    }
+
+    @Override
+    public void setInputChangedToTrue() {
+        application.setInputChangedToTrue();
+    }
+
+    @Override
+    public void setInputChangedToFalse() {
+        application.setInputChangedToFalse();
+    }
+
+    @Override
+    public boolean hasInputChanged() {
+        return application.hasInputChanged();
     }
 
     @Override

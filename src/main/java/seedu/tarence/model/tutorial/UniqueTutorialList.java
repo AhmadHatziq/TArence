@@ -9,8 +9,8 @@ import java.util.Optional;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import seedu.tarence.model.tutorial.exeptions.DuplicateTutorialException;
-import seedu.tarence.model.tutorial.exeptions.TutorialNotFoundException;
+import seedu.tarence.model.tutorial.exceptions.DuplicateTutorialException;
+import seedu.tarence.model.tutorial.exceptions.TutorialNotFoundException;
 
 /**
  * Represents a list of Tutorials.
@@ -27,6 +27,14 @@ public class UniqueTutorialList implements Iterable<Tutorial> {
     public boolean contains(Tutorial toCheck) {
         requireNonNull(toCheck);
         return internalList.stream().anyMatch(toCheck::isSameTutorial);
+    }
+
+    /**
+     * Returns true if the list contains an equivalent tutorial with the given argument.
+     */
+    public boolean containsTutName(TutName tutName) {
+        requireNonNull(tutName);
+        return internalList.stream().anyMatch(tutorial -> tutorial.getTutName().equals(tutName));
     }
 
     /**

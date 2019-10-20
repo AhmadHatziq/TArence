@@ -26,10 +26,9 @@
         </Label>
         <Label fx:id="name" text="\$first" styleClass="cell_big_label" />
       </HBox>
-      <Label fx:id="time" styleClass="cell_small_label" text="\$time" />
       <Label fx:id="day" styleClass="cell_small_label" text="\$day" />
-      <Label fx:id="duration" styleClass="cell_small_label" text="\$duration" />
       <Label fx:id="weeks" styleClass="cell_small_label" text="\$weeks" />
+      <Label fx:id="module" styleClass="module_label" text="\$module" />
     </VBox>
   </GridPane>
 </HBox>

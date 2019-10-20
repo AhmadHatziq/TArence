@@ -21,6 +21,7 @@ public class Student extends Person {
     protected Optional<MatricNum> matricNum;
     protected Optional<NusnetId> nusnetId;
 
+    // TODO: Assumes student can only belong to one module and tutorial?
     protected ModCode modCode;
     protected TutName tutName;
 
@@ -71,7 +72,7 @@ public class Student extends Person {
     }
 
     /**
-     * Returns true if both students have the same identity and data fields.
+     * Returns true if both students have the same identity or data fields.
      * This defines a stronger notion of equality between two students.
      */
     @Override
@@ -88,7 +89,9 @@ public class Student extends Person {
         return otherStudent.getName().equals(getName())
                 && otherStudent.getEmail().equals(getEmail())
                 && otherStudent.getMatricNum().equals(getMatricNum())
-                && otherStudent.getNusnetId().equals(getNusnetId());
+                && otherStudent.getNusnetId().equals(getNusnetId())
+                && otherStudent.getTutName().equals(getTutName())
+                && otherStudent.getModCode().equals(getModCode());
     }
 
     @Override

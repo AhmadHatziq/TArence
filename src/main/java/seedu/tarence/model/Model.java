@@ -1,16 +1,22 @@
 package seedu.tarence.model;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
 import seedu.tarence.commons.core.GuiSettings;
+import seedu.tarence.logic.commands.Command;
+import seedu.tarence.logic.parser.PartialInput;
 import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.module.Module;
+import seedu.tarence.model.person.Name;
+import seedu.tarence.model.person.NameContainsKeywordsPredicate;
 import seedu.tarence.model.person.Person;
 import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
+import seedu.tarence.model.tutorial.Week;
 
 /**
  * The API of the Model component.
@@ -18,6 +24,9 @@ import seedu.tarence.model.tutorial.Tutorial;
 public interface Model {
     /** {@code Predicate} that always evaluate to true */
     Predicate<Person> PREDICATE_SHOW_ALL_PERSONS = unused -> true;
+
+    /** {@code Predicate} that always evaluate to true */
+    Predicate<Student> PREDICATE_SHOW_ALL_STUDENTS = unused -> true;
 
     /** {@code Predicate} that always evaluate to true */
     Predicate<Module> PREDICATE_SHOW_ALL_MODULES = unused -> true;
@@ -90,6 +99,20 @@ public interface Model {
      */
     boolean hasStudent(Student student);
 
+    /**
+     * Removes the student from the studentList
+     * {@code student} must already exist in the application.
+     */
+    void deleteStudent(Student student);
+
+
+    /**
+     * Replaces the given student {@code target} with {@code editedStudent}.
+     * {@code target} must exist in the application.
+     * The student identity of {@code editedStudent} must not be the same as another
+     * existing student in the application.
+     */
+    void setStudent(Student target, Student editedStudent);
 
     /**
      * Adds the given student.
@@ -97,11 +120,16 @@ public interface Model {
      */
     void addStudent(Student student);
 
+    /**
+     * Checks if the combination of a given student name, tutorial name, and module code exists in the model.
+     */
+    public boolean hasStudentInTutorialAndModule(Name studName, TutName tutName, ModCode modCode);
+
     /** Returns an unmodifiable view of the filtered person list */
     ObservableList<Person> getFilteredPersonList();
 
     /** Returns an unmodifiable view of the filtered student list */
-    ObservableList<Person> getFilteredStudentList();
+    ObservableList<Student> getFilteredStudentList();
 
     /** Returns an unmodifiable view of the filtered module list */
     ObservableList<Module> getFilteredModuleList();
@@ -119,7 +147,13 @@ public interface Model {
      * Updates the filter of the filtered student list to filter by the given {@code predicate}.
      * @throws NullPointerException if {@code predicate} is null.
      */
-    void updateFilteredStudentList(Predicate<Person> predicate);
+    void updateFilteredStudentList(Predicate<Student> predicate);
+
+    /**
+     * Updates the filter of the filtered student list to filter by the given NameContainsKeywordsPredicate
+     * Special case only used for find command
+     */
+    void updateFilteredStudentList(NameContainsKeywordsPredicate predicate);
 
     /**
      * Updates the filter of the filtered module list to filter by the given {@code predicate}.
@@ -155,11 +189,15 @@ public interface Model {
      */
     void deleteModule(Module module);
 
+    void deleteTutorialsFromModule(Module module);
+
     boolean hasTutorial(Tutorial tutorial);
 
     void addTutorial(Tutorial tutorial);
 
     void deleteTutorial(Tutorial tutorial);
+
+    void deleteStudentsFromTutorial(Tutorial tutorial);
 
     void addTutorialToModule(Tutorial tutorial);
 
@@ -174,4 +212,79 @@ public interface Model {
      * Checks if there are multiple tutorials of the same name in the application.
      */
     int getNumberOfTutorialsOfName(TutName tutName);
+
+    /**
+     * Sets attendance of a student of a tutorial in the application.
+     */
+    public void setAttendance(Tutorial tutorial,
+            Week week, Student student);
+
+    /**
+     * Stores a command to be executed pending user confirmation.
+     */
+    void storePendingCommand(Command command);
+
+    /**
+     * Removes pending command and returns it for execution if it exists, else null.
+     */
+    Command getPendingCommand();
+
+    /**
+     * Checks if a pending command exists in the application.
+     */
+    boolean hasPendingCommand();
+
+    /**
+     * Returns the pending command at the top of the execution stack if it exists, else null.
+     */
+    Command peekPendingCommand();
+
+    /**
+     * Stores a list of suggested commands for future selection and execution.
+     */
+    void storeSuggestedCommands(List<Command> suggestedCommands, String suggestedCorrections);
+
+    /**
+     * Gets the stored list of suggested commands for selection and execution.
+     */
+    List<Command> getSuggestedCommands();
+
+    /**
+     * Gets the string representing the corrections in the suggested commands.
+     */
+    String getSuggestedCorrections();
+
+    /**
+     * Deletes the stored list of suggested commands.
+     */
+    void deleteSuggestedCommands();
+
+    /**
+     * Stores a list of suggested completions for the current partial input.
+     */
+    void storeSuggestedCompletions(PartialInput suggestedCompletions);
+
+    /**
+     * Gets the list of suggested completions for the current partial input.
+     */
+    PartialInput getSuggestedCompletions();
+
+    /**
+     * Deletes the stored list of suggested completions.
+     */
+    void deleteSuggestedCompletions();
+
+    /**
+     * Returns whether there are suggested completions currently stored in the application.
+     */
+    boolean hasSuggestedCompletions();
+
+    void setInputChangedToTrue();
+
+    void setInputChangedToFalse();
+
+    /**
+     * Checks whether the user's input has changed.
+     */
+    boolean hasInputChanged();
 }

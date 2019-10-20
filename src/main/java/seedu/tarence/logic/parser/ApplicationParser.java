@@ -10,15 +10,22 @@ import seedu.tarence.logic.commands.AddModuleCommand;
 import seedu.tarence.logic.commands.AddStudentCommand;
 import seedu.tarence.logic.commands.AddTutorialCommand;
 import seedu.tarence.logic.commands.Command;
+import seedu.tarence.logic.commands.ConfirmNoCommand;
+import seedu.tarence.logic.commands.ConfirmYesCommand;
 import seedu.tarence.logic.commands.DeleteModuleCommand;
 import seedu.tarence.logic.commands.DeleteStudentCommand;
 import seedu.tarence.logic.commands.DeleteTutorialCommand;
+import seedu.tarence.logic.commands.DisplayAttendanceCommand;
 import seedu.tarence.logic.commands.EditCommand;
 import seedu.tarence.logic.commands.ExitCommand;
+import seedu.tarence.logic.commands.ExportAttendanceCommand;
 import seedu.tarence.logic.commands.FindCommand;
 import seedu.tarence.logic.commands.HelpCommand;
 import seedu.tarence.logic.commands.ListCommand;
+import seedu.tarence.logic.commands.MarkAttendanceCommand;
+import seedu.tarence.logic.commands.SelectSuggestionCommand;
 import seedu.tarence.logic.parser.exceptions.ParseException;
+import seedu.tarence.model.Model;
 
 /**
  * Parses user input.
@@ -59,7 +66,7 @@ public class ApplicationParser {
         } else if (FindCommand.isMatchingCommandWord(commandWord)) {
             return new FindCommandParser().parse(arguments);
         } else if (ListCommand.isMatchingCommandWord(commandWord)) {
-            return new ListCommand();
+            return new ListCommandParser().parse(arguments);
         } else if (ExitCommand.isMatchingCommandWord(commandWord)) {
             return new ExitCommand();
         } else if (HelpCommand.isMatchingCommandWord(commandWord)) {
@@ -68,10 +75,26 @@ public class ApplicationParser {
             return new AddModuleCommandParser().parse(arguments);
         } else if (AddTutorialCommand.isMatchingCommandWord(commandWord)) {
             return new AddTutorialCommandParser().parse(arguments);
+        } else if (MarkAttendanceCommand.isMatchingCommandWord(commandWord)) {
+            return new MarkAttendanceCommandParser().parse(arguments);
+        } else if (ConfirmNoCommand.isMatchingCommandWord(commandWord)) {
+            return new ConfirmNoCommand();
+        } else if (ConfirmYesCommand.isMatchingCommandWord(commandWord)) {
+            return new ConfirmYesCommand();
+        } else if (SelectSuggestionCommand.isMatchingCommandWord(commandWord)) {
+            return new SelectSuggestionCommandParser().parse(commandWord);
+        } else if (ExportAttendanceCommand.isMatchingCommandWord(commandWord)) {
+            return new ExportAttendanceCommandParser().parse(arguments);
+        } else if (DisplayAttendanceCommand.isMatchingCommandWord(commandWord)) {
+            return new DisplayAttendanceCommandParser().parse(arguments);
         } else {
             throw new ParseException(MESSAGE_UNKNOWN_COMMAND);
         }
 
+    }
+
+    public PartialInput parsePartialInput(String partialInput, Model model) throws ParseException {
+        return PartialInputParser.parse(partialInput, model);
     }
 
 }

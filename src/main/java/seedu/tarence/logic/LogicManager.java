@@ -2,6 +2,7 @@ package seedu.tarence.logic;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
@@ -16,6 +17,7 @@ import seedu.tarence.model.Model;
 import seedu.tarence.model.ReadOnlyApplication;
 import seedu.tarence.model.module.Module;
 import seedu.tarence.model.person.Person;
+import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.Tutorial;
 import seedu.tarence.storage.Storage;
 
@@ -41,16 +43,71 @@ public class LogicManager implements Logic {
         logger.info("----------------[USER COMMAND][" + commandText + "]");
 
         CommandResult commandResult;
-        Command command = applicationParser.parseCommand(commandText);
-        commandResult = command.execute(model);
+        Command command;
+        Optional<Tutorial> tutorialToStore = Optional.empty();
 
-        try {
-            storage.saveApplication(model.getApplication());
-        } catch (IOException ioe) {
-            throw new CommandException(FILE_OPS_ERROR_MESSAGE + ioe, ioe);
+        // processes multiple commands in user input if they exit
+        String[] commandStrings = commandText.split("&");
+        // pushes commands from back to front on top of the pending commands stack
+        for (int i = commandStrings.length - 1; i >= 0; i--) {
+            Command tempCommand = applicationParser.parseCommand(commandStrings[i]);
+            model.storePendingCommand(tempCommand);
+        }
+
+        StringBuffer combinedFeedback = new StringBuffer();
+        // clears log of pending commands until it meets a command that requires further user input
+        while (model.hasPendingCommand() && !model.peekPendingCommand().needsInput()) {
+            command = model.getPendingCommand(); // first user-inputted command
+            System.out.println(model.peekPendingCommand());
+
+            // if next command requires user input, checks if current command is relevant
+            if (model.hasPendingCommand()
+                    && model.peekPendingCommand().needsInput()
+                    && !model.peekPendingCommand().needsCommand(command)) {
+                model.getPendingCommand(); // clear any pending commands if user has entered a different command
+            }
+
+            CommandResult currCommandResult = command.execute(model);
+
+            // concatenate all results into a single result
+            combinedFeedback.append(currCommandResult.getFeedbackToUser() + "\n");
+
+            // check for exit/help condition
+            if (currCommandResult.isExit() || currCommandResult.isShowHelp()) {
+                // this means that previous commands won't be shown if help is inside pending commands
+                return currCommandResult;
+            }
+
+            try {
+                storage.saveApplication(model.getApplication());
+            } catch (IOException ioe) {
+                throw new CommandException(FILE_OPS_ERROR_MESSAGE + ioe, ioe);
+            }
+
+            // If attendance is to be displayed, it will be passed into the commandResult
+            if (currCommandResult.isShowAttendance()) {
+                tutorialToStore = Optional.of(currCommandResult.getTutorialAttendance());
+            }
+        }
+
+        // creates a new command concatenating all command result messages into a single result
+        if (tutorialToStore.isPresent()) {
+            commandResult = new CommandResult(combinedFeedback.toString(), tutorialToStore.get());
+        } else {
+            commandResult = new CommandResult(combinedFeedback.toString());
         }
 
         return commandResult;
+    }
+
+    @Override
+    public String autocomplete(String partialInput) throws ParseException {
+        return new AutocompleteHandler(model).handle(partialInput);
+    }
+
+    @Override
+    public void markInputChanged() {
+        model.setInputChangedToTrue();
     }
 
     @Override
@@ -64,7 +121,7 @@ public class LogicManager implements Logic {
     }
 
     @Override
-    public ObservableList<Person> getFilteredStudentList() {
+    public ObservableList<Student> getFilteredStudentList() {
         return model.getFilteredStudentList();
     }
 

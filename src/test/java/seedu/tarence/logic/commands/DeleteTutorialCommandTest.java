@@ -1,23 +1,26 @@
 package seedu.tarence.logic.commands;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.tarence.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.tarence.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.tarence.testutil.TypicalIndexes.INDEX_FIRST_IN_LIST;
-import static seedu.tarence.testutil.TypicalIndexes.INDEX_SECOND_IN_LIST;
 import static seedu.tarence.testutil.TypicalPersons.getTypicalApplication;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.tarence.commons.core.Messages;
 import seedu.tarence.commons.core.index.Index;
+import seedu.tarence.logic.commands.exceptions.CommandException;
 import seedu.tarence.model.Model;
 import seedu.tarence.model.ModelManager;
 import seedu.tarence.model.UserPrefs;
+import seedu.tarence.model.builder.ModuleBuilder;
+import seedu.tarence.model.builder.TutorialBuilder;
+import seedu.tarence.model.module.ModCode;
+import seedu.tarence.model.module.Module;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
-import seedu.tarence.testutil.TutorialBuilder;
 
 /**
  * Contains integration tests (interaction with the Model, UndoCommand and RedoCommand) and unit tests for
@@ -27,11 +30,13 @@ public class DeleteTutorialCommandTest {
 
     public static final String VALID_MODCODE = "GET1029";
     public static final String VALID_MODCODE_ALT = "CS2040";
+    public static final String SIMILAR_MODCODE = "GET1028";
     public static final String VALID_TUTNAME = "WhyIsThisClassAt8am";
     private Model model = new ModelManager(getTypicalApplication(), new UserPrefs());
 
     @Test
-    public void execute_validIndexUnfilteredList_success() {
+    public void execute_validTutorialIndex_success() {
+        TutorialBuilder.DEFAULT_STUDENTS.clear();
         Tutorial tutorialToDelete = new TutorialBuilder().withModCode(VALID_MODCODE).withTutName(VALID_TUTNAME).build();
         model.addTutorial(tutorialToDelete);
         DeleteTutorialCommand deleteTutorialCommand = new DeleteTutorialCommand(INDEX_FIRST_IN_LIST);
@@ -45,43 +50,54 @@ public class DeleteTutorialCommandTest {
     }
 
     @Test
-    public void execute_invalidIndexUnfilteredList_throwsCommandException() {
+    public void execute_invalidTutorialIndex_throwsCommandException() {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredTutorialList().size() + 1);
         DeleteTutorialCommand deleteTutorialCommand = new DeleteTutorialCommand(outOfBoundIndex);
 
         assertCommandFailure(deleteTutorialCommand, model, Messages.MESSAGE_INVALID_TUTORIAL_DISPLAYED_INDEX);
     }
 
-    /* todo: implement later?
     @Test
-    public void execute_validIndexFilteredList_success() {
-        showPersonAtIndex(model, INDEX_FIRST_IN_LIST);
+    public void execute_similarTutorialModuleSuggested_promptSuggestionSelection() throws CommandException {
+        ModuleBuilder.DEFAULT_TUTORIALS.clear();
+        Module similarModule = new ModuleBuilder().withModCode(SIMILAR_MODCODE).build();
+        Tutorial validTutorial = new TutorialBuilder().withModCode(SIMILAR_MODCODE).withTutName(VALID_TUTNAME).build();
+        similarModule.addTutorial(validTutorial);
+        model.addModule(similarModule);
 
-        Person personToDelete = model.getFilteredPersonList().get(INDEX_FIRST_IN_LIST.getZeroBased());
-        DeleteStudentCommand deleteStudentCommand = new DeleteStudentCommand(INDEX_FIRST_IN_LIST);
+        String expectedMessage = String.format(Messages.MESSAGE_SUGGESTED_CORRECTIONS, "Tutorial", VALID_MODCODE
+                + " " + VALID_TUTNAME) + "1. " + SIMILAR_MODCODE + ", " + VALID_TUTNAME + "\n";
 
-        String expectedMessage = String.format(DeleteStudentCommand.MESSAGE_DELETE_PERSON_SUCCESS, personToDelete);
-
-        Model expectedModel = new ModelManager(model.getApplication(), new UserPrefs());
-        expectedModel.deletePerson(personToDelete);
-        showNoPerson(expectedModel);
-
-        assertCommandSuccess(deleteStudentCommand, model, expectedMessage, expectedModel);
+        CommandResult commandResult = new DeleteTutorialCommand(new ModCode(VALID_MODCODE),
+                new TutName(VALID_TUTNAME)).execute(model);
+        assertEquals(expectedMessage, commandResult.getFeedbackToUser());
     }
 
+    /* TODO: implement later?
     @Test
-    public void execute_invalidIndexFilteredList_throwsCommandException() {
-        showPersonAtIndex(model, INDEX_FIRST_IN_LIST);
+    public void execute_moduleWithTutorials_delayed() {
+        ModuleBuilder.DEFAULT_TUTORIALS.clear();
+        TutorialBuilder.DEFAULT_STUDENTS.clear();
+        Module module = new ModuleBuilder().withModCode(VALID_MODCODE).build();
+        Tutorial tutorialToDelete = new TutorialBuilder().withModCode(VALID_MODCODE).build();
+        Student student = new StudentBuilder().withModCode(VALID_MODCODE)
+                .withTutName(tutorialToDelete.getTutName().tutName).build();
+        module.addTutorial(tutorialToDelete);
+        tutorialToDelete.addStudent(student);
+        model.addModule(module);
+        model.addTutorial(tutorialToDelete);
 
-        Index outOfBoundIndex = INDEX_SECOND_PERSON;
-        // ensures that outOfBoundIndex is still in bounds of class list
-        assertTrue(outOfBoundIndex.getZeroBased() < model.getApplication().getPersonList().size());
+        DeleteTutorialCommand deleteTutorialCommand = new DeleteTutorialCommand(INDEX_FIRST_IN_LIST);
 
-        DeleteStudentCommand deleteStudentCommand = new DeleteStudentCommand(outOfBoundIndex);
+        String expectedMessage = String.format(DeleteTutorialCommand.MESSAGE_CONFIRM_DELETE_NONEMPTY_TUTORIAL,
+                tutorialToDelete,
+                tutorialToDelete.getStudents().size());
 
-        assertCommandFailure(deleteStudentCommand, model, Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+        ModelManager expectedModel = new ModelManager(model.getApplication(), new UserPrefs());
+        expectedModel.storePendingCommand(deleteTutorialCommand);
+
+        assertCommandDelayed(deleteTutorialCommand, model, expectedMessage, expectedModel);
     }
-    */
 
     @Test
     public void execute_multipleTutorialsOfSameName_throwsCommandException() {

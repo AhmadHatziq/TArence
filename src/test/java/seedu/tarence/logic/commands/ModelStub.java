@@ -1,19 +1,25 @@
 package seedu.tarence.logic.commands;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
 import seedu.tarence.commons.core.GuiSettings;
+import seedu.tarence.logic.parser.PartialInput;
 import seedu.tarence.model.Model;
 import seedu.tarence.model.ReadOnlyApplication;
 import seedu.tarence.model.ReadOnlyUserPrefs;
 import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.module.Module;
+import seedu.tarence.model.person.Name;
+import seedu.tarence.model.person.NameContainsKeywordsPredicate;
 import seedu.tarence.model.person.Person;
 import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
+import seedu.tarence.model.tutorial.Week;
 
 /**
  * A default model stub that has all of the methods failing.
@@ -85,7 +91,7 @@ class ModelStub implements Model {
     }
 
     @Override
-    public ObservableList<Person> getFilteredStudentList() {
+    public ObservableList<Student> getFilteredStudentList() {
         throw new AssertionError("This method should not be called.");
     }
 
@@ -105,7 +111,13 @@ class ModelStub implements Model {
     }
 
     @Override
-    public void updateFilteredStudentList(Predicate<Person> predicate) {
+    public void updateFilteredStudentList(Predicate<Student> predicate) {
+        throw new AssertionError("This method should not be called.");
+    }
+
+    @Override
+    public void updateFilteredStudentList(NameContainsKeywordsPredicate predicate) {
+
         throw new AssertionError("This method should not be called.");
     }
 
@@ -121,69 +133,155 @@ class ModelStub implements Model {
 
     @Override
     public boolean hasStudent(Student student) {
-        // todo: Implement test for hasStudent
         return false;
     }
 
     @Override
     public void addStudent(Student student) {
-        // todo: Implement test for addStudent
+        throw new AssertionError("This method should not be called.");
+    }
+
+    @Override
+    public void setStudent(Student target, Student editedStudent) {
+        throw new AssertionError("This method should not be called.");
+    }
+
+    @Override
+    public void deleteStudent(Student student) {
+        throw new AssertionError("This method should not be called.");
+    }
+
+    @Override
+    public boolean hasStudentInTutorialAndModule(Name studName, TutName tutName, ModCode modCode) {
+        return false;
     }
 
     @Override
     public boolean hasModule(Module module) {
-        // todo: Implement test for hasModule
+        // TODO: Implement test for hasModule
         return false;
     }
 
     @Override
     public void addModule(Module module) {
-        // todo: Implement test for addModule
+        // TODO: Implement test for addModule
     }
 
     @Override
     public void deleteModule(Module module) {}
 
     @Override
+    public void deleteTutorialsFromModule(Module module) {}
+
+    @Override
     public boolean hasTutorial(Tutorial tutorial) {
-        // todo: Implement test for hasTutorial
+        // TODO: Implement test for hasTutorial
         return false;
     }
 
     @Override
     public void addTutorial(Tutorial tutorial) {
-        // todo: Implement test for addTutorial
+        // TODO: Implement test for addTutorial
     }
 
     @Override
     public void deleteTutorial(Tutorial tutorial) {
-        // todo: Implement test for deleteTutorial
+        // TODO: Implement test for deleteTutorial
     }
 
     @Override
+    public void deleteStudentsFromTutorial(Tutorial tutorial) {}
+
+    @Override
     public boolean hasModuleOfCode(ModCode modCode) {
-        // to implement
+        // TODO: implement
         return false;
     }
 
     @Override
     public void addTutorialToModule(Tutorial tutorial) {
-        // to implement
+        // TODO: implement
     }
 
     @Override
     public void addStudentToTutorial(Student student) {
-        // to implement
+        // TODO: implement
     }
 
     @Override
     public boolean hasTutorialInModule(ModCode modCode, TutName tutName) {
-        // to implement
+        // TODO: implement
         return false;
     }
 
     @Override
     public int getNumberOfTutorialsOfName(TutName tutName) {
         return 0;
+    }
+
+    @Override
+    public void setAttendance(Tutorial tutorial, Week week, Student student) {
+        // TODO: implement
+    }
+
+    @Override
+    public void storePendingCommand(Command command) {};
+
+    @Override
+    public Command getPendingCommand() {
+        return null;
+    }
+
+    @Override
+    public Command peekPendingCommand() {
+        return null;
+    }
+
+    @Override
+    public boolean hasPendingCommand() {
+        return false;
+    }
+
+    @Override
+    public void storeSuggestedCommands(List<Command> l, String s) {};
+
+    @Override
+    public List<Command> getSuggestedCommands() {
+        return new ArrayList<Command>();
+    }
+
+    @Override
+    public String getSuggestedCorrections() {
+        return "";
+    }
+
+    @Override
+    public void deleteSuggestedCommands() {};
+
+    @Override
+    public void storeSuggestedCompletions(PartialInput partialInput) {}
+
+    @Override
+    public PartialInput getSuggestedCompletions() {
+        return null;
+    }
+
+    @Override
+    public void deleteSuggestedCompletions() {}
+
+    @Override
+    public boolean hasSuggestedCompletions() {
+        return false;
+    }
+
+    @Override
+    public void setInputChangedToTrue() {}
+
+    @Override
+    public void setInputChangedToFalse() {}
+
+    @Override
+    public boolean hasInputChanged() {
+        return false;
     }
 }

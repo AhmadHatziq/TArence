@@ -30,15 +30,15 @@ import seedu.tarence.model.Model;
 import seedu.tarence.model.ModelManager;
 import seedu.tarence.model.ReadOnlyApplication;
 import seedu.tarence.model.UserPrefs;
+import seedu.tarence.model.builder.ModuleBuilder;
+import seedu.tarence.model.builder.StudentBuilder;
+import seedu.tarence.model.builder.TutorialBuilder;
 import seedu.tarence.model.module.Module;
 import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.Tutorial;
 import seedu.tarence.storage.JsonApplicationStorage;
 import seedu.tarence.storage.JsonUserPrefsStorage;
 import seedu.tarence.storage.StorageManager;
-import seedu.tarence.testutil.ModuleBuilder;
-import seedu.tarence.testutil.StudentBuilder;
-import seedu.tarence.testutil.TutorialBuilder;
 
 public class LogicManagerTest {
     private static final IOException DUMMY_IO_EXCEPTION = new IOException("dummy exception");
@@ -94,6 +94,7 @@ public class LogicManagerTest {
         Module validModule = new ModuleBuilder().withModCode(VALID_MODULE_AMY).build();
         Tutorial validTutorial = new TutorialBuilder().withTutName(VALID_TUTORIAL_NAME_AMY)
                 .withModCode(VALID_MODULE_AMY).build();
+        validModule.addTutorial(validTutorial);
         expectedModel.addModule(validModule);
         model.addModule(validModule);
         expectedModel.addTutorial(validTutorial);
@@ -128,7 +129,7 @@ public class LogicManagerTest {
     private void assertCommandSuccess(String inputCommand, String expectedMessage,
             Model expectedModel) throws CommandException, ParseException {
         CommandResult result = logic.execute(inputCommand);
-        assertEquals(expectedMessage, result.getFeedbackToUser());
+        assertEquals(expectedMessage + "\n", result.getFeedbackToUser());
         assertEquals(expectedModel, model);
     }
 

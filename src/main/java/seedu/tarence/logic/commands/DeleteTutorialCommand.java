@@ -1,7 +1,9 @@
 package seedu.tarence.logic.commands;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.tarence.commons.core.Messages.MESSAGE_SUGGESTED_CORRECTIONS;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,13 +17,16 @@ import seedu.tarence.model.tutorial.Tutorial;
 
 /**
  * Deletes a tutorial identified using its displayed index from T.A.rence.
- * todo: disallow deleting non-empty tutorials?
+ * TODO: disallow deleting non-empty tutorials?
  */
 public class DeleteTutorialCommand extends Command {
 
     public static final String COMMAND_WORD = "deleteTutorial";
 
     public static final String MESSAGE_DELETE_TUTORIAL_SUCCESS = "Deleted Tutorial: %1$s";
+    public static final String MESSAGE_CONFIRM_DELETE_NONEMPTY_TUTORIAL = "WARNING: Tutorial %1$s "
+            + "contains %2$d student(s). Are you sure you want to delete it?\n"
+            + "(y/n)";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Deletes the tutorial identified by the index number used in the displayed tutorial list.\n"
@@ -60,26 +65,35 @@ public class DeleteTutorialCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
         List<Tutorial> lastShownList = model.getFilteredTutorialList();
+        Tutorial tutorialToDelete = null;
 
         if (targetIndex.isPresent()) {
             if (targetIndex.get().getZeroBased() >= lastShownList.size()) {
                 throw new CommandException(Messages.MESSAGE_INVALID_TUTORIAL_DISPLAYED_INDEX);
             }
+            tutorialToDelete = lastShownList.get(targetIndex.get().getZeroBased());
+        } else if (targetModCode.isPresent()) {
+            ModCode modCode = targetModCode.get();
+            TutName tutName = targetTutName.get();
+            if (!model.hasTutorialInModule(modCode, tutName)) {
+                // find tutorials with same name and similar modcodes, and similar names and same modcode
+                List<ModCode> similarModCodes = getSimilarModCodesWithTutorial(modCode, tutName, model);
+                List<TutName> similarTutNames = getSimilarTutNamesWithModule(modCode, tutName, model);
+                if (similarModCodes.size() == 0 && similarTutNames.size() == 0) {
+                    throw new CommandException(Messages.MESSAGE_INVALID_TUTORIAL_IN_MODULE);
+                }
 
-            Tutorial tutorialToDelete = lastShownList.get(targetIndex.get().getZeroBased());
-            model.deleteTutorial(tutorialToDelete);
-            return new CommandResult(String.format(MESSAGE_DELETE_TUTORIAL_SUCCESS, tutorialToDelete));
-        }
-
-        if (targetModCode.isPresent()) {
-            if (!model.hasTutorialInModule(targetModCode.get(), targetTutName.get())) {
-                throw new CommandException(Messages.MESSAGE_INVALID_TUTORIAL_IN_MODULE);
+                String suggestedCorrections = createSuggestedCommands(similarModCodes, modCode,
+                        similarTutNames, tutName, model);
+                model.storePendingCommand(new SelectSuggestionCommand());
+                return new CommandResult(String.format(MESSAGE_SUGGESTED_CORRECTIONS, "Tutorial",
+                        modCode.toString() + " " + tutName.toString()) + suggestedCorrections);
             }
             for (Tutorial tutorial : lastShownList) {
                 if (tutorial.getTutName().equals(targetTutName.get())
                     && tutorial.getModCode().equals(targetModCode.get())) {
-                    model.deleteTutorial(tutorial);
-                    return new CommandResult(String.format(MESSAGE_DELETE_TUTORIAL_SUCCESS, tutorial));
+                    tutorialToDelete = tutorial;
+                    break;
                 }
             }
         } else {
@@ -91,13 +105,65 @@ public class DeleteTutorialCommand extends Command {
             }
             for (Tutorial tutorial : lastShownList) {
                 if (tutorial.getTutName().equals(targetTutName.get())) {
-                    model.deleteTutorial(tutorial);
-                    return new CommandResult(String.format(MESSAGE_DELETE_TUTORIAL_SUCCESS, tutorial));
+                    tutorialToDelete = tutorial;
+                    break;
                 }
             }
         }
 
-        return null;
+        requireNonNull(tutorialToDelete);
+        if (!tutorialToDelete.getStudents().isEmpty()) {
+            model.storePendingCommand(new DeleteTutorialVerifiedCommand(tutorialToDelete));
+            return new CommandResult(String.format(MESSAGE_CONFIRM_DELETE_NONEMPTY_TUTORIAL,
+                    tutorialToDelete,
+                    tutorialToDelete.getStudents().size()));
+        }
+
+        model.deleteStudentsFromTutorial(tutorialToDelete);
+        model.deleteTutorial(tutorialToDelete);
+        return new CommandResult(String.format(MESSAGE_DELETE_TUTORIAL_SUCCESS, tutorialToDelete));
+    }
+
+    /**
+     * Generates and stores {@code AddStudentCommand}s from a list of {@code ModCode}s.
+     *
+     * @param similarModCodes List of {@code ModCode}s similar to the user's input.
+     * @param model The {@code Model} in which to store the generated commands.
+     * @return string representing the suggested {@code ModCode}s and their corresponding indexes for user selection.
+     */
+    private String createSuggestedCommands(List<ModCode> similarModCodes, ModCode originalModCode,
+                                           List<TutName> similarTutNames, TutName originalTutName, Model model) {
+        List<Command> suggestedCommands = new ArrayList<>();
+        StringBuilder s = new StringBuilder();
+        int index = 1;
+        for (ModCode similarModCode : similarModCodes) {
+            suggestedCommands.add(new DeleteTutorialCommand(similarModCode, originalTutName));
+            s.append(index).append(". ").append(similarModCode).append(", ").append(originalTutName).append("\n");
+            index++;
+        }
+        for (TutName similarTutName: similarTutNames) {
+            DeleteTutorialCommand newCommand = new DeleteTutorialCommand(originalModCode, similarTutName);
+            if (suggestedCommands.stream()
+                    .anyMatch(existingCommand -> existingCommand.equals(newCommand))) {
+                continue;
+            }
+            suggestedCommands.add(newCommand);
+            s.append(index).append(". ").append(originalModCode).append(", ").append(similarTutName).append("\n");
+            index++;
+        }
+        String suggestedCorrections = s.toString();
+        model.storeSuggestedCommands(suggestedCommands, suggestedCorrections);
+        return suggestedCorrections;
+    }
+
+    @Override
+    public boolean needsInput() {
+        return false;
+    }
+
+    @Override
+    public boolean needsCommand(Command command) {
+        return false;
     }
 
     /**
@@ -117,8 +183,11 @@ public class DeleteTutorialCommand extends Command {
 
     @Override
     public boolean equals(Object other) {
+        // TODO: Need to consider case where targetIndex is not specified
         return other == this // short circuit if same object
                 || (other instanceof DeleteTutorialCommand // instanceof handles nulls
-                && targetIndex.equals(((DeleteTutorialCommand) other).targetIndex)); // state check
+                && targetIndex.equals(((DeleteTutorialCommand) other).targetIndex)
+                && targetTutName.equals(((DeleteTutorialCommand) other).targetTutName)
+                && targetModCode.equals(((DeleteTutorialCommand) other).targetModCode)); // state check
     }
 }
