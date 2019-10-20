@@ -35,25 +35,29 @@ public class JsonAdaptedModuleTest {
     @Test
     public void isValidStudentString_studentStringWithoutNameField_returnsFalse() {
         JsonAdaptedModule module = new JsonAdaptedModule(SampleDataUtil.getSampleModule());
-        assertEquals(false, module.isValidStudentString(INVALID_STUDENT_STRING_MISSING_STUDENT_NAME));
+        assertEquals(false, seedu.tarence.commons.util.JsonUtil
+                .isValidStudentString(INVALID_STUDENT_STRING_MISSING_STUDENT_NAME));
     }
 
     @Test
     public void isValidStudentString_studentStringInWrongOrder_returnsFalse() {
         JsonAdaptedModule module = new JsonAdaptedModule(SampleDataUtil.getSampleModule());
-        assertEquals(false, module.isValidStudentString(INVALID_STUDENT_STRING_WRONG_ORDER_OF_FIELDS));
+        assertEquals(false, seedu.tarence.commons.util.JsonUtil
+                .isValidStudentString(INVALID_STUDENT_STRING_WRONG_ORDER_OF_FIELDS));
     }
 
     @Test
     public void isValidTutorialString_tutorialStringInWrongOrder_returnsFalse() {
         JsonAdaptedModule module = new JsonAdaptedModule(SampleDataUtil.getSampleModule());
-        assertEquals(false, module.isValidTutorialString(INVALID_TUTORIAL_STRING_WRONG_ORDER_OF_FIELDS));
+        assertEquals(false, seedu.tarence.commons.util.JsonUtil
+                .isValidTutorialString(INVALID_TUTORIAL_STRING_WRONG_ORDER_OF_FIELDS));
     }
 
     @Test
     public void isValidTutorialString_tutorialStringWithoutNameField_returnsFalse() {
         JsonAdaptedModule module = new JsonAdaptedModule(SampleDataUtil.getSampleModule());
-        assertEquals(false, module.isValidTutorialString(INVALID_TUTORIAL_STRING_MISSING_TUTORIAL_NAME));
+        assertEquals(false, seedu.tarence.commons.util.JsonUtil
+                .isValidTutorialString(INVALID_TUTORIAL_STRING_MISSING_TUTORIAL_NAME));
     }
 
     @Test
