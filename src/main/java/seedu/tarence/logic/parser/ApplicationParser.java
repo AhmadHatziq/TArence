@@ -1,4 +1,5 @@
 package seedu.tarence.logic.parser;
+
 import static seedu.tarence.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.tarence.commons.core.Messages.MESSAGE_UNKNOWN_COMMAND;
 
@@ -25,14 +26,17 @@ import seedu.tarence.logic.commands.MarkAttendanceCommand;
 import seedu.tarence.logic.commands.SelectSuggestionCommand;
 import seedu.tarence.logic.parser.exceptions.ParseException;
 import seedu.tarence.model.Model;
+
 /**
  * Parses user input.
  */
 public class ApplicationParser {
+
     /**
      * Used for initial separation of command word and args.
      */
     private static final Pattern BASIC_COMMAND_FORMAT = Pattern.compile("(?<commandWord>\\S+)(?<arguments>.*)");
+
     /**
      * Parses user input into command for execution.
      *
@@ -45,8 +49,10 @@ public class ApplicationParser {
         if (!matcher.matches()) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE));
         }
+
         final String commandWord = matcher.group("commandWord");
         final String arguments = matcher.group("arguments");
+
         if (AddStudentCommand.isMatchingCommandWord(commandWord)) {
             return new AddStudentCommandParser().parse(arguments);
         } else if (EditCommand.isMatchingCommandWord(commandWord)) {
@@ -84,8 +90,11 @@ public class ApplicationParser {
         } else {
             throw new ParseException(MESSAGE_UNKNOWN_COMMAND);
         }
+
     }
+
     public PartialInput parsePartialInput(String partialInput, Model model) throws ParseException {
         return PartialInputParser.parse(partialInput, model);
     }
+
 }

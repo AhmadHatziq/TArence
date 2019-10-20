@@ -252,7 +252,6 @@ public class Application implements ReadOnlyApplication {
         }
     }
 
-    ////=================== module-level operations    =================================================================
     /**
      * Checks whether a combination of the given student name, tutorial name, and module code exists in the application.
      */
@@ -274,6 +273,8 @@ public class Application implements ReadOnlyApplication {
         }
         return false;
     }
+
+    ////=================== module-level operations    =================================================================
 
     /**
      * Adds a module to the application.

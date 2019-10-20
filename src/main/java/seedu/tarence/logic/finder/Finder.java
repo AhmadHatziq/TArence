@@ -149,4 +149,5 @@ public class Finder {
                 .filter(day -> day.toLowerCase().startsWith(partialDay.toLowerCase()))
                 .collect(Collectors.toList());
     }
+
 }
