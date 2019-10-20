@@ -36,7 +36,6 @@ public class TutorialCard extends UiPart<Region> {
     @FXML
     private Label module;
 
-
     public TutorialCard(Tutorial tutorial, int displayedIndex) {
         super(FXML);
         this.tutorial = tutorial;
