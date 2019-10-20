@@ -154,9 +154,9 @@ public class JsonAdaptedModule {
                 attendanceString = attendanceString.substring(0, (attendanceString.length() - 2));
             }
 
-           // Mapping of weeks to studentStrings example:  {1=[{studentObe}],[{studentTwo}],
-           //                                               2=[{studentOne}],[{studentTwo}]}
-           //where '1' and '2' are the weeks and studentOne and studentTwo are the String representations of 2 Students.
+            // Mapping of weeks to studentStrings example:  {1=[{studentObe}],[{studentTwo}],
+            //                                               2=[{studentOne}],[{studentTwo}]}
+            //where '1' and '2' are the weeks and studentOne and studentTwo are the String representations of 2 Students
             attendanceStringMap.put(week.toString(), attendanceString);
         }
         return attendanceStringMap.toString();
