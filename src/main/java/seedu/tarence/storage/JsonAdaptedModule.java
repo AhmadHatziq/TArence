@@ -50,6 +50,7 @@ public class JsonAdaptedModule {
     public static final String TUTORIAL_MODULE_CODE = "tutorialModuleCode";
     public static final String TUTORIAL_STUDENT_LIST = "tutorialStudentList";
     public static final String TUTORIAL_ATTENDANCE_LIST = "tutorialAttendanceList";
+
     public static final String STUDENT_NAME = "studentName";
     public static final String STUDENT_EMAIL = "studentEmail";
     public static final String STUDENT_MATRIC_NUMBER = "studentMatricNumber";
@@ -58,6 +59,7 @@ public class JsonAdaptedModule {
     public static final String STUDENT_TUTORIAL_NAME = "studentTutorialName";
     public static final String STUDENT_ATTENDANCE_STATUS = "studentAttendance";
 
+    // Error message Strings
     public static final String MISSING_FIELD_MESSAGE_FORMAT = "Tutorial's %s field is missing!";
     public static final String INVALID_FIELD_MESSAGE_FORMAT = "Tutorial's %s field is invalid!";
     public static final String MISSING_GENERIC_FIELD = "Error in reading field! ";
@@ -67,7 +69,12 @@ public class JsonAdaptedModule {
     private String moduleCode;
     private LinkedHashMap<String, String> mapOfDifferentTutorials; // Implemented LinkedHashMap to preserve ordering.
 
-    // Constructor from Json file. Invoked during reading the file.
+    /**
+     * Invoked during reading of the Json file.
+     *
+     * @param moduleName Json string representing the Module Name/Code.
+     * @param map Json string representing the Tutorial objects present in the Module.
+     */
     @JsonCreator
     public JsonAdaptedModule(@JsonProperty("moduleCode") String moduleName,
                              @JsonProperty("tutorialMap") LinkedHashMap<String, String> map) {
@@ -75,7 +82,11 @@ public class JsonAdaptedModule {
         this.mapOfDifferentTutorials = map;
     }
 
-    // Constructor from Module object. Invoked during saving of the file.
+    /**
+     * Invoked when saving the application.
+     *
+     * @param source Module object of the application.
+     */
     public JsonAdaptedModule(Module source) {
         moduleCode = source.getModCode().toString();
         mapOfDifferentTutorials = new LinkedHashMap<String, String>();
@@ -109,6 +120,8 @@ public class JsonAdaptedModule {
 
     /**
      * Invoked when saving an Attendance object.
+     * Converts an Attendance object to String.
+     *
      * @param attendance Attendance object.
      * @return String representation of Attendance object.
      */
@@ -141,16 +154,17 @@ public class JsonAdaptedModule {
                 attendanceString = attendanceString.substring(0, (attendanceString.length() - 2));
             }
 
-            // Mapping of weeks to studentStrings eg {1=[{studentObe}],[{studentTwo}],
-            //                                         2=[{studentOne}],[{studentTwo}]}
+           // Mapping of weeks to studentStrings example:  {1=[{studentObe}],[{studentTwo}],
+           //                                               2=[{studentOne}],[{studentTwo}]}
+           //where '1' and '2' are the weeks and studentOne and studentTwo are the String representations of 2 Students.
             attendanceStringMap.put(week.toString(), attendanceString);
         }
         return attendanceStringMap.toString();
     }
 
-
     /**
-     * Converts JsonAdaptedModule into a Module object. Invoked during reading of Json file.
+     * Invoked during reading of Json file.
+     * Converts JsonAdaptedModule into a Module object.
      *
      * @return Module object.
      * @throws IllegalValueException when there is an error in reading one of the fields.
@@ -179,6 +193,8 @@ public class JsonAdaptedModule {
     }
 
     /**
+     * Invoked during reading of Json String.
+     *
      * Returns a Tutorial Object given the TutorialMap constructed from Json.
      *
      * @param tutorialMap LinkedHashMap obtained after parsing Tutorial String.
@@ -198,10 +214,7 @@ public class JsonAdaptedModule {
             LocalTime startTime = LocalTime.parse(tutorialMap.get(TUTORIAL_START_TIME), DateTimeFormatter.ISO_TIME);
             Attendance attendance = attendanceStringToAttendance(tutorialMap.get(TUTORIAL_ATTENDANCE_LIST), weeks);
 
-
             Tutorial t = new Tutorial(tutorialName, day, startTime, weeks, duration, studentList, modCode, attendance);
-            //System.out.println(t.getAttendance().toString());
-
 
             return t;
         } catch (ParseException | IllegalArgumentException e) {
@@ -215,12 +228,14 @@ public class JsonAdaptedModule {
     }
 
     /**
+     * Invoked during reading from Json String.
+     *
      * Converts an attendanceString eg "[{studentName=Ellie Yee, studentEmail=e0035152@u.nus.edu.sg,
      * studentMatricNumber=Optional[A0155413M], studentNusnetId=Optional[E0031550],
      * studentModuleCode=CS1010S, studentTutorialName=Lab Session, studentAttendance=false}]"
      * to a Student-Boolean pair and then an Attendance object.
      *
-     * @param attendanceString See comments.
+     * @param attendanceString See above comments.
      * @param weeks Set of Weeks.
      * @return An attendance object.
      * @throws IllegalValueException when there is an error during parsing.
@@ -252,9 +267,6 @@ public class JsonAdaptedModule {
         }
 
         return new Attendance(attendance);
-
-        // Stub
-        // return SampleDataUtil.getSampleTutorial().getAttendance();
     }
 
     /**
