@@ -20,3 +20,4 @@ JsonUserPrefsStorage .left.|> UserPrefsStorage
 ApplicationStorage .down.> JsonSerializableApplication
 JsonSerializableApplication .right.> JsonAdaptedModule
 @enduml
+
