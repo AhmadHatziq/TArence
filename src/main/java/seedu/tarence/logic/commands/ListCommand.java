@@ -51,17 +51,7 @@ public class ListCommand extends Command {
             setTutorialAndModule(model);
             model.updateFilteredStudentList(predicate);
         }
-        return new CommandResult(MESSAGE_SUCCESS);
-    }
-
-    @Override
-    public boolean needsInput() {
-        return false;
-    }
-
-    @Override
-    public boolean needsCommand(Command command) {
-        return false;
+        return new CommandResult(MESSAGE_SUCCESS, TabNames.STUDENTS);
     }
 
     /**

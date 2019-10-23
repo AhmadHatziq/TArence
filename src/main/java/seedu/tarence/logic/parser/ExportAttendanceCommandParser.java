@@ -2,8 +2,8 @@ package seedu.tarence.logic.parser;
 
 import static seedu.tarence.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.tarence.logic.parser.CliSyntax.PREFIX_FILE;
+import static seedu.tarence.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.tarence.logic.parser.CliSyntax.PREFIX_MODULE;
-import static seedu.tarence.logic.parser.CliSyntax.PREFIX_TUTORIAL_INDEX;
 import static seedu.tarence.logic.parser.CliSyntax.PREFIX_TUTORIAL_NAME;
 
 import java.util.stream.Stream;
@@ -15,18 +15,18 @@ import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.tutorial.TutName;
 
 /**
- * Parses input arguments and creates a new AddModuleCommand object
+ * Parses input arguments and creates a new ExportAttendanceCommand object
  */
 public class ExportAttendanceCommandParser implements Parser<ExportAttendanceCommand> {
 
     /**
-     * Parses the given {@code String} of arguments in the context of the AddModuleCommand
-     * and returns an AddModuleCommand object for execution.
+     * Parses the given {@code String} of arguments in the context of the ExportAttendanceCommand
+     * and returns an ExportAttendanceCommand object for execution.
      * @throws ParseException if the user input does not match the expected formats for the module code.
      */
     public ExportAttendanceCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args,
-                PREFIX_MODULE, PREFIX_TUTORIAL_NAME, PREFIX_TUTORIAL_INDEX, PREFIX_FILE);
+                PREFIX_MODULE, PREFIX_TUTORIAL_NAME, PREFIX_INDEX, PREFIX_FILE);
 
         ModCode modCode = null;
         TutName tutName = null;
@@ -36,7 +36,7 @@ public class ExportAttendanceCommandParser implements Parser<ExportAttendanceCom
             modCode = ParserUtil.parseModCode(argMultimap.getValue(PREFIX_MODULE).get());
             tutName = ParserUtil.parseTutorialName(argMultimap.getValue(PREFIX_TUTORIAL_NAME).get());
         } else if (validateIndexFormat(argMultimap)) {
-            tutIndex = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_TUTORIAL_INDEX).get());
+            tutIndex = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
         } else {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT,
                     ExportAttendanceCommand.MESSAGE_USAGE));
@@ -57,7 +57,7 @@ public class ExportAttendanceCommandParser implements Parser<ExportAttendanceCom
         // file name not checked since it is optional
         // modcode, tutorial name present without tutorial index - first format
         return (arePrefixesPresent(argMultimap, PREFIX_MODULE, PREFIX_TUTORIAL_NAME)
-                && arePrefixesAbsent(argMultimap, PREFIX_TUTORIAL_INDEX));
+                && arePrefixesAbsent(argMultimap, PREFIX_INDEX));
     }
 
     /**
@@ -68,7 +68,7 @@ public class ExportAttendanceCommandParser implements Parser<ExportAttendanceCom
     public static boolean validateIndexFormat(ArgumentMultimap argMultimap) {
         // file name not checked since it is optional
         // tutorial index present without modcode or tutorial name - second format
-        return (arePrefixesPresent(argMultimap, PREFIX_TUTORIAL_INDEX)
+        return (arePrefixesPresent(argMultimap, PREFIX_INDEX)
                 && arePrefixesAbsent(argMultimap, PREFIX_MODULE, PREFIX_TUTORIAL_NAME));
     }
 

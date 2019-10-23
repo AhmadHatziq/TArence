@@ -27,13 +27,17 @@ public abstract class Command {
     /**
      * Returns true if command requires prior user input, else false.
      */
-    public abstract boolean needsInput();
+    public boolean needsInput() {
+        return false;
+    }
 
     /**
      * Returns true if prior command is required for execution, else false.
      * Only needed for commands that require prior user input.
      */
-    public abstract boolean needsCommand(Command command);
+    public boolean needsCommand(Command command) {
+        return false;
+    }
 
     /**
      * Returns a list of {@code ModCode}s similar to the given one, and corresponding to a module containing a
@@ -45,7 +49,7 @@ public abstract class Command {
      * @return a list of modcodes fulfilling the above criteria.
      * @throws CommandException if no similar modules are found.
      */
-    List<ModCode> getSimilarModCodesWithTutorial (ModCode modCode, TutName tutName, Model model)
+    protected List<ModCode> getSimilarModCodesWithTutorial (ModCode modCode, TutName tutName, Model model)
             throws CommandException {
         return new Finder(model).findSimilarModCodes(modCode)
                 .stream().filter(similarModCode -> model.hasTutorialInModule(similarModCode, tutName))
@@ -62,7 +66,7 @@ public abstract class Command {
      * @return a list of tutnames fulfilling the above criteria.
      * @throws CommandException if no similar tutorial names are found.
      */
-    List<TutName> getSimilarTutNamesWithModule (ModCode modCode, TutName tutName, Model model)
+    protected List<TutName> getSimilarTutNamesWithModule (ModCode modCode, TutName tutName, Model model)
             throws CommandException {
         return new Finder(model).findSimilarTutNames(tutName)
                 .stream().filter(similarTutName -> model.hasTutorialInModule(modCode, similarTutName))

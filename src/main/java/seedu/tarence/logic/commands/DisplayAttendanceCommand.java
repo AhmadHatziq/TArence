@@ -2,8 +2,8 @@ package seedu.tarence.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.tarence.commons.core.Messages.MESSAGE_SUGGESTED_CORRECTIONS;
+import static seedu.tarence.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.tarence.logic.parser.CliSyntax.PREFIX_MODULE;
-import static seedu.tarence.logic.parser.CliSyntax.PREFIX_TUTORIAL_INDEX;
 import static seedu.tarence.logic.parser.CliSyntax.PREFIX_TUTORIAL_NAME;
 
 import java.util.ArrayList;
@@ -35,8 +35,8 @@ public class DisplayAttendanceCommand extends Command {
             + PREFIX_MODULE + "MODULE_CODE \n"
             + "Example: " + COMMAND_WORD + " " + PREFIX_TUTORIAL_NAME + "Lab 02 " + PREFIX_MODULE + "CS2040 \n"
             + "Shortcut format: \n"
-            + PREFIX_TUTORIAL_INDEX + "TUTORIAL_INDEX\n"
-            + "Example: " + COMMAND_WORD + " " + PREFIX_TUTORIAL_INDEX + "1";
+            + PREFIX_INDEX + "TUTORIAL_INDEX\n"
+            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1";
 
 
     private static final ModCode DEFAULT_MOD_CODE = new ModCode("MC1010");
@@ -154,16 +154,6 @@ public class DisplayAttendanceCommand extends Command {
         return suggestedCorrections;
     }
 
-    @Override
-    public boolean needsInput() {
-        return false;
-    }
-
-    @Override
-    public boolean needsCommand(Command command) {
-        return false;
-    }
-
     /**
      * Returns true if user command matches command word or any defined synonyms, and false otherwise.
      *
@@ -184,6 +174,7 @@ public class DisplayAttendanceCommand extends Command {
         return other == this // short circuit if same object
                 || ((other instanceof DisplayAttendanceCommand // instanceof handles nulls
                 && (modCode.equals(((DisplayAttendanceCommand) other).modCode))
+                && (tutName.equals(((DisplayAttendanceCommand) other).tutName))
                 && (index.equals(((DisplayAttendanceCommand) other).index)))); // state check
     }
 }
