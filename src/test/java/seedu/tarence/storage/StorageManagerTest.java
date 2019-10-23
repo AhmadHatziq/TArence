@@ -47,6 +47,9 @@ public class StorageManagerTest {
         assertEquals(original, retrieved);
     }
 
+    /*
+    TODO: Implement integration test for storage manager
+
     @Test
     public void applicationReadSave() throws Exception {
         /*
@@ -54,11 +57,13 @@ public class StorageManagerTest {
          * {@link JsonApplicationStorage} class.
          * More extensive testing of UserPref saving/reading is done in {@link JsonApplicationStorageTest} class.
          */
+    /*
         Application original = getTypicalApplication();
         storageManager.saveApplication(original);
         ReadOnlyApplication retrieved = storageManager.readApplication().get();
         assertEquals(original, new Application(retrieved));
     }
+    */
 
     @Test
     public void getApplicationFilePath() {
