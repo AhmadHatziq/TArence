@@ -59,7 +59,8 @@ public class JsonAdaptedModule {
     // Json fields
     private String moduleCode;
     private LinkedHashMap<String, String> mapOfDifferentTutorials; // Implemented LinkedHashMap to preserve ordering.
-    private LinkedHashMap<String, LinkedHashMap<String, String>> testMap;
+    private LinkedHashMap<String, LinkedHashMap<String, String>> mapOfDifferentTutorialsVersionTwo;
+
 
     /**
      * Invoked during reading of the Json file.
@@ -69,9 +70,11 @@ public class JsonAdaptedModule {
      */
     @JsonCreator
     public JsonAdaptedModule(@JsonProperty("moduleCode") String moduleName,
-                             @JsonProperty("tutorialMap") LinkedHashMap<String, String> map) {
+                             @JsonProperty("tutorialMap") LinkedHashMap<String, String> map,
+                             @JsonProperty("mapOfDifferentTutorialsVersionTwo") LinkedHashMap<String, LinkedHashMap<String, String>> mapOfDifferentTutorialsVersionTwo  ) {
         this.moduleCode = moduleName;
         this.mapOfDifferentTutorials = map;
+        this.mapOfDifferentTutorialsVersionTwo = mapOfDifferentTutorialsVersionTwo;
     }
 
     /**
@@ -83,10 +86,12 @@ public class JsonAdaptedModule {
         moduleCode = source.getModCode().toString();
 
         mapOfDifferentTutorials = new LinkedHashMap<String, String>();
+        mapOfDifferentTutorialsVersionTwo = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 
         for (Tutorial t : source.getTutorials()) {
             LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
 
+            /*
             // Trying to get string representation of  Map<Assignment, Map<Student, Integer>>
             // Needed to create a Tutorial Object
 
@@ -142,18 +147,7 @@ public class JsonAdaptedModule {
             //System.out.println("Module " + moduleCode + "'s assignment string: ");
             //System.out.println(tutorialAssignmentMap.toString());
             // End of obtaining Tutorial's Assignment String
-
-            LinkedHashMap<String, String> innerMapOne = new LinkedHashMap<>();
-            innerMapOne.put("Element 1", "Value 1");
-            innerMapOne.put("Element 2","Value 2");
-
-            LinkedHashMap<String, String> innerMapTwo = new LinkedHashMap<>();
-            innerMapTwo.put("Element 3", "Value 3");
-            innerMapTwo.put("Element 4","Value 4");
-
-            testMap = new LinkedHashMap<>();
-            testMap.put("Inner Map One", innerMapOne);
-            testMap.put("Inner Map Two", innerMapTwo);
+            */
 
             // Obtain all the fields that defines a single Tutorial object.
             String tutorialName = t.getTutName().toString();
@@ -176,6 +170,10 @@ public class JsonAdaptedModule {
             singleTutorialMap.put(TUTORIAL_MODULE_CODE, tutorialModuleCode);
 
             mapOfDifferentTutorials.put(tutorialName, singleTutorialMap.toString());
+
+            // Version 2 of tutorial Map
+             mapOfDifferentTutorialsVersionTwo.put(tutorialName, singleTutorialMap);
+
         }
     }
 
@@ -187,6 +185,19 @@ public class JsonAdaptedModule {
      * @throws IllegalValueException when there is an error in reading one of the fields.
      */
     public Module toModelType() throws IllegalValueException {
+        // Version 2 of saving
+        List<Tutorial> tutorialsFromVersionTwo = new ArrayList<Tutorial>();
+
+        for (String tutorialName : mapOfDifferentTutorialsVersionTwo.keySet()) {
+            LinkedHashMap<String, String> singleTutorialMap = mapOfDifferentTutorialsVersionTwo.get(tutorialName);
+            // TODO: Check if singleTutorialMap is valid ie contains all the requires params
+
+            Tutorial tutorialFromJsonVersionTwo = JsonUtil.tutorialMapToTutorial(singleTutorialMap);
+            tutorialsFromVersionTwo.add(tutorialFromJsonVersionTwo);
+        }
+
+
+        // Version 1 of saving
         List<Tutorial> tutorials = new ArrayList<Tutorial>();
 
         for (String tutorialName : mapOfDifferentTutorials.keySet()) {
@@ -203,10 +214,11 @@ public class JsonAdaptedModule {
 
         try {
             ModCode modCodeFromJson = ParserUtil.parseModCode(moduleCode);
-            return new Module(modCodeFromJson, tutorials);
+            return new Module(modCodeFromJson, tutorialsFromVersionTwo);
         } catch (ParseException e) {
             throw new IllegalValueException(String.format(INVALID_FIELD, Module.class.getSimpleName()));
         }
+
     }
 
     /**
