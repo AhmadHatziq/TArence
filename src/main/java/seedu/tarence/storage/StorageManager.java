@@ -10,6 +10,7 @@ import seedu.tarence.commons.exceptions.DataConversionException;
 import seedu.tarence.model.ReadOnlyApplication;
 import seedu.tarence.model.ReadOnlyUserPrefs;
 import seedu.tarence.model.UserPrefs;
+import seedu.tarence.model.util.SampleDataUtil;
 
 /**
  * Manages storage of Application data in local storage.
@@ -19,12 +20,14 @@ public class StorageManager implements Storage {
     private static final Logger logger = LogsCenter.getLogger(StorageManager.class);
     private ApplicationStorage applicationStorage;
     private UserPrefsStorage userPrefsStorage;
+    private StateStorage stateStorage;
 
 
-    public StorageManager(ApplicationStorage applicationStorage, UserPrefsStorage userPrefsStorage) {
+    public StorageManager(ApplicationStorage applicationStorage, UserPrefsStorage userPrefsStorage, StateStorage stateStorage) {
         super();
         this.applicationStorage = applicationStorage;
         this.userPrefsStorage = userPrefsStorage;
+        this.stateStorage = stateStorage;
     }
 
     // ================ UserPrefs methods ==============================
@@ -60,7 +63,13 @@ public class StorageManager implements Storage {
     @Override
     public Optional<ReadOnlyApplication> readApplication(Path filePath) throws DataConversionException, IOException {
         logger.fine("Attempting to read data from file: " + filePath);
-        return applicationStorage.readApplication(filePath);
+        Optional<ReadOnlyApplication> applicationOptional = applicationStorage.readApplication(filePath);
+
+        // Saves the first state (loaded from previous session)
+        ReadOnlyApplication initialData = applicationOptional.orElseGet(SampleDataUtil::getSampleApplication);
+        stateStorage.saveApplicationState(initialData);
+
+        return applicationOptional;
     }
 
     @Override
@@ -72,6 +81,8 @@ public class StorageManager implements Storage {
     public void saveApplication(ReadOnlyApplication application, Path filePath) throws IOException {
         logger.fine("Attempting to write to data file: " + filePath);
         applicationStorage.saveApplication(application, filePath);
+
+        //stateStorage.saveApplicationState(application);
     }
 
 }

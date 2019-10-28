@@ -376,13 +376,11 @@ public class Tutorial {
                 && otherTutorial.getModCode().equals(getModCode());
     }
 
-    /**
-     * Getter function of all assignments. Usage is for saving.
-     *
-     * @return Map<Assignment, Map<Student, Integer>>
-     */
+    /* TODO: implement saving of assignments
     public Map<Assignment, Map<Student, Integer>> getAssignments() {
         return this.assignments;
     }
+
+     */
 
 }
