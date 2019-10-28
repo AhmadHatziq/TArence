@@ -39,11 +39,16 @@ public class StateStorage {
     public void saveApplicationState(ReadOnlyApplication application) throws IOException {
         requireNonNull(application);
 
+        // Get the next filePath eg "data\states\state5.json".
         Path filePath = getNextFilePath();
         //System.out.println("Mext Fiepath is: " + filePath.toString());
 
+        // Save the application state
         FileUtil.createIfMissing(filePath);
         JsonUtil.saveJsonFile(new JsonSerializableApplication(application), filePath);
+
+        // Increment the stack counter
+        stateStack.push(stateStack.peek() + 1);
 
     }
 

@@ -82,7 +82,8 @@ public class StorageManager implements Storage {
         logger.fine("Attempting to write to data file: " + filePath);
         applicationStorage.saveApplication(application, filePath);
 
-        //stateStorage.saveApplicationState(application);
+        // Save the states whenever a command changes the model.
+        stateStorage.saveApplicationState(application);
     }
 
 }
