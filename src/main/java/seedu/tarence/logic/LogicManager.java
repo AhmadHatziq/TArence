@@ -71,9 +71,13 @@ public class LogicManager implements Logic {
                 model.getPendingCommand(); // clear any pending commands if user has entered a different command
             }
 
-
-            // TODO: Add params to include storage for undo command
-            CommandResult currCommandResult = command.execute(model);
+            // Undo command needs to be handled seperately as involves calling Storage object.
+            CommandResult currCommandResult = null;
+            if (isUndoCommand(command)) {
+                currCommandResult = command.execute(model);
+            } else {
+                currCommandResult = command.execute(model);
+            }
 
             // concatenate all results into a single result
             combinedFeedback.append(currCommandResult.getFeedbackToUser() + "\n");
@@ -111,6 +115,15 @@ public class LogicManager implements Logic {
         }
 
         return commandResult;
+    }
+
+    /**
+     * Checks if an undo command is created. Can be expadned to include other commands that involves the Storage object.
+     * @param command Command parsed from user String.
+     * @return True if command is of type "undo"
+     */
+    public Boolean isUndoCommand(Command command) {
+        return command.toString().toLowerCase().contains("undo");
     }
 
     @Override

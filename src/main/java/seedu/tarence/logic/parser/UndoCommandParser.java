@@ -24,7 +24,7 @@ public class UndoCommandParser implements Parser<UndoCommand> {
         }
 
         String numOfStatesToUndoString = argMultimap.getValue(PREFIX_UNDO_NUM_OF_STATES).get();
-        
+
         try {
             int numOfStatesToUnto = Integer.parseInt(numOfStatesToUndoString);
             return new UndoCommand(numOfStatesToUnto);
