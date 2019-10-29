@@ -108,6 +108,11 @@ public class StorageManager implements Storage {
         return jsonStateStorage.getLatestStateIndex();
     }
 
+    @Override
+    public void clearStateFolder() throws IOException {
+        jsonStateStorage.clearStateFolder();
+    }
+
 
 
 }

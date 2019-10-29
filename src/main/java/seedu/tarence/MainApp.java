@@ -179,6 +179,7 @@ public class MainApp extends javafx.application.Application {
         logger.info("============================ [ Stopping T.A.rence ] =============================");
         try {
             storage.saveUserPrefs(model.getUserPrefs());
+            storage.clearStateFolder();
         } catch (IOException e) {
             logger.severe("Failed to save preferences " + StringUtil.getDetails(e));
         }

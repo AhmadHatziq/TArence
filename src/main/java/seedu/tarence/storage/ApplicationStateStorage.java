@@ -17,4 +17,6 @@ public interface ApplicationStateStorage {
 
     ReadOnlyApplication getSpecifiedState (Integer index) throws IOException;
 
+    void clearStateFolder() throws IOException;
+
 }

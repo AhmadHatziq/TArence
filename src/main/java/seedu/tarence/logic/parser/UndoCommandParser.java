@@ -26,8 +26,13 @@ public class UndoCommandParser implements Parser<UndoCommand> {
         String numOfStatesToUndoString = argMultimap.getValue(PREFIX_UNDO_NUM_OF_STATES).get();
 
         try {
-            int numOfStatesToUnto = Integer.parseInt(numOfStatesToUndoString);
-            return new UndoCommand(numOfStatesToUnto);
+            int numOfStatesToUndo = Integer.parseInt(numOfStatesToUndoString);
+
+            if (numOfStatesToUndo <= 0) {
+                throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, UndoCommand.MESSAGE_USAGE));
+            }
+
+            return new UndoCommand(numOfStatesToUndo);
         } catch (NumberFormatException e) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, UndoCommand.MESSAGE_USAGE));
         }

@@ -17,12 +17,12 @@ public class UndoCommand extends Command {
             + "Parameters: "
             + PREFIX_UNDO_NUM_OF_STATES + "NUMBER_OF_COMMANDS_TO_UNDO "
             + "Example: " + COMMAND_WORD + " "
-            + PREFIX_UNDO_NUM_OF_STATES + "1 ";
+            + PREFIX_UNDO_NUM_OF_STATES + "1 (Must be more than 0)";
 
-    public static final String MESSAGE_SUCCESS = "Previous command successfully undone.";
+    public static final String MESSAGE_SUCCESS = "Previous %1$s command(s) were successfully undone.";
 
-    public static final String MESSAGE_INVALID_INDEX = "The given states to undo, %1$s, is invalid. "
-            + "Please enter a number lower than %2$s";
+    public static final String MESSAGE_INVALID_INDEX = "The state(s) to undo, %1$s, is invalid. "
+            + "Please enter a number lower than %2$s and bigger than 0";
 
     private static final String[] COMMAND_SYNONYMS = {COMMAND_WORD.toLowerCase()};
 
@@ -54,7 +54,7 @@ public class UndoCommand extends Command {
             throw new CommandException("Error in undo command. Possible corrupted state json file");
         }
 
-        return new CommandResult(MESSAGE_SUCCESS);
+        return new CommandResult(String.format(MESSAGE_SUCCESS, numOfStatesToUndo));
     }
 
     /**
