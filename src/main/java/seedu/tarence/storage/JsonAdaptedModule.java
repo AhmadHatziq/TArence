@@ -84,64 +84,6 @@ public class JsonAdaptedModule {
         for (Tutorial t : source.getTutorials()) {
             LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
 
-            /*
-            // Trying to get string representation of  Map<Assignment, Map<Student, Integer>>
-            // Needed to create a Tutorial Object
-
-            Map<Assignment, Map<Student, Integer>> assignmentsList = t.getAssignments();
-            LinkedHashMap<String, String> tutorialAssignmentMap = new LinkedHashMap<String, String>();
-
-            for (Assignment a : assignmentsList.keySet() ) {
-                Map<Student, Integer> studentScoreList = assignmentsList.get(a);
-
-                // Converts the students and their respective scores into String representation.
-                // Each student is encompassed in "[]"
-                String studentsWithAssignmentString = "[";
-                for (Student s : studentScoreList.keySet()) {
-                    LinkedHashMap<String, String> studentMap = new LinkedHashMap<String, String>();
-                    int studentScore = studentScoreList.get(s);
-
-                    studentMap.put(JsonAdaptedModule.STUDENT_NAME, s.getName().toString());
-                    studentMap.put(JsonAdaptedModule.STUDENT_EMAIL, s.getEmail().toString());
-                    studentMap.put(JsonAdaptedModule.STUDENT_MATRIC_NUMBER, s.getMatricNum().toString());
-                    studentMap.put(JsonAdaptedModule.STUDENT_NUSNET_ID, s.getNusnetId().toString());
-                    studentMap.put(JsonAdaptedModule.STUDENT_MODULE_CODE, s.getModCode().toString());
-                    studentMap.put(JsonAdaptedModule.STUDENT_TUTORIAL_NAME, s.getTutName().toString());
-                    studentMap.put(JsonAdaptedModule.STUDENT_ASSIGNMENT_SCORE, Integer.toString(studentScore));
-                    studentsWithAssignmentString = studentsWithAssignmentString + studentMap.toString() + "],[";
-                }
-
-                // Case when there are no students.
-                if (studentsWithAssignmentString.equals("[")) {
-                    studentsWithAssignmentString += "]";
-                } else {
-                    // Remove the last square bracket
-                    studentsWithAssignmentString = studentsWithAssignmentString.substring(0, (studentsWithAssignmentString.length() - 2));
-                }
-
-                // Convert the assignment object into a String representation
-                LinkedHashMap<String, String> assignmentStringMap = new LinkedHashMap<String, String>();
-                String assignmentName = a.getAssignName();
-                String assignmentStartDate = a.getAssignmentStartDate().toString();
-                String assignmentEndDate = a.getAssignmentEndDate().toString();
-                String assignmentMaxScore = Integer.toString(a.getAssignmentMaxScore());
-
-                assignmentStringMap.put(JsonAdaptedModule.ASSIGNMENT_NAME, assignmentName);
-                assignmentStringMap.put(JsonAdaptedModule.ASSIGNMENT_MAX_SCORE, assignmentMaxScore);
-                assignmentStringMap.put(JsonAdaptedModule.ASSIGNMENT_START_DATE, assignmentStartDate);
-                assignmentStringMap.put(JsonAdaptedModule.ASSIGNMENT_END_DATE, assignmentEndDate);
-
-                String singleAssignmentString = assignmentStringMap.toString();
-
-                // Creates the final map of Assignment - StudentList(with scores)
-                tutorialAssignmentMap.put(singleAssignmentString, studentsWithAssignmentString);
-            }
-
-            //System.out.println("Module " + moduleCode + "'s assignment string: ");
-            //System.out.println(tutorialAssignmentMap.toString());
-            // End of obtaining Tutorial's Assignment String
-            */
-
             // Obtain all the fields that defines a single Tutorial object.
             String tutorialName = t.getTutName().toString();
             String tutorialDayOfWeek = t.getTimeTable().getDay().toString();
@@ -162,7 +104,7 @@ public class JsonAdaptedModule {
             singleTutorialMap.put(TUTORIAL_ATTENDANCE_LIST, tutorialAttendanceString);
             singleTutorialMap.put(TUTORIAL_MODULE_CODE, tutorialModuleCode);
 
-             tutorialMap.put(tutorialName, singleTutorialMap);
+            tutorialMap.put(tutorialName, singleTutorialMap);
         }
     }
 

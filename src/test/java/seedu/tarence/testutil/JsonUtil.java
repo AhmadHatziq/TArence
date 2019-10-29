@@ -65,7 +65,7 @@ public class JsonUtil {
         return singleTutorialMap;
     }
 
-    public static LinkedHashMap<String, String> getMapOfSingleTutorialWithInvalidTutorialDay() {
+    public static LinkedHashMap<String, LinkedHashMap<String, String>> getMapOfSingleTutorialWithInvalidTutorialDay() {
         LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
         singleTutorialMap.put(TUTORIAL_NAME, VALID_TUTORIAL_NAME);
         singleTutorialMap.put(TUTORIAL_DAY, INVALID_TUTORIAL_DAY);
@@ -76,12 +76,14 @@ public class JsonUtil {
         singleTutorialMap.put(TUTORIAL_ATTENDANCE_LIST, VALID_TUTORIAL_ATTENDANCE_LIST);
         singleTutorialMap.put(TUTORIAL_MODULE_CODE, VALID_TUTORIAL_MODULE_CODE);
 
-        LinkedHashMap<String, String> differentTutorialsMap = new LinkedHashMap<String, String>();
-        differentTutorialsMap.put(VALID_TUTORIAL_NAME, singleTutorialMap.toString());
+
+        LinkedHashMap<String, LinkedHashMap<String, String>> differentTutorialsMap;
+        differentTutorialsMap = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+        differentTutorialsMap.put(VALID_TUTORIAL_NAME, singleTutorialMap);
         return differentTutorialsMap;
     }
 
-    public static LinkedHashMap<String, String> getMapOfSingleTutorialWithInvalidTutorialDuration() {
+    public static LinkedHashMap<String, LinkedHashMap<String, String>> getMapOfSingleTutorialWithInvalidTutorialDuration() {
         LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
         singleTutorialMap.put(TUTORIAL_NAME, VALID_TUTORIAL_NAME);
         singleTutorialMap.put(TUTORIAL_DAY, VALID_TUTORIAL_DAY);
@@ -92,12 +94,13 @@ public class JsonUtil {
         singleTutorialMap.put(TUTORIAL_ATTENDANCE_LIST, VALID_TUTORIAL_ATTENDANCE_LIST);
         singleTutorialMap.put(TUTORIAL_MODULE_CODE, VALID_TUTORIAL_MODULE_CODE);
 
-        LinkedHashMap<String, String> differentTutorialsMap = new LinkedHashMap<String, String>();
-        differentTutorialsMap.put(VALID_TUTORIAL_NAME, singleTutorialMap.toString());
+        LinkedHashMap<String, LinkedHashMap<String, String>> differentTutorialsMap;
+        differentTutorialsMap = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+        differentTutorialsMap.put(VALID_TUTORIAL_NAME, singleTutorialMap);
         return differentTutorialsMap;
     }
 
-    public static LinkedHashMap<String, String> getMapOfSingleTutorialWithInvalidTutorialStartTime() {
+    public static LinkedHashMap<String, LinkedHashMap<String, String>> getMapOfSingleTutorialWithInvalidTutorialStartTime() {
         LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
         singleTutorialMap.put(TUTORIAL_NAME, VALID_TUTORIAL_NAME);
         singleTutorialMap.put(TUTORIAL_DAY, VALID_TUTORIAL_DAY);
@@ -108,12 +111,13 @@ public class JsonUtil {
         singleTutorialMap.put(TUTORIAL_ATTENDANCE_LIST, VALID_TUTORIAL_ATTENDANCE_LIST);
         singleTutorialMap.put(TUTORIAL_MODULE_CODE, VALID_TUTORIAL_MODULE_CODE);
 
-        LinkedHashMap<String, String> differentTutorialsMap = new LinkedHashMap<String, String>();
-        differentTutorialsMap.put(VALID_TUTORIAL_NAME, singleTutorialMap.toString());
+        LinkedHashMap<String, LinkedHashMap<String, String>> differentTutorialsMap;
+        differentTutorialsMap = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+        differentTutorialsMap.put(VALID_TUTORIAL_NAME, singleTutorialMap);
         return differentTutorialsMap;
     }
 
-    public static LinkedHashMap<String, String> getMapOfSingleTutorialWithInvalidTutorialWeeks() {
+    public static LinkedHashMap<String, LinkedHashMap<String, String>> getMapOfSingleTutorialWithInvalidTutorialWeeks() {
         LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
         singleTutorialMap.put(TUTORIAL_NAME, VALID_TUTORIAL_NAME);
         singleTutorialMap.put(TUTORIAL_DAY, VALID_TUTORIAL_DAY);
@@ -124,12 +128,13 @@ public class JsonUtil {
         singleTutorialMap.put(TUTORIAL_ATTENDANCE_LIST, VALID_TUTORIAL_ATTENDANCE_LIST);
         singleTutorialMap.put(TUTORIAL_MODULE_CODE, VALID_TUTORIAL_MODULE_CODE);
 
-        LinkedHashMap<String, String> differentTutorialsMap = new LinkedHashMap<String, String>();
-        differentTutorialsMap.put(VALID_TUTORIAL_NAME, singleTutorialMap.toString());
+        LinkedHashMap<String, LinkedHashMap<String, String>> differentTutorialsMap;
+        differentTutorialsMap = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+        differentTutorialsMap.put(VALID_TUTORIAL_NAME, singleTutorialMap);
         return differentTutorialsMap;
     }
 
-    public static LinkedHashMap<String, String> getMapOfSingleTutorialWithInvalidModuleCode() {
+    public static LinkedHashMap<String, LinkedHashMap<String, String>> getMapOfSingleTutorialWithInvalidModuleCode() {
         LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
         singleTutorialMap.put(TUTORIAL_NAME, VALID_TUTORIAL_NAME);
         singleTutorialMap.put(TUTORIAL_DAY, VALID_TUTORIAL_DAY);
@@ -140,16 +145,18 @@ public class JsonUtil {
         singleTutorialMap.put(TUTORIAL_ATTENDANCE_LIST, VALID_TUTORIAL_ATTENDANCE_LIST);
         singleTutorialMap.put(TUTORIAL_MODULE_CODE, INVALID_TUTORIAL_MODULE_CODE);
 
-        LinkedHashMap<String, String> differentTutorialsMap = new LinkedHashMap<String, String>();
-        differentTutorialsMap.put(VALID_TUTORIAL_NAME, singleTutorialMap.toString());
+        LinkedHashMap<String, LinkedHashMap<String, String>> differentTutorialsMap;
+        differentTutorialsMap = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+        differentTutorialsMap.put(VALID_TUTORIAL_NAME, singleTutorialMap);
         return differentTutorialsMap;
     }
 
 
 
-    public static LinkedHashMap<String, String> getValidMapOfDifferentTutorials() {
-        LinkedHashMap<String, String> differentTutorialsMap = new LinkedHashMap<String, String>();
-        differentTutorialsMap.put(VALID_TUTORIAL_NAME, getValidMapOfSingleTutorial().toString());
+    public static LinkedHashMap<String, LinkedHashMap<String, String>> getValidMapOfDifferentTutorials() {
+        LinkedHashMap<String, LinkedHashMap<String, String>> differentTutorialsMap;
+        differentTutorialsMap = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+        differentTutorialsMap.put(VALID_TUTORIAL_NAME, getValidMapOfSingleTutorial());
         return differentTutorialsMap;
     }
 }

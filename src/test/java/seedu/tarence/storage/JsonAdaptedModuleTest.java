@@ -15,10 +15,9 @@ public class JsonAdaptedModuleTest {
 
     public static final String INVALID_MODULE_CODE = "CS10101010AAA";
     public static final String VALID_MODULE_CODE = "CS1010E";
-    public static final LinkedHashMap<String, String> VALID_TUTORIAL_MAP = JsonUtil.getValidMapOfDifferentTutorials();
+    public static final LinkedHashMap<String, LinkedHashMap<String, String>>  VALID_TUTORIAL_MAP = JsonUtil.getValidMapOfDifferentTutorials();
 
 
-/*
     @Test
     public void toModelType_tutorialMapWithInvalidDay_throwsIllegalValueException() {
         JsonAdaptedModule module = new JsonAdaptedModule(VALID_MODULE_CODE,
@@ -33,8 +32,6 @@ public class JsonAdaptedModuleTest {
         String expectedMessage = "Invalid field in Module";
         assertThrows(IllegalValueException.class, expectedMessage, module::toModelType);
     }
-
-
 
     @Test
     public void toModelType_tutorialMapWithInvalidDuration_throwsIllegalValueExcepion() {
@@ -68,7 +65,5 @@ public class JsonAdaptedModuleTest {
         String expectedMessage = "Error in reading field! " + ModCode.MESSAGE_CONSTRAINTS;
         assertThrows(IllegalValueException.class, expectedMessage, module::toModelType);
     }
-
- */
 
 }
