@@ -9,6 +9,9 @@ import seedu.tarence.model.Model;
 import seedu.tarence.model.ReadOnlyApplication;
 import seedu.tarence.storage.Storage;
 
+/**
+ * Represents an undo command, which reverts the application to a previous state.
+ */
 public class UndoCommand extends Command {
 
     public static final String COMMAND_WORD = "undo";
@@ -34,7 +37,7 @@ public class UndoCommand extends Command {
 
     @Override
     public CommandResult execute(Model model) throws CommandException {
-        assert true: "Undo command requires Storage to function properly";
+        assert true : "Undo command requires Storage to function properly";
         throw new CommandException("Error with UndoCommand.java's execution path");
     }
 
@@ -42,7 +45,8 @@ public class UndoCommand extends Command {
     public CommandResult execute(Model model, Storage storage) throws CommandException {
 
         if (!storage.isValidNumberOfRollbacks(numOfStatesToUndo)) {
-            String errorMessage = String.format(MESSAGE_INVALID_INDEX, numOfStatesToUndo, storage.maxNumberOfRollbacksAllowed());
+            String errorMessage = String.format(MESSAGE_INVALID_INDEX,
+                    numOfStatesToUndo, storage.maxNumberOfRollbacksAllowed());
             throw new CommandException(errorMessage);
         }
 

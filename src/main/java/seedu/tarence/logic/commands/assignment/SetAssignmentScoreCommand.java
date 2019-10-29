@@ -122,6 +122,11 @@ public class SetAssignmentScoreCommand extends AssignmentCommand {
                 scores, DisplayFormat.GRAPH);
     }
 
+    @Override
+    public CommandResult execute(Model model, Storage storage) throws CommandException {
+        return execute(model);
+    }
+
     /**
      * Returns true if user command matches command word or any defined synonyms, and false otherwise.
      *
@@ -144,8 +149,4 @@ public class SetAssignmentScoreCommand extends AssignmentCommand {
                 && super.equals(other)); // state check
     }
 
-    @Override
-    public CommandResult execute(Model model, Storage storage) throws CommandException {
-        return execute(model);
-    }
 }

@@ -1,20 +1,24 @@
 package seedu.tarence.logic.parser;
 
 import static seedu.tarence.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
-import static seedu.tarence.logic.parser.CliSyntax.PREFIX_MODULE;
 import static seedu.tarence.logic.parser.CliSyntax.PREFIX_UNDO_NUM_OF_STATES;
 
 import java.util.stream.Stream;
 
 import seedu.tarence.logic.commands.UndoCommand;
 import seedu.tarence.logic.parser.exceptions.ParseException;
-import seedu.tarence.model.module.ModCode;
 
 /**
  * Parses input arguments and creates an UndoCommand object.
  */
 public class UndoCommandParser implements Parser<UndoCommand> {
 
+    /**
+     * Parses and creates an Undo Command
+     * @param args String arguments
+     * @return UndoCommand
+     * @throws ParseException thrown if there are invalid parameters.
+     */
     public UndoCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_UNDO_NUM_OF_STATES);
 

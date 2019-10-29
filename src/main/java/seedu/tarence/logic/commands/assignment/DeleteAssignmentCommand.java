@@ -119,6 +119,11 @@ public class DeleteAssignmentCommand extends AssignmentCommand {
                     String.format(MESSAGE_DELETE_ASSIGNMENT_SUCCESS, targetAssignment.getAssignName()));
     }
 
+    @Override
+    public CommandResult execute(Model model, Storage storage) throws CommandException {
+        return execute(model);
+    }
+
     /**
      * Returns true if user command matches command word or any defined synonyms, and false otherwise.
      *
@@ -141,8 +146,5 @@ public class DeleteAssignmentCommand extends AssignmentCommand {
                 && super.equals(other)); // state check
     }
 
-    @Override
-    public CommandResult execute(Model model, Storage storage) throws CommandException {
-        return execute(model);
-    }
+
 }

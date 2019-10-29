@@ -49,6 +49,11 @@ public class AddModuleCommand extends Command {
 
     }
 
+    @Override
+    public CommandResult execute(Model model, Storage storage) throws CommandException {
+        return execute(model);
+    }
+
     /**
      * Returns true if user command matches command word or any defined synonyms, and false otherwise.
      *
@@ -64,10 +69,6 @@ public class AddModuleCommand extends Command {
         return false;
     }
 
-    @Override
-    public CommandResult execute(Model model, Storage storage) throws CommandException {
-        return execute(model);
-    }
 
 }
 

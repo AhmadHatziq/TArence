@@ -88,6 +88,11 @@ public class AddTutorialCommand extends Command {
                 tutorial.getTimeTable().getDuration().toMinutes()));
     }
 
+    @Override
+    public CommandResult execute(Model model, Storage storage) throws CommandException {
+        return execute(model);
+    }
+
     /**
      * Generates and stores {@code AddTutorialCommand}s from a list of {@code ModCode}s.
      *
@@ -139,9 +144,6 @@ public class AddTutorialCommand extends Command {
         return tutorial.equals(((AddTutorialCommand) other).tutorial);
     }
 
-    @Override
-    public CommandResult execute(Model model, Storage storage) throws CommandException {
-        return execute(model);
-    }
+
 }
 

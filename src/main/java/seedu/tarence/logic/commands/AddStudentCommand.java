@@ -118,6 +118,11 @@ public class AddStudentCommand extends Command {
         return new CommandResult(String.format(MESSAGE_SUCCESS, toAdd));
     }
 
+    @Override
+    public CommandResult execute(Model model, Storage storage) throws CommandException {
+        return execute(model);
+    }
+
     /**
      * Generates and stores {@code AddStudentCommand}s from a list of {@code ModCode}s.
      *
@@ -189,8 +194,5 @@ public class AddStudentCommand extends Command {
         }
     }
 
-    @Override
-    public CommandResult execute(Model model, Storage storage) throws CommandException {
-        return execute(model);
-    }
+
 }

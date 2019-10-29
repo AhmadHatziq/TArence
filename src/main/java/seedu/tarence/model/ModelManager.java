@@ -54,16 +54,19 @@ public class ModelManager implements Model {
 
     }
 
+    public ModelManager() {
+        this(new Application(), new UserPrefs());
+    }
+
     @Override
+    /**
+     * Called during Undo Command. Resets the application to the newly loaded data from the undo state.
+     */
     public void setModel(ReadOnlyApplication loadedApplication) {
         requireNonNull(loadedApplication);
 
         application.resetData(loadedApplication);
 
-    }
-
-    public ModelManager() {
-        this(new Application(), new UserPrefs());
     }
 
     //=========== UserPrefs ==================================================================================

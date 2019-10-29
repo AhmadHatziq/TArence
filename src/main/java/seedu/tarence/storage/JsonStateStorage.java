@@ -9,15 +9,14 @@ import java.util.Optional;
 import java.util.Stack;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.FileUtils;
+
 import seedu.tarence.commons.core.LogsCenter;
 import seedu.tarence.commons.exceptions.DataConversionException;
 import seedu.tarence.commons.exceptions.IllegalValueException;
 import seedu.tarence.commons.util.FileUtil;
 import seedu.tarence.commons.util.JsonUtil;
-import seedu.tarence.logic.commands.exceptions.CommandException;
 import seedu.tarence.model.ReadOnlyApplication;
-
-import org.apache.commons.io.FileUtils;
 
 /**
  * A class to access the application states stored as json files on the hard disk.
@@ -44,7 +43,8 @@ public class JsonStateStorage implements ApplicationStateStorage {
             clearStateFolder();
             logger.fine(stateFolderDirectory + " successfully cleared.");
         } catch (IOException e) {
-            logger.info("Error in clearing state folder. Possible error with specified directory: " + stateFolderDirectory);
+            logger.info("Error in clearing state folder. Possible error with specified directory: "
+                    + stateFolderDirectory);
         }
     }
 
@@ -120,7 +120,8 @@ public class JsonStateStorage implements ApplicationStateStorage {
      * @return Path.
      */
     public Path getNextFilePath() {
-        String filePathString = stateFolderDirectory + STATE_FILE_PREFIX + getNextStateIndex().toString() + STATE_FILE_SUFFIX;
+        String filePathString = stateFolderDirectory + STATE_FILE_PREFIX + getNextStateIndex().toString()
+                + STATE_FILE_SUFFIX;
         return Paths.get(filePathString);
     }
 
@@ -182,9 +183,9 @@ public class JsonStateStorage implements ApplicationStateStorage {
             Path filePath = getFilePathFromIndex(index);
             Optional<ReadOnlyApplication> applicationOptional = readApplication(filePath);
 
-            int numOFStatesToPop = getLatestStateIndex() - index;
+            int numOfStatesToPop = getLatestStateIndex() - index;
 
-            for (int i = 0; i < numOFStatesToPop; i++) {
+            for (int i = 0; i < numOfStatesToPop; i++) {
                 stateStack.pop();
             }
 

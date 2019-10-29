@@ -42,6 +42,11 @@ public class ChangeTabCommand extends Command {
         return new CommandResult(String.format(MESSAGE_SUCCESS, tabToDisplay.toString().toLowerCase()), tabToDisplay);
     }
 
+    @Override
+    public CommandResult execute(Model model, Storage storage) throws CommandException {
+        return execute(model);
+    }
+
     /**
      * Returns the Tabname that matches user input
      * TODO: pretty sure there's a better way to do this. do let me know how i can improve iy
@@ -92,8 +97,5 @@ public class ChangeTabCommand extends Command {
         return tabName.equals(((ChangeTabCommand) other).tabName);
     }
 
-    @Override
-    public CommandResult execute(Model model, Storage storage) throws CommandException {
-        return execute(model);
-    }
+
 }

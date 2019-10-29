@@ -67,7 +67,8 @@ public class JsonAdaptedModule {
      */
     @JsonCreator
     public JsonAdaptedModule(@JsonProperty("moduleCode") String moduleName,
-                             @JsonProperty("tutorialMap") LinkedHashMap<String, LinkedHashMap<String, String>> tutorialMap) {
+                             @JsonProperty("tutorialMap") LinkedHashMap<String,
+                                     LinkedHashMap<String, String>> tutorialMap) {
         this.moduleCode = moduleName;
         this.tutorialMap = tutorialMap;
     }

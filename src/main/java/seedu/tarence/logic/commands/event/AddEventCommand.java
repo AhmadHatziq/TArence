@@ -103,6 +103,11 @@ public class AddEventCommand extends EventCommand {
                 String.format(MESSAGE_ADD_EVENT_SUCCESS, eventName.get()));
     }
 
+    @Override
+    public CommandResult execute(Model model, Storage storage) throws CommandException {
+        return execute(model);
+    }
+
     /**
      * Returns true if user command matches command word or any defined synonyms, and false otherwise.
      *
@@ -125,8 +130,5 @@ public class AddEventCommand extends EventCommand {
                 && super.equals(other)); // state check
     }
 
-    @Override
-    public CommandResult execute(Model model, Storage storage) throws CommandException {
-        return execute(model);
-    }
+
 }

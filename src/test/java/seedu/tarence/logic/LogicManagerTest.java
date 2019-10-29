@@ -23,7 +23,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import seedu.tarence.logic.commands.AddStudentCommand;
 import seedu.tarence.logic.commands.CommandResult;
-import seedu.tarence.logic.commands.ListCommand;
+// import seedu.tarence.logic.commands.ListCommand;
 import seedu.tarence.logic.commands.exceptions.CommandException;
 import seedu.tarence.logic.parser.exceptions.ParseException;
 import seedu.tarence.model.Model;
@@ -89,7 +89,7 @@ public class LogicManagerTest {
         JsonUserPrefsStorage userPrefsStorage =
                 new JsonUserPrefsStorage(temporaryFolder.resolve("ioExceptionUserPrefs.json"));
         JsonStateStorage jsonStateStorage = new JsonStateStorage("data\\states\\");
-        StorageManager storage = new StorageManager(applicationStorage, userPrefsStorage, jsonStateStorage );
+        StorageManager storage = new StorageManager(applicationStorage, userPrefsStorage, jsonStateStorage);
         logic = new LogicManager(model, storage);
 
         // Execute add command

@@ -20,9 +20,10 @@ public class StorageManager implements Storage {
     private static final Logger logger = LogsCenter.getLogger(StorageManager.class);
     private ApplicationStorage applicationStorage;
     private UserPrefsStorage userPrefsStorage;
-    public JsonStateStorage jsonStateStorage;
+    private JsonStateStorage jsonStateStorage;
 
-    public StorageManager(ApplicationStorage applicationStorage, UserPrefsStorage userPrefsStorage, JsonStateStorage jsonStateStorage) {
+    public StorageManager(ApplicationStorage applicationStorage, UserPrefsStorage userPrefsStorage,
+                          JsonStateStorage jsonStateStorage) {
         super();
         this.applicationStorage = applicationStorage;
         this.userPrefsStorage = userPrefsStorage;

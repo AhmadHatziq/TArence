@@ -123,7 +123,7 @@ public class ApplicationParser {
             return new SetSemStartCommandParser().parse(arguments);
         } else if (ChangeTabCommand.isMatchingCommandWord(commandWord)) {
             return new ChangeTabCommand(arguments);
-        }  else if (UndoCommand.isMatchingCommandWord(commandWord)) {
+        } else if (UndoCommand.isMatchingCommandWord(commandWord)) {
             return new UndoCommandParser().parse(arguments);
         } else if (DisplayAssignmentScoreCommand.isMatchingCommandWord(commandWord)) {
             return new DisplayAssignmentScoreCommandParser().parse(arguments);

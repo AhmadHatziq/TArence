@@ -114,6 +114,11 @@ public class DeleteEventCommand extends EventCommand {
                     String.format(MESSAGE_DELETE_EVENT_SUCCESS, targetEvent.eventName));
     }
 
+    @Override
+    public CommandResult execute(Model model, Storage storage) throws CommandException {
+        return execute(model);
+    }
+
     /**
      * Returns true if user command matches command word or any defined synonyms, and false otherwise.
      *
@@ -136,8 +141,5 @@ public class DeleteEventCommand extends EventCommand {
                 && super.equals(other)); // state check
     }
 
-    @Override
-    public CommandResult execute(Model model, Storage storage) throws CommandException {
-        return execute(model);
-    }
+
 }

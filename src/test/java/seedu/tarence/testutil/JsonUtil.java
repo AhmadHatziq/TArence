@@ -83,7 +83,9 @@ public class JsonUtil {
         return differentTutorialsMap;
     }
 
-    public static LinkedHashMap<String, LinkedHashMap<String, String>> getMapOfSingleTutorialWithInvalidTutorialDuration() {
+    public static LinkedHashMap<String, LinkedHashMap<String, String>>
+                    getMapOfSingleTutorialWithInvalidTutorialDuration() {
+
         LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
         singleTutorialMap.put(TUTORIAL_NAME, VALID_TUTORIAL_NAME);
         singleTutorialMap.put(TUTORIAL_DAY, VALID_TUTORIAL_DAY);
@@ -100,7 +102,9 @@ public class JsonUtil {
         return differentTutorialsMap;
     }
 
-    public static LinkedHashMap<String, LinkedHashMap<String, String>> getMapOfSingleTutorialWithInvalidTutorialStartTime() {
+    public static LinkedHashMap<String, LinkedHashMap<String, String>>
+                    getMapOfSingleTutorialWithInvalidTutorialStartTime() {
+
         LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
         singleTutorialMap.put(TUTORIAL_NAME, VALID_TUTORIAL_NAME);
         singleTutorialMap.put(TUTORIAL_DAY, VALID_TUTORIAL_DAY);
@@ -117,7 +121,9 @@ public class JsonUtil {
         return differentTutorialsMap;
     }
 
-    public static LinkedHashMap<String, LinkedHashMap<String, String>> getMapOfSingleTutorialWithInvalidTutorialWeeks() {
+    public static LinkedHashMap<String, LinkedHashMap<String, String>>
+                    getMapOfSingleTutorialWithInvalidTutorialWeeks() {
+
         LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
         singleTutorialMap.put(TUTORIAL_NAME, VALID_TUTORIAL_NAME);
         singleTutorialMap.put(TUTORIAL_DAY, VALID_TUTORIAL_DAY);
