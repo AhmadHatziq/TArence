@@ -2,7 +2,6 @@ package seedu.tarence;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -25,7 +24,7 @@ import seedu.tarence.model.util.SampleDataUtil;
 import seedu.tarence.storage.ApplicationStorage;
 import seedu.tarence.storage.JsonApplicationStorage;
 import seedu.tarence.storage.JsonUserPrefsStorage;
-import seedu.tarence.storage.StateStorage;
+import seedu.tarence.storage.JsonStateStorage;
 import seedu.tarence.storage.Storage;
 import seedu.tarence.storage.StorageManager;
 import seedu.tarence.storage.UserPrefsStorage;
@@ -60,11 +59,11 @@ public class MainApp extends javafx.application.Application {
         ApplicationStorage applicationStorage = new JsonApplicationStorage(userPrefs.getApplicationFilePath());
 
 
-        // Creates a StateStorage class for Undo.
-        StateStorage stateStorage = new StateStorage("data\\states\\");
+        // Creates a JsonStateStorage class for Undo.
+        JsonStateStorage jsonStateStorage = new JsonStateStorage("data\\states\\");
 
-        storage = new StorageManager(applicationStorage, userPrefsStorage, stateStorage);
-        
+        storage = new StorageManager(applicationStorage, userPrefsStorage, jsonStateStorage);
+
         initLogging(config);
 
         model = initModelManager(storage, userPrefs);

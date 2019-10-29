@@ -71,6 +71,8 @@ public class LogicManager implements Logic {
                 model.getPendingCommand(); // clear any pending commands if user has entered a different command
             }
 
+
+            // TODO: Add params to include storage for undo command
             CommandResult currCommandResult = command.execute(model);
 
             // concatenate all results into a single result

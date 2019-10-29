@@ -26,6 +26,7 @@ import seedu.tarence.logic.commands.ListCommand;
 import seedu.tarence.logic.commands.MarkAttendanceCommand;
 import seedu.tarence.logic.commands.SelectSuggestionCommand;
 import seedu.tarence.logic.commands.SetSemStartCommand;
+import seedu.tarence.logic.commands.UndoCommand;
 import seedu.tarence.logic.commands.assignment.AddAssignmentCommand;
 import seedu.tarence.logic.commands.assignment.DeleteAssignmentCommand;
 import seedu.tarence.logic.commands.assignment.SetAssignmentScoreCommand;
@@ -120,7 +121,10 @@ public class ApplicationParser {
             return new SetSemStartCommandParser().parse(arguments);
         } else if (ChangeTabCommand.isMatchingCommandWord(commandWord)) {
             return new ChangeTabCommand(arguments);
-        } else {
+        }  else if (UndoCommand.isMatchingCommandWord(commandWord)) {
+            return new UndoCommandParser().parse(arguments);
+        }
+        else {
             throw new ParseException(MESSAGE_UNKNOWN_COMMAND);
         }
 

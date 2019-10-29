@@ -20,14 +20,13 @@ public class StorageManager implements Storage {
     private static final Logger logger = LogsCenter.getLogger(StorageManager.class);
     private ApplicationStorage applicationStorage;
     private UserPrefsStorage userPrefsStorage;
-    private StateStorage stateStorage;
+    public JsonStateStorage jsonStateStorage;
 
-
-    public StorageManager(ApplicationStorage applicationStorage, UserPrefsStorage userPrefsStorage, StateStorage stateStorage) {
+    public StorageManager(ApplicationStorage applicationStorage, UserPrefsStorage userPrefsStorage, JsonStateStorage jsonStateStorage) {
         super();
         this.applicationStorage = applicationStorage;
         this.userPrefsStorage = userPrefsStorage;
-        this.stateStorage = stateStorage;
+        this.jsonStateStorage = jsonStateStorage;
     }
 
     // ================ UserPrefs methods ==============================
@@ -67,7 +66,7 @@ public class StorageManager implements Storage {
 
         // Saves the first state (loaded from previous session)
         ReadOnlyApplication initialData = applicationOptional.orElseGet(SampleDataUtil::getSampleApplication);
-        stateStorage.saveApplicationState(initialData);
+        jsonStateStorage.saveApplicationState(initialData);
 
         return applicationOptional;
     }
@@ -83,7 +82,12 @@ public class StorageManager implements Storage {
         applicationStorage.saveApplication(application, filePath);
 
         // Save the states whenever a command changes the model.
-        stateStorage.saveApplicationState(application);
+        jsonStateStorage.saveApplicationState(application);
+    }
+
+    @Override
+    public void helloFromState() {
+        jsonStateStorage.helloFromState();
     }
 
 }
