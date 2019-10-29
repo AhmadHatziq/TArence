@@ -2,6 +2,7 @@ package seedu.tarence.logic;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -10,6 +11,7 @@ import seedu.tarence.commons.core.GuiSettings;
 import seedu.tarence.commons.core.LogsCenter;
 import seedu.tarence.logic.commands.Command;
 import seedu.tarence.logic.commands.CommandResult;
+import seedu.tarence.logic.commands.DisplayFormat;
 import seedu.tarence.logic.commands.TabNames;
 import seedu.tarence.logic.commands.exceptions.CommandException;
 import seedu.tarence.logic.parser.ApplicationParser;
@@ -19,6 +21,7 @@ import seedu.tarence.model.ReadOnlyApplication;
 import seedu.tarence.model.module.Module;
 import seedu.tarence.model.person.Person;
 import seedu.tarence.model.student.Student;
+import seedu.tarence.model.tutorial.Assignment;
 import seedu.tarence.model.tutorial.Tutorial;
 import seedu.tarence.storage.Storage;
 
@@ -50,9 +53,12 @@ public class LogicManager implements Logic {
         Command command;
         Optional<Tutorial> tutorialToStore = Optional.empty();
         Optional<TabNames> tabToDisplay = Optional.empty();
+        Optional<Assignment> assignmentToDisplay = Optional.empty();
+        Optional<Map<Student, Integer>> studentsScoreToDisplay = Optional.empty();
+        Optional<DisplayFormat> displayFormat = Optional.empty();
 
         // processes multiple commands in user input if they exit
-        String[] commandStrings = commandText.split("&");
+        String[] commandStrings = commandText.split("\\+");
         // pushes commands from back to front on top of the pending commands stack
         for (int i = commandStrings.length - 1; i >= 0; i--) {
             Command tempCommand = applicationParser.parseCommand(commandStrings[i]);
@@ -85,6 +91,7 @@ public class LogicManager implements Logic {
             // check for exit/help condition
             if (currCommandResult.isExit() || currCommandResult.isShowHelp()) {
                 // this means that previous commands won't be shown if help is inside pending commands
+                // but will be executed
                 return currCommandResult;
             }
 
@@ -103,6 +110,13 @@ public class LogicManager implements Logic {
             if (currCommandResult.isChangeTabs()) {
                 tabToDisplay = Optional.of(currCommandResult.getTabToDisplay());
             }
+
+            // If assignment is to be displayed, it will be passed into the commandResult
+            if (currCommandResult.isAssignmentDisplay()) {
+                assignmentToDisplay = Optional.of(currCommandResult.getAssignmentToDisplay());
+                studentsScoreToDisplay = Optional.of(currCommandResult.getStudentScores());
+                displayFormat = Optional.of(currCommandResult.getAssignmentDisplayFormat());
+            }
         }
 
         // creates a new command concatenating all command result messages into a single result
@@ -110,6 +124,9 @@ public class LogicManager implements Logic {
             commandResult = new CommandResult(combinedFeedback.toString(), tutorialToStore.get());
         } else if (tabToDisplay.isPresent()) {
             commandResult = new CommandResult(combinedFeedback.toString(), tabToDisplay.get());
+        } else if (displayFormat.isPresent() && assignmentToDisplay.isPresent() && studentsScoreToDisplay.isPresent()) {
+            commandResult = new CommandResult(combinedFeedback.toString(), assignmentToDisplay.get(),
+                    studentsScoreToDisplay.get(), displayFormat.get());
         } else {
             commandResult = new CommandResult(combinedFeedback.toString());
         }

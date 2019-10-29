@@ -16,12 +16,14 @@ import seedu.tarence.logic.commands.ConfirmYesCommand;
 import seedu.tarence.logic.commands.DeleteModuleCommand;
 import seedu.tarence.logic.commands.DeleteStudentCommand;
 import seedu.tarence.logic.commands.DeleteTutorialCommand;
+import seedu.tarence.logic.commands.DisplayAssignmentScoreCommand;
 import seedu.tarence.logic.commands.DisplayAttendanceCommand;
 import seedu.tarence.logic.commands.EditCommand;
 import seedu.tarence.logic.commands.ExitCommand;
 import seedu.tarence.logic.commands.ExportAttendanceCommand;
 import seedu.tarence.logic.commands.FindCommand;
 import seedu.tarence.logic.commands.HelpCommand;
+import seedu.tarence.logic.commands.ImportCommand;
 import seedu.tarence.logic.commands.ListCommand;
 import seedu.tarence.logic.commands.MarkAttendanceCommand;
 import seedu.tarence.logic.commands.SelectSuggestionCommand;
@@ -123,8 +125,11 @@ public class ApplicationParser {
             return new ChangeTabCommand(arguments);
         }  else if (UndoCommand.isMatchingCommandWord(commandWord)) {
             return new UndoCommandParser().parse(arguments);
-        }
-        else {
+        } else if (DisplayAssignmentScoreCommand.isMatchingCommandWord(commandWord)) {
+            return new DisplayAssignmentScoreCommandParser().parse(arguments);
+        } else if (ImportCommand.isMatchingCommandWord(commandWord)) {
+            return new ImportCommandParser().parse(arguments);
+        } else {
             throw new ParseException(MESSAGE_UNKNOWN_COMMAND);
         }
 
