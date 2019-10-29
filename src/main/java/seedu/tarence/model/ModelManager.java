@@ -29,12 +29,12 @@ import seedu.tarence.model.tutorial.Tutorial;
 public class ModelManager implements Model {
     private static final Logger logger = LogsCenter.getLogger(ModelManager.class);
 
-    private final Application application;
+    private Application application;
     private final UserPrefs userPrefs;
-    private final FilteredList<Person> filteredPersons;
-    private final FilteredList<Student> filteredStudents;
-    private final FilteredList<Module> filteredModules;
-    private final FilteredList<Tutorial> filteredTutorials;
+    private FilteredList<Person> filteredPersons;
+    private FilteredList<Student> filteredStudents;
+    private FilteredList<Module> filteredModules;
+    private FilteredList<Tutorial> filteredTutorials;
 
     /**
      * Initializes a ModelManager with the given student and userPrefs.
@@ -51,6 +51,15 @@ public class ModelManager implements Model {
         filteredPersons = new FilteredList<>(this.application.getPersonList());
         filteredModules = new FilteredList<>(this.application.getModuleList());
         filteredTutorials = new FilteredList<>(this.application.getTutorialList());
+
+    }
+
+    @Override
+    public void setModel(ReadOnlyApplication loadedApplication) {
+        requireNonNull(loadedApplication);
+
+        application.resetData(loadedApplication);
+
     }
 
     public ModelManager() {

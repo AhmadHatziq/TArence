@@ -66,7 +66,8 @@ public class StorageManager implements Storage {
 
         // Saves the first state (loaded from previous session)
         ReadOnlyApplication initialData = applicationOptional.orElseGet(SampleDataUtil::getSampleApplication);
-        jsonStateStorage.saveApplicationState(initialData);
+        jsonStateStorage.saveFirstState(initialData);
+        //jsonStateStorage.saveApplicationState(initialData);
 
         return applicationOptional;
     }
@@ -85,9 +86,28 @@ public class StorageManager implements Storage {
         jsonStateStorage.saveApplicationState(application);
     }
 
+    // ================ Application state methods ==============================
+
     @Override
-    public void helloFromState() {
-        jsonStateStorage.helloFromState();
+    public Boolean isValidNumberOfRollbacks(Integer i) {
+        return jsonStateStorage.isValidNumberOfRollbacks(i);
     }
+
+    @Override
+    public Integer maxNumberOfRollbacksAllowed() {
+        return jsonStateStorage.maxNumberOfRollbacksAllowed();
+    }
+
+    @Override
+    public ReadOnlyApplication getSpecifiedState (Integer index) throws IOException {
+        return jsonStateStorage.getSpecifiedState(index);
+    }
+
+    @Override
+    public Integer getLatestStateIndex () {
+        return jsonStateStorage.getLatestStateIndex();
+    }
+
+
 
 }

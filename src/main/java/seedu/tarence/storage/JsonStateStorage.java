@@ -5,12 +5,16 @@ import static java.util.Objects.requireNonNull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.Stack;
 import java.util.logging.Logger;
 
 import seedu.tarence.commons.core.LogsCenter;
+import seedu.tarence.commons.exceptions.DataConversionException;
+import seedu.tarence.commons.exceptions.IllegalValueException;
 import seedu.tarence.commons.util.FileUtil;
 import seedu.tarence.commons.util.JsonUtil;
+import seedu.tarence.logic.commands.exceptions.CommandException;
 import seedu.tarence.model.ReadOnlyApplication;
 
 import org.apache.commons.io.FileUtils;
@@ -56,7 +60,35 @@ public class JsonStateStorage implements ApplicationStateStorage {
 
         // Get the next filePath eg "data\states\state5.json".
         Path filePath = getNextFilePath();
-        //System.out.println("Mext Fiepath is: " + filePath.toString());
+
+        // Only save the state if the incoming application is different from the latest application
+        ReadOnlyApplication latestApplication = getLatestState();
+
+        // Only saves the state when there is a change with the previous state
+        // TODO: Hypotheses - Undo command won't trigger as prev loaded state will be the latest as alr pop the latest state
+        if (!latestApplication.equals(application)) {
+            // Save the application state
+            FileUtil.createIfMissing(filePath);
+            JsonUtil.saveJsonFile(new JsonSerializableApplication(application), filePath);
+
+            // Increment the stack counter
+            stateStack.push(stateStack.peek() + 1);
+        }
+    }
+
+    /**
+     * Saves the first state. Has to be handled seperately as in the normal saving, saving is only done when there is
+     * a change with the previous state, which does not exist for the first state.
+     *
+     * @param application
+     * @throws IOException
+     */
+    public void saveFirstState(ReadOnlyApplication application) throws IOException {
+        requireNonNull(application);
+
+
+
+        Path filePath = getNextFilePath();
 
         // Save the application state
         FileUtil.createIfMissing(filePath);
@@ -64,7 +96,12 @@ public class JsonStateStorage implements ApplicationStateStorage {
 
         // Increment the stack counter
         stateStack.push(stateStack.peek() + 1);
+    }
 
+    public Boolean isValidNumberOfRollbacks(Integer i) {
+        int finalStateIndex = stateStack.peek() - i;
+
+        return finalStateIndex > 0;
     }
 
     public Path getNextFilePath() {
@@ -76,9 +113,96 @@ public class JsonStateStorage implements ApplicationStateStorage {
         return stateStack.peek() + 1;
     }
 
-    @Override
-    public void helloFromState() {
-        System.out.println("Hello from State");
+    public Integer getLatestStateIndex() {
+        return stateStack.peek();
     }
+
+    /**
+     * Returns the filepath representing the file of the state, indexed by the stack.
+     *
+     * @param index Index of said state.
+     * @return File Path eg "//data//states//state5.json"
+     */
+    public Path getFilePathFromIndex(Integer index) {
+        String filePathString = stateFolderDirectory + STATE_FILE_PREFIX + index.toString() + STATE_FILE_SUFFIX;
+        return Paths.get(filePathString);
+    }
+
+    /**
+     * Get the latest application state.
+     *
+     * @return ReadOnlyApplication
+     * @throws IOException thrown when there is an error in reading of the file.
+     */
+    public ReadOnlyApplication getLatestState() throws IOException {
+        try {
+            Path filePath = getFilePathFromIndex(getLatestStateIndex());
+            Optional<ReadOnlyApplication> applicationOptional = readApplication(filePath);
+            return applicationOptional.get();
+        } catch (DataConversionException e) {
+            throw new IOException("Unable to undo as there is a problem with the state file");
+        }
+
+    }
+
+    /**
+     * Returns the ReadOnlyApplication of a specified index.
+     * Pre-condition: Index supplied is valid ie handled by UndoCommand
+     *
+     * @param index
+     * @return
+     * @throws IOException
+     */
+    public ReadOnlyApplication getSpecifiedState(Integer index) throws IOException {
+
+        try {
+            Path filePath = getFilePathFromIndex(index);
+            Optional<ReadOnlyApplication> applicationOptional = readApplication(filePath);
+            return applicationOptional.get();
+        } catch (DataConversionException e) {
+            throw new IOException("Unable to undo as there is a problem with the state file");
+        }
+    }
+
+    /**
+     * Reads the json file at the specified filepath
+     *
+     * @param filePath Where the json file is stored.
+     * @return Optional Application
+     * @throws DataConversionException If there is a problem with parsing the json file.
+     */
+    public Optional<ReadOnlyApplication> readApplication(Path filePath) throws DataConversionException {
+        requireNonNull(filePath);
+
+        // From the Json file, creates an optional JsonSerializableApplication.
+        // Relies on @JsonCreator of JsonSerializableApplication class.
+        Optional<JsonSerializableApplication> jsonApplication = JsonUtil.readJsonFile(
+                filePath, JsonSerializableApplication.class);
+
+        if (!jsonApplication.isPresent()) {
+            return Optional.empty();
+        }
+
+        try {
+            return Optional.of(jsonApplication.get().toModelType());
+        } catch (IllegalValueException ive) {
+            logger.info("Illegal values found in " + filePath + ": " + ive.getMessage());
+            throw new DataConversionException(ive);
+        }
+    }
+
+    /**
+     * Returns the max number that the undo command can accept as an argument.
+     *
+     * @return Integer.
+     */
+    public Integer maxNumberOfRollbacksAllowed() {
+        return stateStack.peek() - 1;
+    }
+
+    public void resetIndex (Integer currentIndex) {
+
+    }
+
 
 }
