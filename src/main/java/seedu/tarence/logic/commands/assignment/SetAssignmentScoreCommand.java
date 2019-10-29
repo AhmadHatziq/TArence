@@ -21,6 +21,7 @@ import seedu.tarence.model.tutorial.Assignment;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
 import seedu.tarence.model.tutorial.exceptions.InvalidScoreException;
+import seedu.tarence.storage.Storage;
 
 /**
  * Sets Student's score for a particular Assignment.
@@ -136,5 +137,10 @@ public class SetAssignmentScoreCommand extends AssignmentCommand {
         return other == this // short circuit if same object
                 || (other instanceof SetAssignmentScoreCommand // instanceof handles nulls
                 && super.equals(other)); // state check
+    }
+
+    @Override
+    public CommandResult execute(Model model, Storage storage) throws CommandException {
+        return execute(model);
     }
 }

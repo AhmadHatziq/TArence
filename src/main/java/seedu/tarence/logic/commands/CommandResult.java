@@ -42,6 +42,7 @@ public class CommandResult {
         this.changeTabs = false;
     }
 
+
     /**
      * Constructs a {@code CommandResult} with the specified {@code feedbackToUser},
      * and other fields set to their default value.

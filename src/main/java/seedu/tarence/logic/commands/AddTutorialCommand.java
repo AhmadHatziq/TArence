@@ -18,6 +18,7 @@ import seedu.tarence.model.Model;
 import seedu.tarence.model.builder.TutorialBuilder;
 import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.tutorial.Tutorial;
+import seedu.tarence.storage.Storage;
 
 /**
  * Adds a tutorial into T.A.rence.
@@ -136,6 +137,11 @@ public class AddTutorialCommand extends Command {
         }
 
         return tutorial.equals(((AddTutorialCommand) other).tutorial);
+    }
+
+    @Override
+    public CommandResult execute(Model model, Storage storage) throws CommandException {
+        return execute(model);
     }
 }
 

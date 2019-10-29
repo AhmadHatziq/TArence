@@ -20,6 +20,7 @@ import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.tutorial.Assignment;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
+import seedu.tarence.storage.Storage;
 
 /**
  * Deletes assignment in a specified tutorial.
@@ -138,5 +139,10 @@ public class DeleteAssignmentCommand extends AssignmentCommand {
         return other == this // short circuit if same object
                 || (other instanceof DeleteAssignmentCommand // instanceof handles nulls
                 && super.equals(other)); // state check
+    }
+
+    @Override
+    public CommandResult execute(Model model, Storage storage) throws CommandException {
+        return execute(model);
     }
 }

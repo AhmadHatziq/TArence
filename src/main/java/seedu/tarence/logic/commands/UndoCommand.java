@@ -34,6 +34,11 @@ public class UndoCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         return new CommandResult("Hello from undo command result with num of states = " + numOfStatesToUndo);
     }
+    
+    @Override
+    public CommandResult execute(Model model, Storage storage) throws CommandException {
+        return execute(model);
+    }
 
     /**
      * Returns true if matches command word.
