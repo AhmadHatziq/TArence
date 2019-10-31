@@ -118,12 +118,15 @@ public class JsonAdaptedModule {
      */
     public Module toModelType() throws IllegalValueException {
         List<Tutorial> tutorials = new ArrayList<Tutorial>();
-
-        for (String tutorialName : tutorialMap.keySet()) {
-            LinkedHashMap<String, String> singleTutorialMap = tutorialMap.get(tutorialName);
-            // TODO: Check if singleTutorialMap is valid ie contains all the requires params
-            Tutorial tutorialFromJsonVersionTwo = JsonUtil.tutorialMapToTutorial(singleTutorialMap);
-            tutorials.add(tutorialFromJsonVersionTwo);
+        try {
+            for (String tutorialName : tutorialMap.keySet()) {
+                LinkedHashMap<String, String> singleTutorialMap = tutorialMap.get(tutorialName);
+                // TODO: Check if singleTutorialMap is valid ie contains all the requires params
+                Tutorial tutorialFromJsonVersionTwo = JsonUtil.tutorialMapToTutorial(singleTutorialMap);
+                tutorials.add(tutorialFromJsonVersionTwo);
+            }
+        } catch (NullPointerException e) {
+            throw new IllegalValueException(String.format(INVALID_FIELD, Module.class.getSimpleName()));
         }
 
         try {
