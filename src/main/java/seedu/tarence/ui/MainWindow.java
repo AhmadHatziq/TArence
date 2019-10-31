@@ -116,6 +116,11 @@ public class MainWindow extends UiPart<Stage> {
         this.primaryStage = primaryStage;
         this.logic = logic;
 
+        // Set listeners for window width changing
+        primaryStage.widthProperty().addListener((observable, oldValue, newValue) -> {
+            updateCommandBoxWindowWidth((Double) newValue);
+        });
+
         // Configure the UI
         setWindowDefaultSize(logic.getGuiSettings());
 
@@ -190,8 +195,9 @@ public class MainWindow extends UiPart<Stage> {
         statusbarPlaceholder.getChildren().add(statusBarFooter.getRoot());
 
         commandBox = new CommandBox(this::executeCommand, this::executeAutocomplete, this::executeNextSuggestion,
-                this::executeInputChanged, this::getPastInput);
+                this::executeInputChanged, this::getPastInput, this::focusOnInputField);
         commandBoxPlaceholder.getChildren().add(commandBox.getRoot());
+        updateCommandBoxWindowWidth(primaryStage.getWidth());
     }
 
     /**
@@ -378,6 +384,14 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     /**
+     * Handles the user clicking on the autocomplete display box.
+     */
+    private CommandResult focusOnInputField(String dummy) {
+        commandBox.setFocus();
+        return new CommandResult("");
+    }
+
+    /**
      * Handles getting past commands.
      */
     private CommandResult getPastInput(String arrowDirection) {
@@ -424,5 +438,12 @@ public class MainWindow extends UiPart<Stage> {
             attendancePanel = new AttendancePanel(tutorial);
         }
         attendancePanelPlaceholder.getChildren().add(attendancePanel.getPane());
+    }
+
+    /**
+     * Updates the window width known to the CommandBox.
+     */
+    private void updateCommandBoxWindowWidth(double newWidth) {
+        commandBox.updateWindowWidth(newWidth);
     }
 }

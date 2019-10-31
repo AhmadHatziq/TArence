@@ -63,7 +63,7 @@ public class MainApp extends javafx.application.Application {
         ApplicationStorage applicationStorage = new JsonApplicationStorage(userPrefs.getApplicationFilePath());
         // Creates a JsonStateStorage class for Undo.
         JsonStateStorage jsonStateStorage = new JsonStateStorage(DATA_FOLDER_NAME, STATE_FOLDER_NAME);
-        
+
         storage = new StorageManager(applicationStorage, userPrefsStorage, jsonStateStorage);
 
         initLogging(config);

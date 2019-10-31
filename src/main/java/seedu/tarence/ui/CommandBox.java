@@ -10,8 +10,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import seedu.tarence.MainApp;
 import seedu.tarence.logic.commands.CommandResult;
 import seedu.tarence.logic.commands.exceptions.CommandException;
 import seedu.tarence.logic.parser.exceptions.ParseException;
@@ -29,6 +31,7 @@ public class CommandBox extends UiPart<Region> {
     private final CommandExecutor nextSuggestionExecutor;
     private final CommandExecutor inputChangedExecutor;
     private final CommandExecutor pastInputExecutor;
+    private final CommandExecutor inputFieldFocusExecutor;
 
     @FXML
     private TextField commandTextField;
@@ -41,13 +44,15 @@ public class CommandBox extends UiPart<Region> {
 
     public CommandBox(CommandExecutor commandExecutor, CommandExecutor autocompleteExecutor,
                       CommandExecutor nextSuggestionExecutor,
-                      CommandExecutor inputChangedExecutor, CommandExecutor pastInputExecutor) {
+                      CommandExecutor inputChangedExecutor, CommandExecutor pastInputExecutor,
+                      CommandExecutor inputFieldFocusExecutor) {
         super(FXML);
         this.commandExecutor = commandExecutor;
         this.autocompleteExecutor = autocompleteExecutor;
         this.nextSuggestionExecutor = nextSuggestionExecutor;
         this.inputChangedExecutor = inputChangedExecutor;
         this.pastInputExecutor = pastInputExecutor;
+        this.inputFieldFocusExecutor = inputFieldFocusExecutor;
 
         // actions to carry out whenever text field content changes
         commandTextField.textProperty().addListener((unused1, unused2, unused3) -> {
@@ -59,10 +64,15 @@ public class CommandBox extends UiPart<Region> {
             }
         });
 
+        Font.loadFont(MainApp.class.getResource("/fonts/RobotoMono-Light.ttf").toExternalForm(), 12);
+        Font.loadFont(MainApp.class.getResource("/fonts/RobotoMono-Thin.ttf").toExternalForm(), 12);
         commandTextField.prefColumnCountProperty().bind(commandTextField.textProperty().length());
-        commandTextField.setPadding(new Insets(5.0, 0.0, 5.0, 0.0));
+        commandTextField.setMinWidth(10.0); // to make the field clickable
+        commandTextField.setPadding(new Insets(5.0, 0.0, 5.0, 10.0));
+
         commandTextField.setAlignment(BASELINE_RIGHT);
-        autocompleteTextBox.setFill(Color.WHITE);
+
+        autocompleteTextBox.setFill(Color.GRAY);
 
         commandTextFlow.getChildren().set(1, autocompleteTextBox);
     }
@@ -185,6 +195,14 @@ public class CommandBox extends UiPart<Region> {
     }
 
     /**
+     * Handles user clicking on autocomplete text box.
+     */
+    @FXML
+    private void handleClick() throws CommandException, ParseException {
+        inputFieldFocusExecutor.execute("");
+    }
+
+    /**
      * Sets the command box style to use the default style.
      */
     private void setStyleToDefault() {
@@ -202,6 +220,13 @@ public class CommandBox extends UiPart<Region> {
         }
 
         styleClass.add(ERROR_STYLE_CLASS);
+    }
+
+    /**
+     * Updates commandTextField max width based on window width
+     */
+    void updateWindowWidth(double newWidth) {
+        commandTextField.setMaxWidth(newWidth - 100);
     }
 
     /**

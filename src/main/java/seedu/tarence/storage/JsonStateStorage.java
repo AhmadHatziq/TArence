@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.logging.Logger;
-
 import org.apache.commons.io.FileUtils;
 
 import seedu.tarence.commons.core.LogsCenter;
@@ -58,9 +57,11 @@ public class JsonStateStorage implements ApplicationStateStorage {
      * Clears the folder used to store temporate state json files.
      * @throws IOException if got error in accessing the file directory.
      */
+    // TODO: Throws import cannot be found error
     public void clearStateFolder() throws IOException {
         Path filePath = Paths.get(dataFolderName, stateFolderName);
         FileUtils.deleteDirectory(filePath.toFile());
+        
     }
 
     /**
