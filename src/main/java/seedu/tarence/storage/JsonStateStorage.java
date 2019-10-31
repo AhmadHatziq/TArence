@@ -54,6 +54,13 @@ public class JsonStateStorage implements ApplicationStateStorage {
      */
     public void clearStateFolder() throws IOException {
         Path filePath = Paths.get(stateFolderDirectory);
+
+        String pathArguments[] = filePath.toString().split("\\\\");
+        for (String w : pathArguments) {
+            System.out.println(w);
+        }
+
+        System.out.println(filePath.toString());
         FileUtils.deleteDirectory(filePath.toFile());
     }
 
@@ -80,7 +87,6 @@ public class JsonStateStorage implements ApplicationStateStorage {
             // Increment the stack counter
             stateStack.push(stateStack.peek() + 1);
 
-            System.out.println("Saved state no: " + stateStack.peek());
         }
     }
 
@@ -89,7 +95,7 @@ public class JsonStateStorage implements ApplicationStateStorage {
      * a change with the previous state, which does not exist for the first state.
      *
      * @param application
-     * @throws IOException
+     * @throws IOException thrown when error in saving first state.
      */
     public void saveFirstState(ReadOnlyApplication application) throws IOException {
         requireNonNull(application);

@@ -390,4 +390,8 @@ public class Tutorial {
 
      */
 
+    public Map<Assignment, Map<Student, Integer>> getAssignmentsForSaving() {
+        return this.assignments;
+    }
+
 }
