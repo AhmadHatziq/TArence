@@ -25,27 +25,33 @@ public class JsonStateStorage implements ApplicationStateStorage {
     private static final Logger logger = LogsCenter.getLogger(JsonApplicationStorage.class);
     private static final String STATE_FILE_PREFIX = "state";
     private static final String STATE_FILE_SUFFIX = ".json";
-    private String stateFolderDirectory;
+    private String dataFolderName;
+    private String stateFolderName;
+
     private Stack<Integer> stateStack;
 
     /**
-     * Constructor will be initialised with the String directory and the first state will be the data the application is
-     * loaded from. String directory: "data\states\"
-     * @param stateFolderDirectory String of the directory location for storing states.
+     * Constructor will be initialised with the folder names.
+     *
+     * @param DataFolderName Folder name of the data folder used.
+     * @param stateFolderName Folder name of the state folder.
      */
-    public JsonStateStorage(String stateFolderDirectory) {
+    public JsonStateStorage(String DataFolderName, String stateFolderName) {
 
-        this.stateFolderDirectory = stateFolderDirectory;
+        this.dataFolderName = DataFolderName;
+        this.stateFolderName = stateFolderName;
+
         stateStack = new Stack<Integer>();
         stateStack.add(0);
 
         try {
             clearStateFolder();
-            logger.fine(stateFolderDirectory + " successfully cleared.");
+            logger.fine(Paths.get(dataFolderName, stateFolderName).toString() + " successfully cleared.");
         } catch (IOException e) {
             logger.info("Error in clearing state folder. Possible error with specified directory: "
-                    + stateFolderDirectory);
+                    + dataFolderName + "/" + stateFolderName);
         }
+
     }
 
     /**
@@ -53,14 +59,7 @@ public class JsonStateStorage implements ApplicationStateStorage {
      * @throws IOException if got error in accessing the file directory.
      */
     public void clearStateFolder() throws IOException {
-        Path filePath = Paths.get(stateFolderDirectory);
-
-        String pathArguments[] = filePath.toString().split("\\\\");
-        for (String w : pathArguments) {
-            System.out.println(w);
-        }
-
-        System.out.println(filePath.toString());
+        Path filePath = Paths.get(dataFolderName, stateFolderName);
         FileUtils.deleteDirectory(filePath.toFile());
     }
 
@@ -126,9 +125,9 @@ public class JsonStateStorage implements ApplicationStateStorage {
      * @return Path.
      */
     public Path getNextFilePath() {
-        String filePathString = stateFolderDirectory + STATE_FILE_PREFIX + getNextStateIndex().toString()
+        String fileName = STATE_FILE_PREFIX + getNextStateIndex().toString()
                 + STATE_FILE_SUFFIX;
-        return Paths.get(filePathString);
+        return Paths.get(dataFolderName, stateFolderName, fileName );
     }
 
     /**
@@ -154,8 +153,8 @@ public class JsonStateStorage implements ApplicationStateStorage {
      * @return File Path eg "//data//states//state5.json"
      */
     public Path getFilePathFromIndex(Integer index) {
-        String filePathString = stateFolderDirectory + STATE_FILE_PREFIX + index.toString() + STATE_FILE_SUFFIX;
-        return Paths.get(filePathString);
+        String fileName = STATE_FILE_PREFIX + index.toString() + STATE_FILE_SUFFIX;
+        return Paths.get(dataFolderName, stateFolderName, fileName);
     }
 
     /**
@@ -179,7 +178,7 @@ public class JsonStateStorage implements ApplicationStateStorage {
      * Returns the ReadOnlyApplication of a specified index.
      * Pre-condition: Index supplied is valid ie handled by UndoCommand
      *
-     * @param index
+     * @param index of the state that you want to retrieve.
      * @return ReadOnlyApplication from state json file.
      * @throws IOException thrown when got error in reading the state.
      */

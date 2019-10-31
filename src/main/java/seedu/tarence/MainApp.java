@@ -2,6 +2,7 @@ package seedu.tarence;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -38,6 +39,9 @@ public class MainApp extends javafx.application.Application {
 
     public static final Version VERSION = new Version(0, 6, 0, true);
 
+    private static final String DATA_FOLDER_NAME = "data";
+    private static final String STATE_FOLDER_NAME = "state";
+
     private static final Logger logger = LogsCenter.getLogger(MainApp.class);
 
     protected Ui ui;
@@ -58,8 +62,8 @@ public class MainApp extends javafx.application.Application {
         UserPrefs userPrefs = initPrefs(userPrefsStorage);
         ApplicationStorage applicationStorage = new JsonApplicationStorage(userPrefs.getApplicationFilePath());
         // Creates a JsonStateStorage class for Undo.
-        JsonStateStorage jsonStateStorage = new JsonStateStorage("data\\states\\");
-
+        JsonStateStorage jsonStateStorage = new JsonStateStorage(DATA_FOLDER_NAME, STATE_FOLDER_NAME);
+        
         storage = new StorageManager(applicationStorage, userPrefsStorage, jsonStateStorage);
 
         initLogging(config);
