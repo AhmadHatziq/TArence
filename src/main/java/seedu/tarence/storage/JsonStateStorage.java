@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.logging.Logger;
+
 import org.apache.commons.io.FileUtils;
 
 import seedu.tarence.commons.core.LogsCenter;
@@ -32,12 +33,12 @@ public class JsonStateStorage implements ApplicationStateStorage {
     /**
      * Constructor will be initialised with the folder names.
      *
-     * @param DataFolderName Folder name of the data folder used.
+     * @param dataFolderName Folder name of the data folder used.
      * @param stateFolderName Folder name of the state folder.
      */
-    public JsonStateStorage(String DataFolderName, String stateFolderName) {
+    public JsonStateStorage(String dataFolderName, String stateFolderName) {
 
-        this.dataFolderName = DataFolderName;
+        this.dataFolderName = dataFolderName;
         this.stateFolderName = stateFolderName;
 
         stateStack = new Stack<Integer>();
@@ -61,7 +62,6 @@ public class JsonStateStorage implements ApplicationStateStorage {
     public void clearStateFolder() throws IOException {
         Path filePath = Paths.get(dataFolderName, stateFolderName);
         FileUtils.deleteDirectory(filePath.toFile());
-        
     }
 
     /**
@@ -128,7 +128,7 @@ public class JsonStateStorage implements ApplicationStateStorage {
     public Path getNextFilePath() {
         String fileName = STATE_FILE_PREFIX + getNextStateIndex().toString()
                 + STATE_FILE_SUFFIX;
-        return Paths.get(dataFolderName, stateFolderName, fileName );
+        return Paths.get(dataFolderName, stateFolderName, fileName);
     }
 
     /**

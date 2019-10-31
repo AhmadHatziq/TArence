@@ -121,6 +121,12 @@ public class JsonAdaptedModule {
         }
     }
 
+    /**
+     * Returns the string representation of a Tutorial's Assignment.
+     *
+     * @param assignmentList Assignment List, obtained directly from Tutorial.
+     * @return String.
+     */
     public String assignmentListToString (Map<Assignment, Map<Student, Integer>> assignmentList) {
 
         LinkedHashMap<String, String> listOfAssignments = new LinkedHashMap<>();
