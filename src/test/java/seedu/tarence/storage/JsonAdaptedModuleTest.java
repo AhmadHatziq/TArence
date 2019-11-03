@@ -28,9 +28,9 @@ public class JsonAdaptedModuleTest {
         assertThrows(IllegalValueException.class, expectedMessage, module::toModelType);
     }
 
-    //todo: fix test
+    
      /*
-
+    TODO: fix test with correcy tutorial map
     @Test
     public void toModelType_invalidModuleCode_throwsIllegalValueException() {
         JsonAdaptedModule module = new JsonAdaptedModule(INVALID_MODULE_CODE, VALID_TUTORIAL_MAP);
