@@ -273,6 +273,10 @@ public class Tutorial {
      * Adds an Assignment to a Tutorial.
      */
     public void addAssignment(Assignment assignment) {
+        if (isDuplicateAssignment(assignment)) {
+            throw new DuplicateAssignmentException();
+        }
+
         if (assignments.containsKey(assignment)) {
             throw new DuplicateAssignmentException();
         }
@@ -283,6 +287,31 @@ public class Tutorial {
         addEvent(new Event(assignment.getAssignName(),
                 assignment.getStartDate(),
                 assignment.getEndDate()));
+    }
+
+    /**
+     * Implemented another way to check for duplicate Assignments due to the behaviour of hash map key objects.
+     * Issue listed here:
+     * https://stackoverflow.com/questions/21600344/java-hashmap-containskey-returns-false-for-existing-object
+     *
+     * @param assignment Assignment object.
+     * @return Boolean
+     */
+    public Boolean isDuplicateAssignment(Assignment assignment) {
+        String assignmentName = assignment.getAssignmentName();
+        String maxScore = Integer.toString(assignment.getMaxScore());
+        String startDateString = assignment.getStartDate().toString();
+        String endDateString = assignment.getEndDate().toString();
+
+        for (Assignment key : assignments.keySet()) {
+            if (assignmentName.equals(key.getAssignmentName())
+                    && maxScore.equals(Integer.toString(key.getMaxScore()))
+                    && startDateString.equals(key.getStartDate().toString())
+                    && endDateString.equals(key.getEndDate().toString())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
