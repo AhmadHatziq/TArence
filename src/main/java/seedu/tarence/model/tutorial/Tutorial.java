@@ -78,13 +78,27 @@ public class Tutorial {
     }
 
     /**
-     * Constructor for a tutorial read from saved file. Difference is that the attendance objact is specified.
+     * Constructor for a tutorial read from saved file. Difference is that the attendance object is specified.
      */
     public Tutorial(TutName tutName, DayOfWeek day, LocalTime startTime,
                     Set<Week> weeks, Duration duration,
                     List<Student> students, ModCode modCode, Attendance attendance) {
         this(tutName, day, startTime, weeks, duration, students, modCode, attendance, null, null);
     }
+
+    /**
+     * Constructor for a tutorial read from saved file.
+     * Difference is that the attendance object & assignment is specified.
+     */
+    public Tutorial(TutName tutName, DayOfWeek day, LocalTime startTime,
+                    Set<Week> weeks, Duration duration,
+                    List<Student> students, ModCode modCode, Attendance attendance,
+                    Map<Assignment, Map<Student, Integer>> assignments) {
+        this(tutName, day, startTime, weeks, duration, students, modCode, attendance, null, null);
+        this.assignments = assignments;
+    }
+
+
 
     public TutName getTutName() {
         return tutName;

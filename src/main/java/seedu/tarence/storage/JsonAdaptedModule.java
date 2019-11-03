@@ -122,7 +122,7 @@ public class JsonAdaptedModule {
     }
 
     /**
-     * Returns the string representation of a Tutorial's Assignment.
+     * Returns the string representation of a Tutorial's Assignment(s).
      *
      * @param assignmentList Assignment List, obtained directly from Tutorial.
      * @return String.
@@ -191,14 +191,17 @@ public class JsonAdaptedModule {
                 tutorials.add(tutorialFromJson);
             }
         } catch (NullPointerException e) {
-            throw new IllegalValueException(String.format(INVALID_FIELD, Module.class.getSimpleName()));
+            String errorMessage = e.getClass().toString() + " " + e.getMessage();
+            throw new IllegalValueException(errorMessage);
         }
 
         try {
             ModCode modCodeFromJson = ParserUtil.parseModCode(moduleCode);
             return new Module(modCodeFromJson, tutorials);
         } catch (ParseException e) {
-            throw new IllegalValueException(String.format(INVALID_FIELD, Module.class.getSimpleName()));
+            String errorMessage = String.format(INVALID_FIELD, Module.class.getSimpleName()) + " "
+                    + moduleCode + " " + e.getMessage();
+            throw new IllegalValueException(errorMessage);
         }
 
     }
