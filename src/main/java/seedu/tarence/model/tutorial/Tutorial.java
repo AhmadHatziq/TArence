@@ -205,7 +205,9 @@ public class Tutorial {
         if (Module.getSemStart() != null) {
             List<Event> tutorialEvents = getTutorialasEvents();
             for (Event tutorialEvent : tutorialEvents) {
-                addEvent(tutorialEvent);
+                if (!eventLog.contains(tutorialEvent)) {
+                    addEvent(tutorialEvent);
+                }
             }
         }
         return eventLog;
@@ -229,10 +231,16 @@ public class Tutorial {
      * The person identity of {@code editedStudent} must not be the same as another existing student in the application.
      */
     public void setStudent(Student target, Student editedStudent) {
-        for (int i = 0; i < students.size(); i++) {
-            if (students.get(i).isSameStudent(target)) {
-                students.set(i, editedStudent);
+        if (!target.equals(editedStudent)) {
+            addStudent(editedStudent);
+            for (Week week : getTimeTable().getWeeks()) {
+                setAttendance(week, editedStudent, getAttendance().isPresent(week, target));
             }
+            List<Assignment> assignmentsList = getAssignments();
+            for (Assignment assignment : assignmentsList) {
+                setScore(assignment, editedStudent, getAssignmentScore(assignment, target));
+            }
+            deleteStudent(target);
         }
     }
     /**
@@ -252,6 +260,13 @@ public class Tutorial {
      */
     public void setAttendance(Week week, Student student) {
         attendance.setAttendance(week, student);
+    }
+
+    /**
+     * Sets a Student's Attendance.
+     */
+    public void setAttendance(Week week, Student student, boolean isPresent) {
+        attendance.setAttendance(week, student, isPresent);
     }
 
     /**
@@ -284,16 +299,18 @@ public class Tutorial {
      * Sets an Assignment in a Tutorial.
      */
     public void setAssignment(Assignment target, Assignment assignment) {
-        addAssignment(assignment);
-        try {
-            for (Student student : students) {
-                setScore(assignment, student, getAssignmentScore(target, student));
+        if (!target.equals(assignment)) {
+            addAssignment(assignment);
+            try {
+                for (Student student : students) {
+                    setScore(assignment, student, getAssignmentScore(target, student));
+                }
+            } catch (InvalidScoreException e) {
+                deleteAssignment(assignment);
+                throw new InvalidScoreException();
             }
-        } catch (InvalidScoreException e) {
-            deleteAssignment(assignment);
-            throw new InvalidScoreException();
+            deleteAssignment(target);
         }
-        deleteAssignment(target);
     }
 
     /**
@@ -397,6 +414,7 @@ public class Tutorial {
                 && otherTutorial.getModCode().equals(getModCode());
     }
 
+
     /* TODO: implement saving of assignments
     public Map<Assignment, Map<Student, Integer>> getAssignments() {
         return this.assignments;
@@ -407,5 +425,6 @@ public class Tutorial {
     public Map<Assignment, Map<Student, Integer>> getAssignmentsForSaving() {
         return this.assignments;
     }
+
 
 }
