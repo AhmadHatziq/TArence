@@ -113,10 +113,10 @@ public class JsonAdaptedModule {
 
             // Saving of assignment
             String tutorialAssignmentString = assignmentListToString(t.getAssignmentsForSaving());
-            System.out.println(tutorialAssignmentString);
+            //System.out.println(tutorialAssignmentString);
             singleTutorialMap.put(TUTORIAL_ASSIGNMENT_LIST, tutorialAssignmentString);
 
-            //tutorialMap.put(tutorialName, singleTutorialMap);
+            tutorialMap.put(tutorialName, singleTutorialMap);
 
         }
     }

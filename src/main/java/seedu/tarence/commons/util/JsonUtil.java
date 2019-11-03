@@ -1,10 +1,13 @@
 package seedu.tarence.commons.util;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.tarence.logic.parser.CliSyntax.PREFIX_END_DATE;
+import static seedu.tarence.logic.parser.CliSyntax.PREFIX_START_DATE;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalTime;
@@ -12,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -44,6 +48,7 @@ import seedu.tarence.model.person.Name;
 import seedu.tarence.model.student.MatricNum;
 import seedu.tarence.model.student.NusnetId;
 import seedu.tarence.model.student.Student;
+import seedu.tarence.model.tutorial.Assignment;
 import seedu.tarence.model.tutorial.Attendance;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
@@ -550,6 +555,7 @@ public class JsonUtil {
     public static Tutorial tutorialMapToTutorial(LinkedHashMap<String, String> tutorialMap)
             throws IllegalValueException {
 
+        //TODO: CHECK ALL FIELDS ARE PRESENT
         try {
             List<Student> studentList = studentStringToList(tutorialMap.get(JsonAdaptedModule.TUTORIAL_STUDENT_LIST));
             TutName tutorialName = ParserUtil.parseTutorialName(tutorialMap.get(JsonAdaptedModule.TUTORIAL_NAME));
@@ -561,6 +567,12 @@ public class JsonUtil {
                     DateTimeFormatter.ISO_TIME);
             Attendance attendance = attendanceStringToAttendance(tutorialMap
                     .get(JsonAdaptedModule.TUTORIAL_ATTENDANCE_LIST), weeks);
+
+            // Constructing Assignment(s) from String
+            String tutorialAssignmentString = tutorialMap.get(JsonAdaptedModule.TUTORIAL_ASSIGNMENT_LIST);
+            System.out.println("Tutorial Assignment String is: " + tutorialAssignmentString);
+            Map<Assignment, Map<Student, Integer>> listOfAssignments = tutorialAssignmentStringToAssignment(tutorialAssignmentString);
+
 
             Tutorial t = new Tutorial(tutorialName, day, startTime, weeks, duration, studentList, modCode, attendance);
 
@@ -575,6 +587,73 @@ public class JsonUtil {
                     LocalTime.class.getSimpleName());
             throw new IllegalValueException(errorMessage);
         }
+    }
+
+    public static Map<Assignment, Map<Student, Integer>> tutorialAssignmentStringToAssignment(String tutorialAssignmentString) throws IllegalValueException {
+        int numOfAssignmentsToParse = getTotalNumberOfAssignments(tutorialAssignmentString);
+
+        if (numOfAssignmentsToParse == 0) {
+            return null;
+            // Since according to Tutorial constructor, null is used for the default Tutorial.
+            // NTS: reverify
+        }
+
+        for (int i = 1; i < numOfAssignmentsToParse; i++) {
+
+            String identifier = JsonAdaptedModule.ASSIGNMENT_NUMBER + i;
+            String nextIdentifier = JsonAdaptedModule.ASSIGNMENT_NUMBER + (i + 1);
+
+            String singleAssignmentString = extractField(identifier, nextIdentifier, tutorialAssignmentString);
+            Assignment assignmentFromString = stringToAssignment(singleAssignmentString);
+            System.out.println(assignmentFromString.toString());
+        }
+
+        // Parse the final assignment string
+        String finalIdentifier = JsonAdaptedModule.ASSIGNMENT_NUMBER + numOfAssignmentsToParse;
+        String finalAssignmentString = extractLastField(finalIdentifier, tutorialAssignmentString);
+        Assignment assignmentFromString = stringToAssignment(finalAssignmentString);
+        System.out.println(assignmentFromString.toString());
+
+        return null;
+    }
+
+    public static Assignment stringToAssignment(String assignmentString) throws IllegalValueException {
+        // TODO: CHECK ORDER IS VALID
+        String assignmentName = extractField(JsonAdaptedModule.ASSIGNMENT_NAME, JsonAdaptedModule.ASSIGNMENT_MAX_SCORE, assignmentString);
+        String assignmentMaxScore = extractField(JsonAdaptedModule.ASSIGNMENT_MAX_SCORE, JsonAdaptedModule.ASSIGNMENT_START_DATE, assignmentString);
+        String assignmentStartDate = extractField(JsonAdaptedModule.ASSIGNMENT_START_DATE, JsonAdaptedModule.ASSIGNMENT_END_DATE, assignmentString);
+        String assignmentEndDate = extractField(JsonAdaptedModule.ASSIGNMENT_END_DATE, JsonAdaptedModule.ASSIGNMENT_STUDENT_LIST, assignmentString);
+
+        // Parses the strings and return an Assignment object.
+        try {
+            Integer maxScore = Integer.parseInt(assignmentMaxScore);
+            if (maxScore < 0) {
+                throw new NumberFormatException();
+            }
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+            Date startDate = dateFormatter.parse(assignmentStartDate);
+            Date endDate = dateFormatter.parse(assignmentEndDate);
+            Assignment assignmentFromString = new Assignment(assignmentName, maxScore, startDate, endDate);
+            return assignmentFromString;
+        } catch (java.text.ParseException e) {
+            throw new IllegalValueException("Illegal value in assignment date");
+        } catch (NumberFormatException e) {
+            throw new IllegalValueException("Illegal value in assignment max score");
+        }
+    }
+
+    public static int getTotalNumberOfAssignments(String tutorialAssignmentString) {
+        int numOfAssignments = 0;
+
+        int index = 0;
+        while (index !=-1) {
+            index = tutorialAssignmentString.indexOf(JsonAdaptedModule.ASSIGNMENT_NUMBER, index);
+            if (index != -1) {
+                index++;
+                numOfAssignments++;
+            }
+        }
+        return numOfAssignments;
     }
 
     /**
