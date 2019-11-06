@@ -96,7 +96,7 @@ of the json file.
 |_Given below are sections I contributed to the User Guide. They showcase my ability to write documentation targeting end-users._
 |===
 
-include::https://github.com/AhmadHatziq/main/blob/pp-update/docs/UserGuide.adoc#undo-previously-entered-commands-undo[undo]
+include::https://github.com/AhmadHatziq/main/blob/master/docs/UserGuide.adoc#undo-previously-entered-commands-undo[undo]
 
 == Contributions to the Developer Guide
 
@@ -104,7 +104,7 @@ include::https://github.com/AhmadHatziq/main/blob/pp-update/docs/UserGuide.adoc#
 |_Given below are sections I contributed to the Developer Guide. They showcase my ability to write technical documentation and the technical depth of my contributions to the project._
 |===
 
-include::../DeveloperGuide.adoc[tag=Design-Storage]
+include::https://github.com/AhmadHatziq/main/blob/master/docs/DeveloperGuide.adoc#storage-component[storage]
 
 * *Code contributed*:
 * [link:{repoURL}/commits?author=AhmadHatziq[Commits]] [link:{repoURL}/pulls?q=is%3Apr+author%3AAhmadHatziq+is%3Aclosed[Pull Requests]] [https://nus-cs2103-ay1920s1.github.io/tp-dashboard/#search=Hatziq&sort=groupTitle&sortWithin=title&since=2019-09-06&timeframe=commit&mergegroup=false&groupSelect=groupByRepos&breakdown=false[RepoSense Code Contribution Dashboard]]
