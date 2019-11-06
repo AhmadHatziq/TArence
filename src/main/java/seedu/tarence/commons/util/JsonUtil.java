@@ -52,7 +52,6 @@ import seedu.tarence.model.tutorial.Attendance;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Tutorial;
 import seedu.tarence.model.tutorial.Week;
-import seedu.tarence.model.util.SampleDataUtil;
 import seedu.tarence.storage.JsonAdaptedModule;
 
 /**
@@ -260,7 +259,7 @@ public class JsonUtil {
                                                   String studentModuleCodeString, String studentTutorialNameString) {
 
         // Populates the fields needed to create a Student object.
-        studentNameString = studentNameString.replace("[", "").replace("]","");
+        studentNameString = studentNameString.replace("[", "").replace("]", "");
         Name studentName = new Name(studentNameString);
 
         studentEmailString = studentEmailString.replace("[", "").replace("]", "");
@@ -271,7 +270,7 @@ public class JsonUtil {
             studentMatricNumber = Optional.empty();
         } else {
             studentMatricNumberString = studentMatricNumberString.replace("Optional", "");
-            studentMatricNumberString = studentMatricNumberString.replace("[","").replace("]","");
+            studentMatricNumberString = studentMatricNumberString.replace("[", "").replace("]", "");
             studentMatricNumber = Optional.of(new MatricNum(studentMatricNumberString));
         }
 

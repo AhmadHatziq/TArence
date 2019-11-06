@@ -51,7 +51,7 @@ public class UndoCommand extends Command {
             if (storage.maxNumberOfRollbacksAllowed() == 0) {
                 errorMessage = "Unable to undo as there are no state-altering commands eecuted in this session";
             }
-            
+
             throw new CommandException(errorMessage);
         }
 
