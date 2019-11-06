@@ -7,7 +7,11 @@
 
 == PROJECT: T.A.rence
 
+<<<<<<< HEAD
 Hello there, I'm _Hatziq_. I am currently pursuing a major in Industrial & Systems Engineering, with minors
+=======
+Hi there, I'm _Hatziq_. I am currently pursuing a major in Industrial & Systems Engineering, with minors
+>>>>>>> 6e7664ab83390a576f1788c5697095bd77de6e54
 in Computer Science and Statistics.
 at National University of Singapore (NUS). +
 
@@ -46,10 +50,10 @@ their previous commands.
 
 * Highlights:
 ** This enhancement affects existing commands and commands to be added in the future. +
-Given the storage is dependant on the underlying structure of the model,
-+ collaboration with other components of the application was highly needed.
-n-depth analysis of display formats and design alternatives were
-considered in the process.
+Given the storage is dependant on the underlying structure of the model, +
+collaboration with other components of the application was highly needed.
+
+
 ** The implementation too was challenging as it required to work with a variety of data structures, so as to maintain the efficiency and effectiveness of data processing.
 ** Given the many layers of information contained within T.A.rence, information had to carefully extracted without compromising other related systems.
 
@@ -78,6 +82,7 @@ from the saved json state file.
 of the json file.
 
 === *Minor Enhancement*: added commands for "addModule" and "addTutorial".
+<<<<<<< HEAD
 ** Added the basic skeleton functionality for TArence.
 
 === *Other contributions*
@@ -105,6 +110,9 @@ include::https://github.com/AhmadHatziq/main/blob/master/docs/UserGuide.adoc#und
 |===
 
 include::https://github.com/AhmadHatziq/main/blob/master/docs/DeveloperGuide.adoc#storage-component[storage]
+=======
+
+>>>>>>> 6e7664ab83390a576f1788c5697095bd77de6e54
 
 * *Code contributed*:
 * [link:{repoURL}/commits?author=AhmadHatziq[Commits]] [link:{repoURL}/pulls?q=is%3Apr+author%3AAhmadHatziq+is%3Aclosed[Pull Requests]] [https://nus-cs2103-ay1920s1.github.io/tp-dashboard/#search=Hatziq&sort=groupTitle&sortWithin=title&since=2019-09-06&timeframe=commit&mergegroup=false&groupSelect=groupByRepos&breakdown=false[RepoSense Code Contribution Dashboard]]
