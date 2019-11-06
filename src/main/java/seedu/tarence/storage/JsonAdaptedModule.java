@@ -17,6 +17,7 @@ import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.module.Module;
 import seedu.tarence.model.student.Student;
 import seedu.tarence.model.tutorial.Assignment;
+import seedu.tarence.model.tutorial.Event;
 import seedu.tarence.model.tutorial.Tutorial;
 
 /**
@@ -35,6 +36,7 @@ public class JsonAdaptedModule {
     public static final String TUTORIAL_STUDENT_LIST = "tutorialStudentList";
     public static final String TUTORIAL_ATTENDANCE_LIST = "tutorialAttendanceList";
     public static final String TUTORIAL_ASSIGNMENT_LIST = "tutorialAssignmentList";
+    public static final String TUTORIAL_EVENT_LIST = "tutorialEventList";
 
     public static final String STUDENT_NAME = "studentName";
     public static final String STUDENT_EMAIL = "studentEmail";
@@ -113,12 +115,20 @@ public class JsonAdaptedModule {
 
             // Saving of assignment
             String tutorialAssignmentString = assignmentListToString(t.getAssignmentsForSaving());
-            //System.out.println(tutorialAssignmentString);
             singleTutorialMap.put(TUTORIAL_ASSIGNMENT_LIST, tutorialAssignmentString);
+
+            // Saving of event(s)
+            String tutorialEventString = eventListToString(t.getEventLog());
+
 
             tutorialMap.put(tutorialName, singleTutorialMap);
 
         }
+    }
+
+    public String eventListToString(List<Event> eventLog) {
+        System.out.println(eventLog.toString());
+        return "";
     }
 
     /**
