@@ -580,11 +580,11 @@ public class JsonUtil {
                     tutorialAssignmentStringToAssignment(tutorialAssignmentString);
 
             // With assignment construction
-            //Tutorial t = new Tutorial(tutorialName, day, startTime, weeks, duration, studentList,
-            //        modCode, attendance, listOfAssignments);
-
             Tutorial t = new Tutorial(tutorialName, day, startTime, weeks, duration, studentList,
-                            modCode, attendance);
+                   modCode, attendance, listOfAssignments);
+
+            //Tutorial t = new Tutorial(tutorialName, day, startTime, weeks, duration, studentList,
+            //                modCode, attendance);
 
             //Tutorial t = SampleDataUtil.getSampleTutorial();
             return t;
@@ -611,7 +611,7 @@ public class JsonUtil {
      */
     public static Map<Assignment, Map<Student, Integer>> tutorialAssignmentStringToAssignment(
             String tutorialAssignmentString) throws IllegalValueException {
-        Map<Assignment, Map<Student, Integer>> assignmentMap = new HashMap<>();
+        Map<Assignment, Map<Student, Integer>> assignmentMap = new TreeMap<>();
         int numOfAssignmentsToParse = getTotalNumberOfAssignments(tutorialAssignmentString);
 
         if (numOfAssignmentsToParse == 0) {
@@ -648,8 +648,6 @@ public class JsonUtil {
         Map <Student, Integer> studentIntegerMap = studentAssignmentStringToMap(studentAssignmentString);
 
         assignmentMap.put(assignmentFromString, studentIntegerMap);
-
-
 
         return assignmentMap;
     }
