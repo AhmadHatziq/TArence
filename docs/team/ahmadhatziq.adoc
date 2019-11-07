@@ -82,7 +82,7 @@ from the saved json state file.
 of the json file.
 
 === *Minor Enhancement*: added commands for "addModule" and "addTutorial".
-<<<<<<< HEAD
+
 ** Added the basic skeleton functionality for TArence.
 
 === *Other contributions*
@@ -112,7 +112,6 @@ include::https://github.com/AhmadHatziq/main/blob/master/docs/UserGuide.adoc#und
 include::https://github.com/AhmadHatziq/main/blob/master/docs/DeveloperGuide.adoc#storage-component[storage]
 =======
 
->>>>>>> 6e7664ab83390a576f1788c5697095bd77de6e54
 
 * *Code contributed*:
 * [link:{repoURL}/commits?author=AhmadHatziq[Commits]] [link:{repoURL}/pulls?q=is%3Apr+author%3AAhmadHatziq+is%3Aclosed[Pull Requests]] [https://nus-cs2103-ay1920s1.github.io/tp-dashboard/#search=Hatziq&sort=groupTitle&sortWithin=title&since=2019-09-06&timeframe=commit&mergegroup=false&groupSelect=groupByRepos&breakdown=false[RepoSense Code Contribution Dashboard]]
