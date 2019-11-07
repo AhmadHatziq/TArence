@@ -15,10 +15,11 @@ import seedu.tarence.model.tutorial.Tutorial;
  * Guarantees: details are present and not null, field values are validated, immutable.
  */
 public class Module {
-    // TODO: Add to storage
+
+    // Class-level common attributes
     private static Date semStart = null;
 
-    // Identity fields
+    // Module attributes
     protected final ModCode modCode;
     protected List<Tutorial> tutorials;
 
@@ -31,19 +32,18 @@ public class Module {
         this.tutorials = tutorials;
     }
 
+    /**
+     * semStart can be a null object.
+     */
+    public Module(ModCode modCode, List<Tutorial> tutorials, Date semStart) {
+        this(modCode, tutorials);
+        Module.setSemStart(semStart);
+    }
+
     //============================ Semester start operations ===========================================================
 
     public static Date getSemStart() {
-        return semStart;
-    }
-
-    /**
-     * Non-static getter function for semester start.
-     *
-     * @return Date semester start.
-     */
-    public Date getSemesterStart() {
-        return semStart;
+        return Module.semStart;
     }
 
     /**
@@ -81,6 +81,8 @@ public class Module {
         }
     }
 
+    //============================ Student operations =================================================================
+
     /**
      * Deletes the given student from the module
      */
@@ -91,6 +93,8 @@ public class Module {
             }
         }
     }
+
+    //============================ Module operations ===================================================================
 
     /**
      * Returns true if both modules have the same module code.

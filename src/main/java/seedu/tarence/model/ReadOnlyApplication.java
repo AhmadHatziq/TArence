@@ -1,5 +1,7 @@
 package seedu.tarence.model;
 
+import java.util.Date;
+
 import javafx.collections.ObservableList;
 import seedu.tarence.model.module.Module;
 import seedu.tarence.model.person.Person;
@@ -34,4 +36,5 @@ public interface ReadOnlyApplication {
      * This list will not contain any duplicate tutorials.
      */
     ObservableList<Tutorial> getTutorialList();
+
 }
