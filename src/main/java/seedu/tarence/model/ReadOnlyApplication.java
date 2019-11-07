@@ -1,7 +1,5 @@
 package seedu.tarence.model;
 
-import java.util.Date;
-
 import javafx.collections.ObservableList;
 import seedu.tarence.model.module.Module;
 import seedu.tarence.model.person.Person;

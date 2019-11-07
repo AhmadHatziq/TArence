@@ -419,18 +419,25 @@ public class JsonUtil {
             assignmentMap.put(JsonAdaptedModule.ASSIGNMENT_STUDENT_LIST, assignmentStudentString);
 
             assignmentCounter++;
-            listOfAssignments.put(JsonAdaptedModule.ASSIGNMENT_NUMBER + assignmentCounter.toString(), assignmentMap.toString());
+            listOfAssignments.put(JsonAdaptedModule.ASSIGNMENT_NUMBER + assignmentCounter.toString(),
+                    assignmentMap.toString());
         }
 
         return listOfAssignments.toString();
     }
 
+    /**
+     * Serializes an Event List to a Json-friendly string.
+     *
+     * @param eventList List of Events
+     * @return String representation of an event.
+     */
     public static String eventListToString(List<Event> eventList) {
         LinkedHashMap<String, String> eventHashMap = new LinkedHashMap<>();
         Integer eventCounter = 0;
 
         for (Event e : eventList) {
-            eventCounter ++;
+            eventCounter++;
             String eventName = e.eventName;
             String eventStartDate = e.startTime.toString();
             String eventEndDate = e.endTime.toString();
@@ -662,6 +669,13 @@ public class JsonUtil {
     //=============================== Parsing event-Json-String to Event object ========================================
 
 
+    /**
+     * Converts the String representation of Tutorial Events to a List of Events.
+     *
+     * @param tutorialEventString String representation of Tutorial Events
+     * @return List of Events.
+     * @throws IllegalValueException when there is an error during parsing.
+     */
     public static List<Event> tutorialEventStringToEventList(String tutorialEventString) throws IllegalValueException {
         List <Event> eventList = new ArrayList<Event>();
         int numOfEvents = getTotalNumberOfEvents(tutorialEventString);
@@ -670,7 +684,7 @@ public class JsonUtil {
             return eventList;
         }
 
-        for (int i = 1; i < numOfEvents; i++)  {
+        for (int i = 1; i < numOfEvents; i++) {
 
             String identifier = JsonAdaptedModule.EVENT_NUMBER + i;
             String nextIdentifier = JsonAdaptedModule.EVENT_NUMBER + (i + 1);
@@ -692,14 +706,23 @@ public class JsonUtil {
         return eventList;
     }
 
+    /**
+     * Converts the String representation of a Single Event to an Event object.
+     *
+     * @param singleEventString String representing a single Event.
+     * @return Event object.
+     * @throws IllegalValueException when there is an error during parsing.
+     */
     public static Event singleEventStringToEvent(String singleEventString) throws IllegalValueException {
         //TODO: check all event fields are present and in order 66
 
         singleEventString = singleEventString.replace("{", "").replace("}", "");
 
-        String eventName = extractField(JsonAdaptedModule.EVENT_NAME, JsonAdaptedModule.EVENT_START_DATE, singleEventString);
-        String eventStartDateString = extractField(JsonAdaptedModule.EVENT_START_DATE, JsonAdaptedModule.EVENT_END_DATE, singleEventString);
-        String eventEndDateString = extractLastField(JsonAdaptedModule.EVENT_END_DATE, singleEventString );
+        String eventName = extractField(JsonAdaptedModule.EVENT_NAME,
+                JsonAdaptedModule.EVENT_START_DATE, singleEventString);
+        String eventStartDateString = extractField(JsonAdaptedModule.EVENT_START_DATE,
+                JsonAdaptedModule.EVENT_END_DATE, singleEventString);
+        String eventEndDateString = extractLastField(JsonAdaptedModule.EVENT_END_DATE, singleEventString);
 
         try {
             // Parse the event-strings to an Event object

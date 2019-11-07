@@ -5,14 +5,12 @@ import static java.util.Objects.requireNonNull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
 
-import javafx.collections.ObservableList;
 import seedu.tarence.commons.core.LogsCenter;
 import seedu.tarence.commons.exceptions.DataConversionException;
 import seedu.tarence.commons.exceptions.IllegalValueException;
@@ -84,7 +82,7 @@ public class JsonStateStorage implements ApplicationStateStorage {
         //System.out.println("Saved semester start date: " + getSemesterStartDateOfLatestState());
 
         // Only saves the state when there is a change with the current state
-        if ( (!latestApplication.equals(application))) {
+        if (!latestApplication.equals(application)) {
             // Save the application state
             FileUtil.createIfMissing(filePath);
             JsonUtil.saveJsonFile(new JsonSerializableApplication(application), filePath);
@@ -121,6 +119,11 @@ public class JsonStateStorage implements ApplicationStateStorage {
     }
 
 
+    /**
+     * Checks if the semester start date has been changed by comparing with the previously saved-state file.
+     * @return
+     * @throws IOException
+     */
     public Boolean hasSemesterStartDateChanged() throws IOException {
 
         // Semester start is assigned a class level attribute.

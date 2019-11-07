@@ -4,7 +4,6 @@ import static java.util.Objects.requireNonNull;
 import static seedu.tarence.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.nio.file.Path;
-import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
@@ -181,11 +180,6 @@ public class ModelManager implements Model {
     }
 
     //=========== T.A.rence: Module methods ============================================================================
-
-    @Override
-    public void setStartDate(Date startDate) {
-        Module.setSemStart(startDate);
-    }
 
     @Override
     public void addModule(Module module) {

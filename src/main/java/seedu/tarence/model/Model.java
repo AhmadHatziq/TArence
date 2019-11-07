@@ -1,7 +1,6 @@
 package seedu.tarence.model;
 
 import java.nio.file.Path;
-import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -314,5 +313,4 @@ public interface Model {
 
     void setModel(ReadOnlyApplication application);
 
-    void setStartDate(Date startDate);
 }
