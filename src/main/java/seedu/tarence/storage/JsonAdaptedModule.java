@@ -1,6 +1,7 @@
 package seedu.tarence.storage;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,7 @@ public class JsonAdaptedModule {
     // Implemented LinkedHashMap to preserve ordering.
     private LinkedHashMap<String, LinkedHashMap<String, String>> tutorialMap;
     private String moduleCode;
+    private Date semesterStart;
 
 
     /**
@@ -88,6 +90,9 @@ public class JsonAdaptedModule {
     public JsonAdaptedModule(Module source) {
         moduleCode = source.getModCode().toString();
         tutorialMap = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+        semesterStart = source.getSemesterStart();
+
+        //System.out.println("Semester start of module " + moduleCode + " is " + semesterStart);
 
         for (Tutorial t : source.getTutorials()) {
             LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
@@ -120,14 +125,13 @@ public class JsonAdaptedModule {
             // Saving of event(s)
             String tutorialEventString = eventListToString(t.getEventLog());
 
-
             tutorialMap.put(tutorialName, singleTutorialMap);
 
         }
     }
 
     public String eventListToString(List<Event> eventLog) {
-        System.out.println(eventLog.toString());
+        //System.out.println(eventLog.toString());
         return "";
     }
 
