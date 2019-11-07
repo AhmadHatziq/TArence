@@ -68,7 +68,6 @@ public class JsonAdaptedModule {
     private String moduleCode;
     private String semesterStartString;
 
-
     /**
      * Invoked during reading of the Json file.
      *
@@ -94,6 +93,7 @@ public class JsonAdaptedModule {
         moduleCode = source.getModCode().toString();
         tutorialMap = new LinkedHashMap<String, LinkedHashMap<String, String>>();
         semesterStartString = String.valueOf(Module.getSemStart());
+
 
         for (Tutorial t : source.getTutorials()) {
             LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
@@ -128,7 +128,6 @@ public class JsonAdaptedModule {
 
         }
     }
-
 
     /**
      * Invoked during reading of Json file.

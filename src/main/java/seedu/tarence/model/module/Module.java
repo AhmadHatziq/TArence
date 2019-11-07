@@ -33,17 +33,27 @@ public class Module {
     }
 
     /**
-     * semStart can be a null object.
+     *  Note that semStart can be a null object.
      */
     public Module(ModCode modCode, List<Tutorial> tutorials, Date semStart) {
         this(modCode, tutorials);
         Module.setSemStart(semStart);
     }
 
+
     //============================ Semester start operations ===========================================================
 
     public static Date getSemStart() {
         return Module.semStart;
+    }
+
+    /**
+     * Non-static getter function for semester start.
+     *
+     * @return Date semester start.
+     */
+    public Date getSemesterStart() {
+        return semStart;
     }
 
     /**
@@ -80,6 +90,7 @@ public class Module {
             throw new InvalidTutorialModCodeException();
         }
     }
+<<<<<<< HEAD
 
     //============================ Student operations =================================================================
 
@@ -95,6 +106,19 @@ public class Module {
     }
 
     //============================ Module operations ===================================================================
+=======
+>>>>>>> 1c291d1849569dfecc0b64611abe0dc8e835f0bc
+
+    /**
+     * Deletes the given student from the module
+     */
+    public void deleteStudent(Student student) {
+        for (Tutorial tutorial : tutorials) {
+            if (tutorial.getTutName().equals(student.getTutName())) {
+                tutorial.deleteStudent(student);
+            }
+        }
+    }
 
     /**
      * Returns true if both modules have the same module code.
