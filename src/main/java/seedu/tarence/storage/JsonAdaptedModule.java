@@ -130,6 +130,12 @@ public class JsonAdaptedModule {
         }
     }
 
+    /**
+     * Converts a tutorial's eventList ot a String
+     *
+     * @param eventLog
+     * @return
+     */
     public String eventListToString(List<Event> eventLog) {
         //System.out.println(eventLog.toString());
         return "";
