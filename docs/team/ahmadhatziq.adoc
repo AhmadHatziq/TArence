@@ -7,11 +7,8 @@
 
 == PROJECT: T.A.rence
 
-<<<<<<< HEAD
+
 Hello there, I'm _Hatziq_. I am currently pursuing a major in Industrial & Systems Engineering, with minors
-=======
-Hi there, I'm _Hatziq_. I am currently pursuing a major in Industrial & Systems Engineering, with minors
->>>>>>> 6e7664ab83390a576f1788c5697095bd77de6e54
 in Computer Science and Statistics.
 at National University of Singapore (NUS). +
 
