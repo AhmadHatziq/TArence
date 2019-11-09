@@ -8,7 +8,6 @@ import java.util.NoSuchElementException;
 import seedu.tarence.logic.commands.exceptions.CommandException;
 import seedu.tarence.model.Model;
 import seedu.tarence.model.ReadOnlyApplication;
-import seedu.tarence.model.person.exceptions.DuplicatePersonException;
 import seedu.tarence.storage.Storage;
 
 /**
@@ -65,8 +64,6 @@ public class UndoCommand extends Command {
             model.setModel(retrievedState);
         } catch (IOException | NoSuchElementException e) {
             throw new CommandException("Error in undo command. Possible corrupted state json file");
-        } catch (DuplicatePersonException e) {
-            System.out.println(e.getMessage());
         }
 
         return new CommandResult(String.format(MESSAGE_SUCCESS, numOfStatesToUndo));

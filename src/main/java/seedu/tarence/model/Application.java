@@ -619,6 +619,13 @@ public class Application implements ReadOnlyApplication {
         return applicationString;
     }
 
+    @Override
+    /**
+     * Compares this application with another application, based on "toStringForComparison(0" method.
+     *
+     * @param newApp Application to compare to.
+     * @return Boolean.
+     */
     public Boolean equalsUsingStringComparison(ReadOnlyApplication newApp) {
 
         return newApp.toStringForComparison().equals(this.toStringForComparison());

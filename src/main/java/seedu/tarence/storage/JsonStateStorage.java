@@ -97,8 +97,6 @@ public class JsonStateStorage implements ApplicationStateStorage {
             // System.out.println("Current app sem start date: " + Module.getSemStart());
             //System.out.println("Saved semester start date: " + getSemesterStartDateOfLatestState());
 
-            // Old comparison method (!latestApplication.equals(application)
-
             // Only saves the state when there is a change with the current state
             if (!latestApplication.equalsUsingStringComparison(application)) {
 

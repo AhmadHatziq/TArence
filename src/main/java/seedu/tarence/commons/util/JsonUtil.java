@@ -319,10 +319,16 @@ public class JsonUtil {
 
     //============================== From object to Json String methods ================================================
 
-
+    /**
+     * Converts a single Module to its LinkedHashMap representation.
+     *
+     * @param source Module.
+     * @return LinkedHashMap
+     */
     public static LinkedHashMap<String, LinkedHashMap<String, String>> moduleToHashMap(Module source) {
 
-        LinkedHashMap<String, LinkedHashMap<String, String>> tutorialMap = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+        LinkedHashMap<String, LinkedHashMap<String, String>> tutorialMap =
+                new LinkedHashMap<String, LinkedHashMap<String, String>>();
 
         for (Tutorial t : source.getTutorials()) {
             LinkedHashMap<String, String> singleTutorialMap = new LinkedHashMap<String, String>();
