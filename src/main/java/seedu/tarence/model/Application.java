@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Stack;
 
 import javafx.collections.ObservableList;
+import seedu.tarence.commons.util.JsonUtil;
 import seedu.tarence.logic.commands.Command;
 import seedu.tarence.logic.parser.PartialInput;
 import seedu.tarence.model.module.ModCode;
@@ -90,14 +91,6 @@ public class Application implements ReadOnlyApplication {
         this.persons.setPersons(persons);
     }
 
-    public void setStudentsFromScratch(List<Student> students) {
-        List<Person> personList = new ArrayList<>();
-         for (Student student : students) {
-             personList.add(student);
-        }
-        this.students.setPersons(personList);
-    }
-
     /**
      * Replaces the contents of the student list with {@code students}.
      * {@code persons} must not contain duplicate students.
@@ -151,8 +144,7 @@ public class Application implements ReadOnlyApplication {
         requireNonNull(newData);
 
         setPersons(newData.getPersonList());
-        setStudentsFromScratch(newData.getStudentList());
-        //setStudents(newData.getStudentList());
+        setStudents(newData.getStudentList());
         setModules(newData.getModuleList());
         setTutorials(newData.getTutorialList());
     }
@@ -321,6 +313,8 @@ public class Application implements ReadOnlyApplication {
     }
 
     ////=================== module-level operations    =================================================================
+
+
     /**
      * Adds a module to the application.
      * The module must not already exist in the application.
@@ -612,5 +606,22 @@ public class Application implements ReadOnlyApplication {
     @Override
     public int hashCode() {
         return persons.hashCode();
+    }
+
+    @Override
+    public String toStringForComparison() {
+        String applicationString = "";
+
+        for (Module m : this.getModuleList()) {
+            applicationString += m.getModCode().toString() + ": " + JsonUtil.moduleToHashMap(m).toString() + "\n";
+        }
+
+        return applicationString;
+    }
+
+    public Boolean equalsUsingStringComparison(ReadOnlyApplication newApp) {
+
+        return newApp.toStringForComparison().equals(this.toStringForComparison());
+
     }
 }
