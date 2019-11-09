@@ -90,6 +90,14 @@ public class Application implements ReadOnlyApplication {
         this.persons.setPersons(persons);
     }
 
+    public void setStudentsFromScratch(List<Student> students) {
+        List<Person> personList = new ArrayList<>();
+         for (Student student : students) {
+             personList.add(student);
+        }
+        this.students.setPersons(personList);
+    }
+
     /**
      * Replaces the contents of the student list with {@code students}.
      * {@code persons} must not contain duplicate students.
@@ -140,7 +148,8 @@ public class Application implements ReadOnlyApplication {
         requireNonNull(newData);
 
         setPersons(newData.getPersonList());
-        setStudents(newData.getStudentList());
+        setStudentsFromScratch(newData.getStudentList());
+        //setStudents(newData.getStudentList());
         setModules(newData.getModuleList());
         setTutorials(newData.getTutorialList());
     }
