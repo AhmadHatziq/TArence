@@ -1,13 +1,18 @@
 package seedu.tarence.commons.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.tarence.testutil.Assert.assertThrows;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -15,14 +20,15 @@ import java.util.TreeSet;
 import org.junit.jupiter.api.Test;
 
 import seedu.tarence.commons.exceptions.IllegalValueException;
-import seedu.tarence.logic.parser.ParserUtil;
 import seedu.tarence.model.module.ModCode;
 import seedu.tarence.model.person.Email;
 import seedu.tarence.model.person.Name;
 import seedu.tarence.model.student.MatricNum;
 import seedu.tarence.model.student.NusnetId;
 import seedu.tarence.model.student.Student;
+import seedu.tarence.model.tutorial.Assignment;
 import seedu.tarence.model.tutorial.Attendance;
+import seedu.tarence.model.tutorial.Event;
 import seedu.tarence.model.tutorial.TutName;
 import seedu.tarence.model.tutorial.Week;
 import seedu.tarence.model.util.SampleDataUtil;
@@ -35,6 +41,7 @@ import seedu.tarence.testutil.TestUtil;
  */
 public class JsonUtilTest {
 
+    public static final String UNHANDLED_EXCEPTION_MESSAGE = "Testing results in unhandled EXCEPTION";
     public static final String INVALID_STUDENT_STRING_MISSING_STUDENT_NAME = "[studentEmail=e0035152@u.nus.edu.sg, "
             + "studentMatricNumber=OptionalA0155413M, studentNusnetId=OptionalE0031550, "
             + "studentModuleCode=CS1010S, studentTutorialName=Lab Session}]";
@@ -110,6 +117,12 @@ public class JsonUtilTest {
             + "studentEmail=e0012952@gmail.com, studentMatricNumber=Optional[A0155413X], "
             + "studentNusnetId=Optional[E0031550], studentModuleCode=CS1010E, studentTutorialName=Lab Session, "
             + "studentAttendance=false}]}";
+    public static final String VALID_TUTORIAL_EVENT_STRING = "{eventNumber-1={eventName=Assignment A, "
+            + "eventStartDate=Wed Oct 10 00:00:00 SGT 2012, eventEndDate=Thu Oct 10 23:59:00 SGT 2019}, "
+            + "eventNumber-2={eventName=Assignment B, eventStartDate=Wed Oct 10 00:00:00 SGT 2012, "
+            + "eventEndDate=Thu Oct 10 23:59:00 SGT 2019}}";
+    public static final String INVALID_STUDENT_ASSIGNMENT_STRING_WITHOUT_ASSIGNMENT_SCORE =
+            VALID_STUDENT_ASSIGNMENT_STRING.replace("studentAssignmentScore", "");
 
 
     private static final Path SERIALIZATION_FILE = TestUtil.getFilePathInSandboxFolder("serialize.json");
@@ -163,10 +176,6 @@ public class JsonUtilTest {
                 .isValidTutorialString(INVALID_TUTORIAL_STRING_MISSING_TUTORIAL_NAME));
     }
 
-    //TODO: @Test jsonUtil_readJsonStringToObjectInstance_correctObject()
-
-    //TODO: @Test jsonUtil_writeThenReadObjectToJson_correctObject()
-
     @Test
     public void isValidStudentWithAttendanceString_studentStringWithoutAttendanceField_returnsFalse() {
         assertEquals(false, seedu.tarence.commons.util.JsonUtil.isValidStudentWithAttendanceString(
@@ -219,10 +228,9 @@ public class JsonUtilTest {
 
     @Test
     public void isValidStudentWithAssignmentString_invalidStudentAssignmentStringWithNoAssignmentScore_returnsFalse() {
-        String INVALID_STUDENT_ASSIGNMENT_STRING_WITHOUT_ASSIGHNMENT_sCORE = VALID_STUDENT_ASSIGNMENT_STRING.replace(
-                "studentAssignmentScore", "");
         assertEquals(false,
-                JsonUtil.isValidStudentWithAssignmentString(INVALID_STUDENT_ASSIGNMENT_STRING_WITHOUT_ASSIGHNMENT_sCORE));
+                JsonUtil.isValidStudentWithAssignmentString(
+                        INVALID_STUDENT_ASSIGNMENT_STRING_WITHOUT_ASSIGNMENT_SCORE));
     }
 
     @Test
@@ -261,7 +269,7 @@ public class JsonUtilTest {
             assertEquals(student.toString(), studentFromJsonUtil.toString());
 
         } catch (IllegalValueException e) {
-
+            System.out.println(UNHANDLED_EXCEPTION_MESSAGE);
         }
     }
 
@@ -274,7 +282,8 @@ public class JsonUtilTest {
     public void studentStringToList_studentStringWithTwoStudents_returnsTrue() {
 
         try {
-            ArrayList<Student> studentFromJsonUtil = (ArrayList<Student>) JsonUtil.studentStringToList(VALID_STUDENT_LIST_STRING_WITH_TWO_STUDENTS);
+            ArrayList<Student> studentFromJsonUtil = (ArrayList<Student>) JsonUtil.studentStringToList(
+                    VALID_STUDENT_LIST_STRING_WITH_TWO_STUDENTS);
 
             Name name = new Name("Bob");
             Email email = new Email("e0012952@gmail.com");
@@ -301,7 +310,7 @@ public class JsonUtilTest {
             assertEquals(studentList.toString(), studentFromJsonUtil.toString());
 
         } catch (IllegalValueException e) {
-
+            System.out.println(UNHANDLED_EXCEPTION_MESSAGE);
         }
     }
 
@@ -310,7 +319,8 @@ public class JsonUtilTest {
 
         try {
             LinkedHashMap<Student, Boolean> jsonUtilMap =
-                    (LinkedHashMap<Student, Boolean>) JsonUtil.studentAttendanceStringToMap(VALID_SINGLE_WEEK_TUTORIAL_ATTENDANCE_STRING);
+                    (LinkedHashMap<Student, Boolean>) JsonUtil.studentAttendanceStringToMap(
+                            VALID_SINGLE_WEEK_TUTORIAL_ATTENDANCE_STRING);
 
             Name name = new Name("Bob");
             Email email = new Email("e0012952@gmail.com");
@@ -336,7 +346,7 @@ public class JsonUtilTest {
 
             assertEquals(attendanceMap.toString(), jsonUtilMap.toString());
         } catch (IllegalValueException e) {
-
+            System.out.println(UNHANDLED_EXCEPTION_MESSAGE);
         }
 
     }
@@ -367,14 +377,145 @@ public class JsonUtilTest {
             studentList.add(firstStudent);
 
             Attendance attendance = new Attendance(listOfWeeks, studentList);
-            Attendance jsonAttendance = JsonUtil.attendanceStringToAttendance(VALID_TUTORIAL_ATTENDANCE_STRING, listOfWeeks);
+            Attendance jsonAttendance = JsonUtil.attendanceStringToAttendance
+                    (VALID_TUTORIAL_ATTENDANCE_STRING, listOfWeeks);
 
             assertEquals(attendance.toString(), jsonAttendance.toString());
         } catch (IllegalValueException e) {
-
+            System.out.println(UNHANDLED_EXCEPTION_MESSAGE);
         }
 
     }
 
+    @Test
+    public void assignmentListToString_validArguments_returnsTrue() {
+        try {
+            Name name = new Name("Bob");
+            Email email = new Email("e0012952@gmail.com");
+            MatricNum matricNum = new MatricNum("A0155413X");
+            Optional<MatricNum> optionalMatricNum = Optional.of(matricNum);
+            NusnetId nusnetId = new NusnetId("E0031550");
+            Optional<NusnetId> optionalNusnetId = Optional.of(nusnetId);
+            ModCode modCode = new ModCode("CS1010E");
+            TutName tutName = new TutName("Lab Session");
+            Student firstStudent = new Student(name, email, optionalMatricNum, optionalNusnetId, modCode, tutName);
 
+            Map<Student, Integer> firstAssignmentMap = new LinkedHashMap<>();
+            firstAssignmentMap.put(firstStudent, -1);
+
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+            Date startDate = dateFormatter.parse("Wed Oct 10 00:00:00 SGT 2012");
+            Date endDate = dateFormatter.parse("Thu Oct 10 23:59:00 SGT 2019");
+
+            Assignment firstAssignment = new Assignment("Assignment A", 100, startDate, endDate);
+            Assignment secondAssignment = new Assignment("Assignment B", 990, startDate, endDate);
+
+            Map<Assignment, Map<Student, Integer>> assignmentStudentScoreMap = new LinkedHashMap<>();
+
+            assignmentStudentScoreMap.put(firstAssignment, firstAssignmentMap);
+            assignmentStudentScoreMap.put(secondAssignment, firstAssignmentMap);
+
+            String assignmentString = JsonUtil.assignmentListToString(assignmentStudentScoreMap);
+
+            assertEquals(assignmentString, VALID_TUTORIAL_ASSIGNMENT_STRING);
+        } catch (ParseException e) {
+            System.out.println(UNHANDLED_EXCEPTION_MESSAGE);
+        }
+    }
+
+    @Test
+    public void tutorialAssignmentStringToAssignment_validArguments_returnsTrue() {
+        try {
+            Name name = new Name("Bob");
+            Email email = new Email("e0012952@gmail.com");
+            MatricNum matricNum = new MatricNum("A0155413X");
+            Optional<MatricNum> optionalMatricNum = Optional.of(matricNum);
+            NusnetId nusnetId = new NusnetId("E0031550");
+            Optional<NusnetId> optionalNusnetId = Optional.of(nusnetId);
+            ModCode modCode = new ModCode("CS1010E");
+            TutName tutName = new TutName("Lab Session");
+            Student firstStudent = new Student(name, email, optionalMatricNum, optionalNusnetId, modCode, tutName);
+
+            Map<Student, Integer> firstAssignmentMap = new LinkedHashMap<>();
+            firstAssignmentMap.put(firstStudent, -1);
+
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+            Date startDate = dateFormatter.parse("Wed Oct 10 00:00:00 SGT 2012");
+            Date endDate = dateFormatter.parse("Thu Oct 10 23:59:00 SGT 2019");
+
+            Assignment firstAssignment = new Assignment("Assignment A", 100, startDate, endDate);
+            Assignment secondAssignment = new Assignment("Assignment B", 990, startDate, endDate);
+
+            Map<Assignment, Map<Student, Integer>> assignmentStudentScoreMap = new LinkedHashMap<>();
+
+            assignmentStudentScoreMap.put(firstAssignment, firstAssignmentMap);
+            assignmentStudentScoreMap.put(secondAssignment, firstAssignmentMap);
+
+            Map<Assignment, Map<Student, Integer>> assignmentMapFromJsonUtil =
+                    JsonUtil.tutorialAssignmentStringToAssignment(VALID_TUTORIAL_ASSIGNMENT_STRING);
+
+            assertEquals(assignmentMapFromJsonUtil.toString(), assignmentStudentScoreMap.toString());
+        } catch (IllegalValueException | ParseException e) {
+            System.out.println(UNHANDLED_EXCEPTION_MESSAGE);
+        }
+    }
+
+    @Test
+    public void eventListToString_validArguments_returnsTrue() {
+        try {
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+            Date startDate = dateFormatter.parse("Wed Oct 10 00:00:00 SGT 2012");
+            Date endDate = dateFormatter.parse("Thu Oct 10 23:59:00 SGT 2019");
+
+            Event firstEvent = new Event("Assignment A", startDate, endDate);
+            Event secondEvent = new Event("Assignment B", startDate, endDate);
+
+            ArrayList<Event> listOfEvent = new ArrayList<>();
+
+            listOfEvent.add(firstEvent);
+            listOfEvent.add(secondEvent);
+
+            String eventStringFromJsonUtil = JsonUtil.eventListToString(listOfEvent);
+
+            assertEquals(eventStringFromJsonUtil, VALID_TUTORIAL_EVENT_STRING);
+        } catch (ParseException e) {
+            System.out.println(UNHANDLED_EXCEPTION_MESSAGE);
+        }
+    }
+
+    @Test
+    public void tutorialEventStringToEventList_validArguments_returnsTrue() {
+        try {
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+            Date startDate = dateFormatter.parse("Wed Oct 10 00:00:00 SGT 2012");
+            Date endDate = dateFormatter.parse("Thu Oct 10 23:59:00 SGT 2019");
+
+            Event firstEvent = new Event("Assignment A", startDate, endDate);
+            Event secondEvent = new Event("Assignment B", startDate, endDate);
+
+            ArrayList<Event> listOfEvent = new ArrayList<>();
+
+            listOfEvent.add(firstEvent);
+            listOfEvent.add(secondEvent);
+
+            ArrayList<Event> eventListFromJsonUtil = (ArrayList<Event>)
+                    JsonUtil.tutorialEventStringToEventList(VALID_TUTORIAL_EVENT_STRING);
+
+            assertEquals(listOfEvent.toString(), eventListFromJsonUtil.toString());
+
+        } catch (IllegalValueException | ParseException e) {
+            System.out.println(UNHANDLED_EXCEPTION_MESSAGE);
+        }
+
+    }
+
+    @Test
+    public void isValidTutorialString_validArguments_returnsTrue() {
+        String validTutorialString = JsonAdaptedModule.TUTORIAL_NAME + JsonAdaptedModule.TUTORIAL_DAY
+                + JsonAdaptedModule.TUTORIAL_START_TIME + JsonAdaptedModule.TUTORIAL_WEEKS
+                + JsonAdaptedModule.TUTORIAL_DURATION
+                + JsonAdaptedModule.TUTORIAL_STUDENT_LIST + JsonAdaptedModule.TUTORIAL_ATTENDANCE_LIST
+                + JsonAdaptedModule.TUTORIAL_MODULE_CODE;
+        assertTrue(JsonUtil.isValidTutorialString(validTutorialString));
+    }
 }

@@ -313,6 +313,12 @@ public class JsonUtil {
                 < studentString.indexOf(JsonAdaptedModule.STUDENT_TUTORIAL_NAME)));
     }
 
+    /**
+     * Checks if a studentAttendanceString is valid.
+     *
+     * @param studentWithAttendanceString String representing a Student, with attendance status, from Json object.
+     * @return Boolean.
+     */
     public static Boolean isValidStudentWithAttendanceString(String studentWithAttendanceString) {
         return (studentWithAttendanceString.contains(JsonAdaptedModule.STUDENT_EMAIL)
                 && studentWithAttendanceString.contains(JsonAdaptedModule.STUDENT_MATRIC_NUMBER)
@@ -335,6 +341,12 @@ public class JsonUtil {
                 < studentWithAttendanceString.indexOf(JsonAdaptedModule.STUDENT_ATTENDANCE_STATUS)));
     }
 
+    /**
+     * Checks if a single event String is valid.
+     *
+     * @param singleTutorialEventString String representing a single Event.
+     * @return Boolean.
+     */
     public static Boolean isValidSingleEventString(String singleTutorialEventString) {
         return (singleTutorialEventString.contains(JsonAdaptedModule.EVENT_NAME)
                 && singleTutorialEventString.contains(JsonAdaptedModule.EVENT_START_DATE)
@@ -345,7 +357,14 @@ public class JsonUtil {
                 < singleTutorialEventString.indexOf(JsonAdaptedModule.EVENT_END_DATE)));
     }
 
-    public static Boolean isValidEventString(int numOfEvents, String eventString ) {
+    /**
+     * Checks if the whole event String (represents more than 1 event) is valid.
+     *
+     * @param numOfEvents Total number of events.
+     * @param eventString String.
+     * @return Boolean.
+     */
+    public static Boolean isValidEventString(int numOfEvents, String eventString) {
         LinkedHashMap<Integer, String> identifiers = new LinkedHashMap();
 
         for (int i = 1; i <= numOfEvents; i++) {
@@ -354,7 +373,7 @@ public class JsonUtil {
         }
 
         for (int i = 2; i <= numOfEvents; i++) {
-            String firstIdentifier = identifiers.get(i-1);
+            String firstIdentifier = identifiers.get(i - 1);
             String secondIdentifier = identifiers.get(i);
             // Checks for ordering of EVENT_NUMBER
             if (eventString.indexOf(firstIdentifier) > eventString.indexOf(secondIdentifier)) {
@@ -365,6 +384,12 @@ public class JsonUtil {
 
     }
 
+    /**
+     * Checks if a single Student String, with Assignment, is valid.
+     *
+     * @param studentAssignmentString String.
+     * @return Boolean.
+     */
     public static Boolean isValidStudentWithAssignmentString(String studentAssignmentString) {
         return (studentAssignmentString.contains(JsonAdaptedModule.STUDENT_EMAIL)
                 && studentAssignmentString.contains(JsonAdaptedModule.STUDENT_MATRIC_NUMBER)
