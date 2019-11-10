@@ -81,12 +81,7 @@ public class JsonUtilTest {
             + "assignmentEndDate=Thu Oct 10 23:59:00 SGT 2019, assignmentStudentList=[{studentName=Bob, "
             + "studentEmail=e0012952@gmail.com, studentMatricNumber=Optional[A0155413X], "
             + "studentNusnetId=Optional[E0031550], studentModuleCode=CS1010E, "
-            + "studentTutorialName=Lab Session, studentAssignmentScore=-1}]}, "
-            + "assignmentNumber-2={assignmentName=Assignment B, assignmentMaxScore=990, "
-            + "assignmentStartDate=Wed Oct 10 00:00:00 SGT 2012, assignmentEndDate=Thu Oct 10 23:59:00 SGT 2019, "
-            + "assignmentStudentList=[{studentName=Bob, studentEmail=e0012952@gmail.com, "
-            + "studentMatricNumber=Optional[A0155413X], studentNusnetId=Optional[E0031550], "
-            + "studentModuleCode=CS1010E, studentTutorialName=Lab Session, studentAssignmentScore=-1}]}}";
+            + "studentTutorialName=Lab Session, studentAssignmentScore=-1}]}}";
     public static final String VALID_STUDENT_ASSIGNMENT_STRING = "studentName=Bob, studentEmail=e0012952@gmail.com, "
             + "studentMatricNumber=Optional[A0155413X], studentNusnetId=Optional[E0031550], studentModuleCode=CS1010E, "
             + "studentTutorialName=Lab Session, studentAssignmentScore=-1}";
@@ -408,12 +403,10 @@ public class JsonUtilTest {
             Date endDate = dateFormatter.parse("Thu Oct 10 23:59:00 SGT 2019");
 
             Assignment firstAssignment = new Assignment("Assignment A", 100, startDate, endDate);
-            Assignment secondAssignment = new Assignment("Assignment B", 990, startDate, endDate);
 
             Map<Assignment, Map<Student, Integer>> assignmentStudentScoreMap = new LinkedHashMap<>();
 
             assignmentStudentScoreMap.put(firstAssignment, firstAssignmentMap);
-            assignmentStudentScoreMap.put(secondAssignment, firstAssignmentMap);
 
             String assignmentString = JsonUtil.assignmentListToString(assignmentStudentScoreMap);
 
@@ -444,12 +437,10 @@ public class JsonUtilTest {
             Date endDate = dateFormatter.parse("Thu Oct 10 23:59:00 SGT 2019");
 
             Assignment firstAssignment = new Assignment("Assignment A", 100, startDate, endDate);
-            Assignment secondAssignment = new Assignment("Assignment B", 990, startDate, endDate);
 
             Map<Assignment, Map<Student, Integer>> assignmentStudentScoreMap = new LinkedHashMap<>();
 
             assignmentStudentScoreMap.put(firstAssignment, firstAssignmentMap);
-            assignmentStudentScoreMap.put(secondAssignment, firstAssignmentMap);
 
             Map<Assignment, Map<Student, Integer>> assignmentMapFromJsonUtil =
                     JsonUtil.tutorialAssignmentStringToAssignment(VALID_TUTORIAL_ASSIGNMENT_STRING);
