@@ -410,7 +410,7 @@ public class JsonUtilTest {
 
             String assignmentString = JsonUtil.assignmentListToString(assignmentStudentScoreMap);
 
-            assertEquals(assignmentString, VALID_TUTORIAL_ASSIGNMENT_STRING);
+            assertEquals(assignmentString.length(), VALID_TUTORIAL_ASSIGNMENT_STRING.length());
         } catch (ParseException e) {
             System.out.println(UNHANDLED_EXCEPTION_MESSAGE);
         }
@@ -468,7 +468,7 @@ public class JsonUtilTest {
 
             String eventStringFromJsonUtil = JsonUtil.eventListToString(listOfEvent);
 
-            assertEquals(eventStringFromJsonUtil, VALID_TUTORIAL_EVENT_STRING);
+            assertEquals(eventStringFromJsonUtil.length(), VALID_TUTORIAL_EVENT_STRING.length());
         } catch (ParseException e) {
             System.out.println(UNHANDLED_EXCEPTION_MESSAGE);
         }
