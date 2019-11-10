@@ -8,7 +8,6 @@ import static seedu.tarence.testutil.TypicalIndexes.INDEX_FIRST_IN_LIST;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
