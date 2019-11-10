@@ -24,6 +24,7 @@ public class JsonAdaptedModuleTest {
         JsonAdaptedModule module = new JsonAdaptedModule(VALID_MODULE_CODE,
                 JsonUtil.getMapOfSingleTutorialWithInvalidTutorialDay(), "null");
         String expectedMessage = "Json data has missing fields for tutorial map";
+
         assertThrows(IllegalValueException.class, expectedMessage, module::toModelType);
     }
 
@@ -73,10 +74,10 @@ public class JsonAdaptedModuleTest {
 
     @Test
     public void getSemesterStartString_validSemesterStartString_returnsTrue() {
-
-        //String semesterStartString = String.valueOf(Module.getSemStart());
+        String semesterStartString = String.valueOf("Mon Dec 31 00:00:00 SGT 2001");
         JsonAdaptedModule module = new JsonAdaptedModule(VALID_MODULE_CODE,
-                JsonUtil.getMapOfSingleTutorialWithInvalidTutorialWeeks(), "null");
+                JsonUtil.getMapOfSingleTutorialWithInvalidTutorialWeeks(), semesterStartString);
+        assertEquals(semesterStartString, module.getSemesterStartString());
 
     }
 
