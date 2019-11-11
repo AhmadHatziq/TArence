@@ -103,6 +103,13 @@ include::../UserGuide.adoc[tag=FeatureUndo]
 
 include::../UserGuide.adoc[tag=FeatureClear]
 
+include::../UserGuide.adoc[tag=Storage]
+
+include::../UserGuide.adoc[tag=FeatureAddModule]
+
+include::../UserGuide.adoc[tag=FeatureAddTutorial]
+
+
 == Contributions to the Developer Guide
 
 |===
