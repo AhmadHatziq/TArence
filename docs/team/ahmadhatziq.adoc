@@ -101,6 +101,10 @@ from json and re-creating the proper specified model.
 
 include::https://github.com/AhmadHatziq/main/blob/master/docs/UserGuide.adoc#undo-previously-entered-commands-undo[undo]
 
+include::../UserGuide.adoc[tag=FeatureUndo]
+
+include::../UserGuide.adoc[tag=FeatureClear]
+
 == Contributions to the Developer Guide
 
 |===
@@ -108,6 +112,9 @@ include::https://github.com/AhmadHatziq/main/blob/master/docs/UserGuide.adoc#und
 |===
 
 include::https://github.com/AhmadHatziq/main/blob/master/docs/DeveloperGuide.adoc#storage-component[storage]
+
+include::../DeveloperGuide.adoc[tag=undoredo]
+
 =======
 
 
