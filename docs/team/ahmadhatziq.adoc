@@ -101,8 +101,6 @@ from json and re-creating the proper specified model.
 
 include::../UserGuide.adoc[tag=FeatureUndo]
 
-include::../UserGuide.adoc[tag=FeatureUndo]
-
 include::../UserGuide.adoc[tag=FeatureClear]
 
 == Contributions to the Developer Guide
