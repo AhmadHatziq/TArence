@@ -20,6 +20,7 @@ public class DeleteModuleVerifiedCommandTest {
 
     @Test
     public void execute_model_moduleDeleted() {
+        ModuleBuilder.DEFAULT_TUTORIALS.clear();
         Model model = new ModelManager(getTypicalApplication(), new UserPrefs());
         Model expectedModel = new ModelManager(getTypicalApplication(), new UserPrefs());
         Module validModule = new ModuleBuilder().withModCode(VALID_MOD_CODE).build();

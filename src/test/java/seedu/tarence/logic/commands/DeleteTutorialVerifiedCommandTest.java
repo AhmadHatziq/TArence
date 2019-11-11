@@ -20,6 +20,8 @@ public class DeleteTutorialVerifiedCommandTest {
 
     @Test
     public void execute_model_tutorialToBeDeleted() {
+        ModuleBuilder.DEFAULT_TUTORIALS.clear();
+        TutorialBuilder.DEFAULT_STUDENTS.clear();
         Module validModule = new ModuleBuilder().withModCode(VALID_MODULE_AMY).build();
         Tutorial validTutorial = new TutorialBuilder().withTutName(VALID_TUTORIAL_NAME_AMY)
                 .withModCode(VALID_MODULE_AMY).build();
