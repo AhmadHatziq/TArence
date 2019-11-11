@@ -27,8 +27,8 @@ public class DeleteTutorialVerifiedCommandTest {
         Model model = new ModelManager(getTypicalApplication(), new UserPrefs());
         Model expectedModel = new ModelManager(getTypicalApplication(), new UserPrefs());
 
-        model.addModule(validModule);
         expectedModel.addModule(validModule);
+        model.addModule(validModule);
 
         model.addTutorial(validTutorial);
         model.addTutorialToModule(validTutorial);
