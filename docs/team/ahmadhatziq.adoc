@@ -97,6 +97,7 @@ include::../UserGuide.adoc[tag=FeatureAddModule]
 
 include::../UserGuide.adoc[tag=FeatureAddTutorial]
 
+=======
 == Contributions to the Developer Guide
 
 |===
@@ -106,7 +107,7 @@ include::../UserGuide.adoc[tag=FeatureAddTutorial]
 =======
 include::../DeveloperGuide.adoc[tag=undoredo]
 
-=======
+
 
 * *Code contributed*:
 * [link:{repoURL}/commits?author=AhmadHatziq[Commits]] [link:{repoURL}/pulls?q=is%3Apr+author%3AAhmadHatziq+is%3Aclosed[Pull Requests]] [https://nus-cs2103-ay1920s1.github.io/tp-dashboard/#search=Hatziq&sort=groupTitle&sortWithin=title&since=2019-09-06&timeframe=commit&mergegroup=false&groupSelect=groupByRepos&breakdown=false[RepoSense Code Contribution Dashboard]]
