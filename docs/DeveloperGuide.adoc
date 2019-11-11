@@ -337,7 +337,10 @@ image::MarkAttendanceSequenceDiagram.png[]
 Entering the input will call the execute() method in LogicManager, which identifies the command as a MarkAttendanceCommand via ApplicationParser.parse(). MarkAttendanceCommand.parse() is then called to parse the input and extract the relevant information (tutorial name, module code, student name) which is used to initialize the MarkAttendanceCommand, which finally modifies the student's attendance when executed.
 // end::MarkAttendanceFeature[]
 // tag::undoredo[]
-=== Undo/Redo feature
+
+=== Undo feature
+The undo feature allows the user to undo multiple commands at once.
+
 ==== Implementation
 
 The undo mechanism is facilitated by `JsonStateStorage`.
