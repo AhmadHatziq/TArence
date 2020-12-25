@@ -30,7 +30,8 @@ endif::[]
 
 * Original source: https://github.com/nus-cs2103-AY1920S1/addressbook-level3[AddressBook Level 3] created by https://se-education.org[SE-EDU initiative]
 * Some parts of this sample application were inspired by the excellent http://code.makery.ch/library/javafx-8-tutorial/[Java FX tutorial] by
-_Marco Jakob_.
+_Marco Jakob_
 * Libraries used: https://openjfx.io/[JavaFX], https://github.com/FasterXML/jackson[Jackson], https://github.com/junit-team/junit5[JUnit5]
+* This project is part of the coursework https://nusmods.com/modules/CS2103/software-engineering[CS 2103: Software Engineering]
 
 == Licence : link:LICENSE[MIT]
